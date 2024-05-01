@@ -1,0 +1,41 @@
+<div class="container">
+    <h2>Register</h2>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" formControlName="email">
+            <div *ngIf="registerForm.controls['email'].invalid && registerForm.controls['email'].touched">
+                Please enter a valid email.
+            </div>
+        </div>
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" formControlName="username">
+            <div *ngIf="registerForm.controls['username'].invalid && registerForm.controls['username'].touched">
+                Username is required (minimum 4 characters).
+            </div>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" formControlName="password">
+            <div *ngIf="registerForm.controls['password'].invalid && registerForm.controls['password'].touched">
+                Password is required (minimum 6 characters).
+            </div>
+        </div>
+        <div>
+            <label for="password_confirm">Confirm Password:</label>
+            <input type="password" id="password_confirm" formControlName="password_confirm">
+            <div *ngIf="registerForm.errors?.['mismatch'] && registerForm.controls['password_confirm'].touched">
+                Passwords do not match.
+            </div>
+        </div>
+        <button type="submit" [disabled]="!registerForm.valid">Register</button>
+
+    </form>
+</div>
+<div id= "success-message" style="display: none;">
+    Vielen Dank für Ihre Registrierung! Eine Aktivierungs-E-Mail wurde an Ihre Adresse gesendet. Bitte überprüfen Sie
+    Ihre E-Mail und aktivieren Sie Ihr Konto.
+    <br>
+    Sie werden in <span id="countdown"></span> Sekunden zur Anmeldeseite weitergeleitet.
+</div>

@@ -1,0 +1,33 @@
+<section [ngSwitch]="editSelectedProfile">
+    <div *ngSwitchCase="false" class="profile-section">
+        <h2>Who's watching?</h2>
+        <div class="profile-list">
+            <div class="profile" *ngFor="let profile of profiles" (click)="selectProfile(profile)" [ngClass]="{'show-edit-mode': editMode}">
+                <img [src]="showAvatarUrl(profile.avatar)" alt="Avatar of {{ profile.name }}" class="profile-avatar"
+                    [ngClass]="{'edit-mode': editMode}">
+                <div class="profile-name">{{ profile.name }}</div>
+            </div>
+        </div>
+        <button class="manage-btn" (click)="toggleEditMode()">{{ editMode ? 'Done' : 'Manage Profiles' }}</button>
+    </div>
+
+    <div *ngSwitchCase="true">
+        <h2>Edit Profile: {{ editingProfile?.name }}</h2>
+        <div class="profile-detail">
+            <img [src]="showAvatarUrl(editingProfile?.avatar || 'avatar_0.png')"
+                alt="Avatar of {{ editingProfile?.name }}" class="profile-avatar">
+            <input type="text" [(ngModel)]="editName">
+            <select [(ngModel)]="editAvatar" (change)="changeAvatar(editAvatar)">
+                <option *ngFor="let avatar of avatars" [value]="avatar">
+                    <img [src]="showAvatarUrl(avatar)" alt="Avatar" class="profile-avatar">
+                    {{ avatar }}
+                </option>
+            </select>
+
+        </div>
+        <div>
+            <button class="save-btn" (click)="saveProfile()">Save</button>
+            <button class="cancel-btn" (click)="cancelEditing()">Cancel</button>
+        </div>
+    </div>
+</section>
