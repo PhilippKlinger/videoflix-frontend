@@ -30,6 +30,7 @@ export class LoginComponent {
         next: (response) => {
           console.log('Login successful', response);
           localStorage.setItem('token', response.token);
+          localStorage.setItem('userId', response.user_id);
           setTimeout(() => {
             this.router.navigate(['/profiles']);
           }, 2000);

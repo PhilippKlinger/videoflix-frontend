@@ -1,17 +1,22 @@
-<section [ngSwitch]="editSelectedProfile">
-    <div *ngSwitchCase="false" class="profile-section">
+<section [ngSwitch]="selectProfileAction">
+    <div *ngSwitchCase="'selectProfile'" class="profile-section">
         <h2>Who's watching?</h2>
         <div class="profile-list">
-            <div class="profile" *ngFor="let profile of profiles" (click)="selectProfile(profile)" [ngClass]="{'show-edit-mode': editMode}">
+            <div class="profile" *ngFor="let profile of profiles" (click)="selectProfile(profile)"
+                [ngClass]="{'show-edit-mode': editMode}">
                 <img [src]="showAvatarUrl(profile.avatar)" alt="Avatar of {{ profile.name }}" class="profile-avatar"
                     [ngClass]="{'edit-mode': editMode}">
                 <div class="profile-name">{{ profile.name }}</div>
+            </div>
+            <div *ngIf="profiles.length !==5" class="profile" (click)="addNewProfile()">
+                <img src="assets/icons/add-profile.png" class="profile-avatar">
+                <div class="profile-name">Add Profile</div>
             </div>
         </div>
         <button class="manage-btn" (click)="toggleEditMode()">{{ editMode ? 'Done' : 'Manage Profiles' }}</button>
     </div>
 
-    <div *ngSwitchCase="true">
+    <div *ngSwitchCase="'editProfile'">
         <h2>Edit Profile: {{ editingProfile?.name }}</h2>
         <div class="profile-detail">
             <img [src]="showAvatarUrl(editingProfile?.avatar || 'avatar_0.png')"
@@ -28,6 +33,26 @@
         <div>
             <button class="save-btn" (click)="saveProfile()">Save</button>
             <button class="cancel-btn" (click)="cancelEditing()">Cancel</button>
+            <button class="delete-btn" (click)="deleteProfile(editId)">Delete Profile</button>
         </div>
+    </div>
+
+    <div *ngSwitchCase="'addProfile'">
+        <h2>Add Profile</h2>
+        <p>Add another Profile watching videoflix.</p>
+        <form [formGroup]="profilesForm">
+            <div class="profile-detail">
+                <img [src]="showAvatarUrl(profilesForm.value.avatar)" alt="Avatar"
+                    class="profile-avatar">
+                <input formControlName="name" type="text" placeholder="Name">
+                <select formControlName="avatar">
+                    <option *ngFor="let avatar of avatars" [value]="avatar">{{ avatar }}</option>
+                </select>
+            </div>
+            <div>
+                <button class="save-btn" (click)="addProfile()" [disabled]="!profilesForm.valid">Continue</button>
+                <button class="cancel-btn" (click)="cancelEditing()">Cancel</button>
+            </div>
+        </form>
     </div>
 </section>

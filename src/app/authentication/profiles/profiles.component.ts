@@ -3,6 +3,8 @@ import { Profile } from 'src/app/models/profile.model';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
 import { SelectProfileService } from 'src/app/services/select-profile.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 
 @Component({
   selector: 'app-profiles',
@@ -22,16 +24,25 @@ export class ProfilesComponent implements OnInit {
   ];
   selectedProfile!: Profile;
   editMode: boolean = false;
-  editSelectedProfile: boolean = false;
+  selectProfileAction: string = 'selectProfile';
   editingProfile?: Profile;
   editName: string = '';
   editAvatar: string = '';
+  editId!: number;
+  profilesForm!: FormGroup;
 
-  constructor(private apiService: ApiService, private router: Router, private profileService: SelectProfileService) { }
+  constructor(private apiService: ApiService, private router: Router, private profileService: SelectProfileService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.loadProfiles();
+    this.profilesForm = this.fb.group({
+      name: ['', Validators.required],
+      avatar: ['avatars/avatar_0.png'],
+      user: localStorage.getItem('userId')
+    });
   }
+
+ 
 
   loadProfiles() {
     this.apiService.getProfiles().subscribe({
@@ -44,15 +55,18 @@ export class ProfilesComponent implements OnInit {
     });
   }
 
-  addProfile(profileData: Profile) {
-    this.apiService.createProfile(profileData).subscribe({
-      next: (newProfile) => {
-        this.profiles.push(newProfile);
-      },
-      error: (error) => {
-        console.error('Failed to add profile', error);
-      }
-    });
+  addProfile() {
+    if (this.profilesForm.valid) {
+      this.apiService.createProfile(this.profilesForm.value).subscribe({
+        next: (newProfile) => {
+          this.profiles.push(newProfile);
+          this.selectProfileAction= 'selectProfile';
+        },
+        error: (error) => {
+          console.error('Failed to add profile', error);
+        }
+      });
+    }
   }
 
   saveProfile() {
@@ -64,7 +78,7 @@ export class ProfilesComponent implements OnInit {
           if (index !== -1) {
             this.profiles[index] = updatedProfile;
           }
-          this.editSelectedProfile = false;
+          this.selectProfileAction = 'selectProfile';
         },
         error: (error) => {
           console.error('Failed to update profile', error);
@@ -74,15 +88,21 @@ export class ProfilesComponent implements OnInit {
   }
 
   deleteProfile(profileId: number) {
-    this.apiService.deleteProfile(profileId).subscribe({
-      next: () => {
-        this.profiles = this.profiles.filter(profile => profile.id !== profileId);
-      },
-      error: (error) => {
-        console.error('Failed to delete profile', error);
-      }
-    });
+    // Mat dialog einbauen später 
+    const confirmation = confirm('Please confirm to delete this Profile!');
+    if (confirmation) {
+      this.apiService.deleteProfile(profileId).subscribe({
+        next: () => {
+          this.profiles = this.profiles.filter(profile => profile.id !== profileId);
+          this.selectProfileAction = 'selectProfile';
+        },
+        error: (error) => {
+          console.error('Failed to delete profile', error);
+        }
+      });
+    }
   }
+  
 
   showAvatarUrl(avatarPath: string): string {
     const baseUrl = this.apiService.baseUrl;
@@ -94,15 +114,16 @@ export class ProfilesComponent implements OnInit {
       this.profileService.selectProfile(profile);
       this.router.navigate(['/main-view']);
     } else {
-      this.editSelectedProfile = true;
+      this.selectProfileAction = 'editProfile';
       this.editingProfile = { ...profile };
       this.editName = profile.name;
       this.editAvatar = profile.avatar;
+      this.editId = profile.id;
     }
   }
 
   cancelEditing() {
-    this.editSelectedProfile = false;
+    this.selectProfileAction = 'selectProfile';
   }
 
   toggleEditMode() {
@@ -118,4 +139,7 @@ export class ProfilesComponent implements OnInit {
     }
   }
 
+  addNewProfile() {
+    this.selectProfileAction = 'addProfile';
+  }
 }
