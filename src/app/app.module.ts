@@ -12,6 +12,7 @@ import { ProfilesComponent } from './authentication/profiles/profiles.component'
 import { ImprintComponent } from './imprint/imprint.component';
 import { NavbarComponent } from './main-view/navbar/navbar.component';
 import { MainViewComponent } from './main-view/main-view.component';
+import { VideoListComponent } from './main-view/video-list/video-list.component';
 import { AuthInterceptor } from './services/auth-interceptor.service';
 
 @NgModule({
@@ -23,6 +24,7 @@ import { AuthInterceptor } from './services/auth-interceptor.service';
     ImprintComponent,
     NavbarComponent,
     MainViewComponent,
+    VideoListComponent,
   ],
   imports: [
     BrowserModule,

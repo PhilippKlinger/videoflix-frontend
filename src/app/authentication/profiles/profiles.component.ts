@@ -112,7 +112,7 @@ export class ProfilesComponent implements OnInit {
   selectProfile(profile: Profile) {
     if (!this.editMode) {
       this.profileService.selectProfile(profile);
-      this.router.navigate(['/main-view']);
+      this.router.navigate(['/browse']);
     } else {
       this.selectProfileAction = 'editProfile';
       this.editingProfile = { ...profile };
