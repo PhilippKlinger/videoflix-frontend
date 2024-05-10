@@ -14,12 +14,20 @@ export class ApiService {
   constructor(private http: HttpClient) { }
 
   //user model anlegen??
+  registerUserEmail(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/register-email/`, data);
+  }
+
   registerUser(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/register/`, data);
   }
 
   loginUser(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/login/`, data);
+  }
+
+  resetPassword(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/password-reset/`, data);
   }
 
   getProfiles(): Observable<Profile[]> {

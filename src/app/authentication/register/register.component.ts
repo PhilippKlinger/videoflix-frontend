@@ -10,11 +10,14 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
+  emailCheckForm!: FormGroup;
+  selectRegisterFormAction: string = 'enterEmail';
+  newEmail: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
     private apiService: ApiService,
-    private router: Router) {}
+    private router: Router) { }
 
   ngOnInit(): void {
     this.registerForm = this.formBuilder.group({
@@ -23,6 +26,10 @@ export class RegisterComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       password_confirm: ['', Validators.required]
     }, { validator: this.passwordMatchValidator });
+
+    this.emailCheckForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+    });
   }
 
   passwordMatchValidator(form: AbstractControl): ValidationErrors | null {
@@ -45,10 +52,10 @@ export class RegisterComponent implements OnInit {
           const countdownTimer = setInterval(() => {
             timeLeft--;
             countdownElement.innerHTML = `${timeLeft}`;
-          
+
             if (timeLeft <= 0) {
               clearInterval(countdownTimer);
-              window.location.href = '/login'; // Weiterleitung zur Login-Seite
+              this.router.navigate(['/login']);
             }
           }, 1000);
         },
@@ -58,4 +65,29 @@ export class RegisterComponent implements OnInit {
       });
     }
   }
+
+
+
+  onSubmitEmailCheck() {
+    if (this.emailCheckForm.valid) {
+      this.apiService.registerUserEmail(this.emailCheckForm.value).subscribe({
+        next: (response) => {
+          console.log('Email check successful', response);
+          if (response.user_exists) {
+            this.registerForm.controls['email'].setValue(this.emailCheckForm.controls['email'].value);
+            localStorage.setItem('emailForLogin', this.emailCheckForm.controls['email'].value);
+            this.router.navigate(['/login']);
+          } else {
+            this.selectRegisterFormAction = 'registerNewUser';
+            this.registerForm.controls['email'].setValue(this.emailCheckForm.controls['email'].value);
+          }
+        },
+        error: (error) => {
+          console.error('Email check failed', error);
+        }
+      });
+    }
+  }
+
+
 }

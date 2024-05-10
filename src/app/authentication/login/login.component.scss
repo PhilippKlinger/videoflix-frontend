@@ -1,0 +1,136 @@
+.login-section {
+  background-image: url("/assets/cover.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-form-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba($color: #000000, $alpha: 0.8);
+  padding: 20px;
+  height: 500px;
+  color: white;
+
+  h2 {
+    font-size: 42px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    padding: 50px;
+  }
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 10px;
+
+  input {
+    display: flex;
+    align-items: center;
+    outline: none;
+    border: 2px solid #fffcf3;
+    padding: 5px 15px;
+    width: 100%;
+    background-color: #000000;
+    color: #fff;
+    font-size: clamp(12px, 2vw, 18px);
+
+    ::placeholder {
+      z-index: 999;
+      color: #fffcf3;
+      font-family: "Overpass";
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 120%;
+      transition: transform 0.3s ease;
+      transform: translateY(0);
+    }
+
+    &:hover {
+      cursor: pointer;
+      border: 2px solid #fffcf3;
+    }
+
+    &:focus {
+      border: 2px solid #fffcf3;
+      color: #fff;
+      caret-color: #fff;
+
+      &::placeholder {
+        transform: translateY(-30px);
+      }
+    }
+
+    &.ng-touched,
+    &.ng-dirty {
+      &.ng-invalid {
+        border-color: red;
+      }
+
+      &.ng-valid {
+        border-color: #00bc8f;
+      }
+    }
+  }
+
+  .text-danger {
+    color: red;
+    padding: 5px;
+    font-size: 14px;
+  }
+}
+
+button {
+  width: 189px;
+  height: 68px;
+  border: 4px solid black;
+  font-size: 23px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 120%;
+  z-index: 5;
+  background-color: #e50915;
+  color: white;
+
+  &:hover {
+    cursor: pointer;
+    transition: transform ease-in-out 200ms;
+  }
+}
+
+.button-section {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+button[disabled] {
+  cursor: not-allowed;
+
+  &:hover {
+    transform: none !important;
+  }
+}
+
+.password-reset {
+    font-size: 24px;
+  &:hover {
+    cursor: pointer;
+    font-weight: 900;
+  }
+}

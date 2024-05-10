@@ -1,3 +1,13 @@
+.video-section {
+    display: flex;
+    flex-direction: row;
+    overflow-y: auto;
+}
+
+.video {
+    padding: 25px;
+}
+
 .video-preview {
     width: 250px;
 }

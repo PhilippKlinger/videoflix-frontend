@@ -1,4 +1,5 @@
-<div *ngFor="let video of videos">
+<div class="video-section">
+  <div *ngFor="let video of videos" class="video">
     <h2>{{ video.title }}</h2>
     <p>{{ video.description }}</p>
     <video controls class="video-preview">
@@ -6,4 +7,5 @@
       Your browser does not support the video tag.
     </video>
   </div>
-  
+
+</div>
