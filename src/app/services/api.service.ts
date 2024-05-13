@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, catchError, throwError } from 'rxjs';
 import { Profile } from '../models/profile.model';
 import { Video } from '../models/video.model';
 
@@ -22,13 +22,27 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/register/`, data);
   }
 
+  getNewActivationEmail(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/request-new-activation-link/`, data)
+  }
+
   loginUser(data: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/login/`, data);
+    return this.http.post(`${this.baseUrl}/login/`, data).pipe(
+      catchError((error: HttpErrorResponse) => {
+        // Extract error message from non_field_errors or default to a general error message
+        const errorMsg = error.error.non_field_errors ? error.error.non_field_errors[0] : 'An unexpected error occurred';
+        return throwError(() => errorMsg);
+      })
+    );
   }
 
   resetPassword(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/password-reset/`, data);
   }
+
+  resetPasswordConfirm(code: string, data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/password-reset-confirm/${code}/`, data);
+}
 
   getProfiles(): Observable<Profile[]> {
     return this.http.get<Profile[]>(`${this.baseUrl}/profiles/`);

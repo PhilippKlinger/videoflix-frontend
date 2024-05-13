@@ -14,7 +14,7 @@ import { NavbarComponent } from './main-view/navbar/navbar.component';
 import { MainViewComponent } from './main-view/main-view.component';
 import { VideoListComponent } from './main-view/video-list/video-list.component';
 import { AuthInterceptor } from './services/auth-interceptor.service';
-
+import { HttpErrorInterceptor } from './services/http-error-interceptor.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -38,6 +38,11 @@ import { AuthInterceptor } from './services/auth-interceptor.service';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
       multi: true
     }
   ],

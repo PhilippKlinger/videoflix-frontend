@@ -6,13 +6,16 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+  styleUrls: ['./register.component.scss', '../login/login.component.scss']
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
   emailCheckForm!: FormGroup;
   selectRegisterFormAction: string = 'enterEmail';
   newEmail: string = '';
+  requestloading: boolean = false;
+  registerSuccess: boolean = false;
+  timeLeft: number = 5 ;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -38,22 +41,18 @@ export class RegisterComponent implements OnInit {
     return password && passwordConfirm && password.value === passwordConfirm.value ? null : { 'mismatch': true };
   }
 
-  //Fehlermeldunge anzeigen lassen die von backend kommen
-  onSubmit() {
-    let timeLeft = 10;
-    let countdownElement: any = document.getElementById('countdown');
-    let message: any = document.getElementById('success-message');
 
-    if (this.registerForm.valid) {
+  onSubmit() {
+      if (this.registerForm.valid) {
+      this.requestloading = true;
       this.apiService.registerUser(this.registerForm.value).subscribe({
         next: (response) => {
           console.log('Registration successful', response);
-          message.style.display = 'block';
+          this.requestloading = false;
+          this.registerSuccess = true;
           const countdownTimer = setInterval(() => {
-            timeLeft--;
-            countdownElement.innerHTML = `${timeLeft}`;
-
-            if (timeLeft <= 0) {
+            this.timeLeft--;
+            if (this.timeLeft <= 0) {
               clearInterval(countdownTimer);
               this.router.navigate(['/login']);
             }
@@ -61,6 +60,7 @@ export class RegisterComponent implements OnInit {
         },
         error: (error) => {
           console.error('Registration failed', error);
+          this.requestloading = false;
         }
       });
     }
@@ -75,12 +75,12 @@ export class RegisterComponent implements OnInit {
           console.log('Email check successful', response);
           if (response.user_exists) {
             this.registerForm.controls['email'].setValue(this.emailCheckForm.controls['email'].value);
-            localStorage.setItem('emailForLogin', this.emailCheckForm.controls['email'].value);
             this.router.navigate(['/login']);
           } else {
             this.selectRegisterFormAction = 'registerNewUser';
             this.registerForm.controls['email'].setValue(this.emailCheckForm.controls['email'].value);
           }
+          localStorage.setItem('emailForLogin', this.emailCheckForm.controls['email'].value);
         },
         error: (error) => {
           console.error('Email check failed', error);

@@ -1,10 +1,10 @@
-<div class="register-section" [ngSwitch]="selectRegisterFormAction">
-    <div class="register-form-section" *ngSwitchCase="'enterEmail'">
+<div class="login-section" [ngSwitch]="selectRegisterFormAction">
+    <div class="login-form-section" *ngSwitchCase="'enterEmail'">
         <h2>Register</h2>
         <form [formGroup]="emailCheckForm" (ngSubmit)="onSubmitEmailCheck()">
             <div class="form-group">
                 <input type="email" id="email" class="form-control name-content" formControlName="email"
-                    placeholder="Your email">
+                    placeholder="youremail@example.com">
                 <div *ngIf="(emailCheckForm.controls['email'].dirty || emailCheckForm.controls['email'].touched)  && emailCheckForm.controls['email'].invalid "
                     class="text-danger">
                     Please enter a valid email.
@@ -16,41 +16,40 @@
         </form>
     </div>
 
-    <div class="container" *ngSwitchCase="'registerNewUser'">
+    <div class="login-form-section" *ngSwitchCase="'registerNewUser'">
         <h2>Register</h2>
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-            <div>
-                <label for="username">Username:</label>
-                <input type="text" id="username" formControlName="username">
+        <div *ngIf="requestloading" class="shape-loader"></div>
+        <form *ngIf="!requestloading && !registerSuccess" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <input type="text" id="username" formControlName="username" class="form-control name-content"
+                    placeholder="username">
                 <div *ngIf="registerForm.controls['username'].invalid && registerForm.controls['username'].touched">
                     Username is required (minimum 4 characters).
                 </div>
             </div>
-            <div>
-                <label for="password">Password:</label>
-                <input type="password" id="password" formControlName="password">
+            <div class="form-group">
+                <input type="password" id="password" formControlName="password" class="form-control name-content"
+                    placeholder="password">
                 <div *ngIf="registerForm.controls['password'].invalid && registerForm.controls['password'].touched">
                     Password is required (minimum 6 characters).
                 </div>
             </div>
-            <div>
-                <label for="password_confirm">Confirm Password:</label>
-                <input type="password" id="password_confirm" formControlName="password_confirm">
+            <div class="form-group">
+                <input type="password" id="password_confirm" formControlName="password_confirm"
+                    class="form-control name-content" placeholder="confirm password">
                 <div *ngIf="registerForm.errors?.['mismatch'] && registerForm.controls['password_confirm'].touched">
                     Passwords do not match.
                 </div>
             </div>
-            <button type="submit" [disabled]="!registerForm.valid">Register</button>
-    
+            <div class="button-section">
+                <button type="submit" [disabled]="!registerForm.valid">Register</button>
+            </div>
         </form>
+        <div *ngIf="registerSuccess">
+            Vielen Dank für Ihre Registrierung! Eine Aktivierungs-E-Mail wurde an Ihre Adresse gesendet. Bitte
+            überprüfen Sie
+            Ihre E-Mail und aktivieren Sie Ihr Konto.
+            <br>
+            Sie können die Seite nun schließen oder sie werden in <span>{{ timeLeft }}</span> Sekunden zum Login weitergeleitet.
+        </div>
     </div>
-    <div id="success-message" style="display: none;">
-        Vielen Dank für Ihre Registrierung! Eine Aktivierungs-E-Mail wurde an Ihre Adresse gesendet. Bitte überprüfen Sie
-        Ihre E-Mail und aktivieren Sie Ihr Konto.
-        <br>
-        Sie werden in <span id="countdown"></span> Sekunden zur Anmeldeseite weitergeleitet.
-    </div>
-</div>
-
-
-
