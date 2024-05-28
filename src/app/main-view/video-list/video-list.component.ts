@@ -21,16 +21,28 @@ export class VideoListComponent {
     this.apiService.getVideos().subscribe({
       next: (videos) => {
         this.videos = videos;
+        console.log(this.videos)
       },
       error: (error) => {
         console.error('Failed to load videos', error);
       }
     });
-    console.log(this.videos)
   }
 
   showVideoUrl(videoPath: string): string {
     const baseUrl = this.apiService.baseUrl;
-    return `${baseUrl}${'/static' + videoPath}`;
+    return `${baseUrl}${ videoPath }`;
   }
+
+  showThumbnailUrl(thumbnailPath: string): string {
+    const baseUrl = this.apiService.baseUrl;
+    return `${baseUrl}${ thumbnailPath }`;
+  }
+
+  openVideoDetails(videoPath: string) {
+  
+  }
+
+
 }
+

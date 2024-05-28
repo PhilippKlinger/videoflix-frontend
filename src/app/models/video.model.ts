@@ -12,5 +12,6 @@ export interface Resolution {
     title: string;
     description: string;
     video_file: string;
+    thumbnail: string;
   }
   
