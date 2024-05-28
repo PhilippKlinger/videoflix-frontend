@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
   errorMessage: string = '';
   statusMessage: string = '';
   requestloading: boolean = false;
-  activationCode:string = '';
+  activationCode: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -50,6 +50,12 @@ export class LoginComponent implements OnInit {
         case 'password-reset':
           this.activationCode = params['code'];
           this.selectLoginFormAction = 'passwordResetConfirm';
+          break;
+        case 'invalid-reset':
+          this.statusMessage = 'Bereits genutzter Passwortreset-Link. Bitte fordern Sie einen neuen an.';
+          break;
+        case 'expired-reset':
+          this.statusMessage = 'Ihr Passwortreset-Link ist abgelaufen. Bitte fordern Sie einen neuen an.';
           break;
         default:
           this.statusMessage = '';

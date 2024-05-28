@@ -1,6 +1,7 @@
 <div class="login-section" [ngSwitch]="selectLoginFormAction">
     <div class="login-form-section" *ngSwitchCase="'login'">
         <h2>Login</h2>
+        <!-- <div *ngIf="requestloading" class="lds-ripple"><div></div><div></div></div> -->
         <div *ngIf="requestloading" class="shape-loader"></div>
         <div *ngIf="statusMessage" class="alert alert-success">
             {{ statusMessage }}

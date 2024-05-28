@@ -36,7 +36,7 @@ export class ProfilesComponent implements OnInit {
   ngOnInit(): void {
     this.loadProfiles();
     this.profilesForm = this.fb.group({
-      name: ['', Validators.required],
+      name: ['', [Validators.required, Validators.maxLength(8)]],
       avatar: ['avatars/avatar_0.png'],
       user: localStorage.getItem('userId')
     });
@@ -61,6 +61,7 @@ export class ProfilesComponent implements OnInit {
         next: (newProfile) => {
           this.profiles.push(newProfile);
           this.selectProfileAction= 'selectProfile';
+          this.profilesForm.controls['name'].reset('');
         },
         error: (error) => {
           console.error('Failed to add profile', error);
@@ -94,6 +95,7 @@ export class ProfilesComponent implements OnInit {
       this.apiService.deleteProfile(profileId).subscribe({
         next: () => {
           this.profiles = this.profiles.filter(profile => profile.id !== profileId);
+          this.toggleEditMode()
           this.selectProfileAction = 'selectProfile';
         },
         error: (error) => {
@@ -124,6 +126,7 @@ export class ProfilesComponent implements OnInit {
 
   cancelEditing() {
     this.selectProfileAction = 'selectProfile';
+    this.profilesForm.controls['name'].reset('');
   }
 
   toggleEditMode() {
