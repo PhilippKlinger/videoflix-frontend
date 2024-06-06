@@ -15,6 +15,8 @@ import { MainViewComponent } from './main-view/main-view.component';
 import { VideoListComponent } from './main-view/video-list/video-list.component';
 import { AuthInterceptor } from './services/auth-interceptor.service';
 import { HttpErrorInterceptor } from './services/http-error-interceptor.service';
+import { FavoriteListComponent } from './main-view/favorite-list/favorite-list.component';
+import { VideoUploadComponent } from './main-view/video-upload/video-upload.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,6 +27,8 @@ import { HttpErrorInterceptor } from './services/http-error-interceptor.service'
     NavbarComponent,
     MainViewComponent,
     VideoListComponent,
+    FavoriteListComponent,
+    VideoUploadComponent,
   ],
   imports: [
     BrowserModule,

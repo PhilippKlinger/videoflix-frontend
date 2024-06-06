@@ -10,6 +10,7 @@ import { ApiService } from 'src/app/services/api.service';
 })
 export class VideoListComponent {
   videos: Video[] = [];
+  hoveredIndex: number = -1;
 
   constructor(private apiService: ApiService, private router: Router,) { }
 
@@ -31,18 +32,35 @@ export class VideoListComponent {
 
   showVideoUrl(videoPath: string): string {
     const baseUrl = this.apiService.baseUrl;
-    return `${baseUrl}${ videoPath }`;
+    return `${baseUrl}${videoPath}`;
   }
 
   showThumbnailUrl(thumbnailPath: string): string {
     const baseUrl = this.apiService.baseUrl;
-    return `${baseUrl}${ thumbnailPath }`;
+    return `${baseUrl}${thumbnailPath}`;
   }
 
-  openVideoDetails(videoPath: string) {
-  
+  hoverVideo(index: number): void {
+    this.hoveredIndex = index;
   }
 
+  playVideo(videoPath: string): void {
+    const videoUrl = this.showVideoUrl(videoPath);
+    const videoElement = document.createElement('video');
+    videoElement.src = videoUrl;
+    videoElement.controls = true;
+    videoElement.style.width = '100%';
+    videoElement.style.height = '100%';
+    document.body.appendChild(videoElement);
+    videoElement.requestFullscreen();
+    videoElement.play();
+
+    videoElement.onfullscreenchange = () => {
+      if (!document.fullscreenElement) {
+        videoElement.remove();
+      }
+    };
+  }
 
 }
 

@@ -64,8 +64,8 @@ export class ApiService {
     return this.http.get<Video[]>(`${this.baseUrl}/videos/`);
   }
 
-  addVideo(videoData: Video): Observable<Video> {
-    return this.http.post<Video>(`${this.baseUrl}/videos/`, videoData);
+  addVideo(videoData: FormData): Observable<Video> {
+    return this.http.post<Video>(`${this.baseUrl}/upload/`, videoData);
   }
 
   updateVideo(videoId: number, videoData: Video): Observable<Video> {

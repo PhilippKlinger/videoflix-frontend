@@ -1,4 +1,13 @@
-<div class="profile">
-    <img [src]="avatarUrl" alt="Avatar of {{ selectedProfile?.name }}" class="profile-avatar">
-    <div class="profile-name">{{ selectedProfile?.name }}</div>
-</div>
+<nav>
+    <h1>Videoflix</h1>
+    <button routerLink="/browse">Home</button>
+    <button routerLink="/browse/favorites">My list</button>
+    <button routerLink="/browse/video-upload">Upload Video</button>
+    <div class="profile-container" (click)="toggleDropdown()">
+        <img [src]="avatarUrl" alt="Avatar of {{ selectedProfile?.name }}" class="profile-avatar">
+        <div *ngIf="showDropdown" class="dropdown-menu">
+            <button (click)="logout()">Logout</button>
+            <button (click)="switchProfile()">Switch Profile</button>
+        </div>
+    </div>
+</nav>

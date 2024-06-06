@@ -7,12 +7,20 @@ import { Profile } from '../models/profile.model';
 })
 export class SelectProfileService {
 
-  private selectedProfile = new BehaviorSubject<Profile | null>(null);
+  private selectedProfile = new BehaviorSubject<Profile | null>(this.getProfileFromLocalStorage());
   selectedProfile$ = this.selectedProfile.asObservable();
 
   selectProfile(profile: Profile) {
     this.selectedProfile.next(profile);
+    this.saveProfileToLocalStorage(profile);
+  }  
+
+  private saveProfileToLocalStorage(profile: Profile) {
+    localStorage.setItem('selectedProfile', JSON.stringify(profile));
   }
 
-  
+  private getProfileFromLocalStorage(): Profile | null {
+    const profileJson = localStorage.getItem('selectedProfile');
+    return profileJson ? JSON.parse(profileJson) : null;
+  }
 }
