@@ -1,1 +1,13 @@
-<p>favorite-list works!</p>
+<div class="video-section">
+  <div *ngFor="let video of favoriteVideos; index as i" class="video-container">
+    <div class="video" [class.hovered]="hoveredIndex === i" (mouseenter)="hoverVideo(i)" (mouseleave)="hoverVideo(-1)">
+      <img [src]="showThumbnailUrl(video.thumbnail)" alt="Thumbnail of {{ video.title }}" class="video-thumbnail">
+      <div *ngIf="hoveredIndex === i" class="video-detail">
+        <h2>{{ video.title }}</h2>
+        <p>{{ video.description }}</p>
+        <button (click)="playVideo(video.video_file)" class="play-button">Play</button>
+        <button (click)="toggleFavorite(video)" class="favorite-button">delete from list</button>
+      </div>
+    </div>
+  </div>
+</div>

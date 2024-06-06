@@ -1,3 +1,5 @@
+import { Profile } from "./profile.model";
+
 export interface Resolution {
     id: number;
     resolution: string;
@@ -13,5 +15,6 @@ export interface Resolution {
     description: string;
     video_file: string;
     thumbnail: string;
+    favorited_by: Profile[];
   }
   

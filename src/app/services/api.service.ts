@@ -68,8 +68,8 @@ export class ApiService {
     return this.http.post<Video>(`${this.baseUrl}/upload/`, videoData);
   }
 
-  updateVideo(videoId: number, videoData: Video): Observable<Video> {
-    return this.http.put<Video>(`${this.baseUrl}/videos/${videoId}/`, videoData);
+  updateVideo(videoId: number, videoData: Partial<Video>): Observable<Video> {
+    return this.http.patch<Video>(`${this.baseUrl}/videos/${videoId}/`, videoData);
   }
 
   deleteVideo(videoId: number): Observable<any> {
