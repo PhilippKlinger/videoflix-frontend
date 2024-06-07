@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Video } from 'src/app/models/video.model';
 import { ApiService } from 'src/app/services/api.service';
@@ -12,6 +12,9 @@ export class VideoPlayerComponent implements OnInit {
   video!: Video;
   selectedResolution: string = '4K';
   videoUrl: string = '';
+
+  @ViewChild('videoPlayer', { static: true }) videoPlayer!: ElementRef<HTMLVideoElement>;
+
 
   constructor(
     private apiService: ApiService,
@@ -33,6 +36,7 @@ export class VideoPlayerComponent implements OnInit {
         this.videoUrl = this.showVideoUrl(resolution.converted_file);
       }
     }
+    this.updateVideoSource();
   }
 
   showVideoUrl(videoPath: string): string {
@@ -40,9 +44,22 @@ export class VideoPlayerComponent implements OnInit {
     return `${baseUrl}${videoPath}`;
   }
 
-  updateVideoQuality(resolution: string): void {
+  onResolutionChange(resolution: string): void {
     this.selectedResolution = resolution;
     this.setVideoUrl();
+  }
+
+  updateVideoSource(): void {
+    const videoElement = this.videoPlayer.nativeElement;
+    videoElement.src = this.videoUrl;
+    // Listen for the video to be ready before playing
+    videoElement.oncanplay = () => {
+      videoElement.play().catch((error) => {
+        console.error('Error playing video:', error);
+      });
+    };
+
+    videoElement.load();
   }
 
   closeDialog(): void {

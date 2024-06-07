@@ -1,28 +1,33 @@
 <mat-dialog-content>
     <vg-player>
-        <video [vgMedia]="$any(media)" #media id="singleVideo" preload="auto" crossorigin>
+        <vg-overlay-play></vg-overlay-play>
+        <vg-buffering></vg-buffering>
+        <video #videoPlayer [vgMedia]="$any(media)" #media id="singleVideo" preload="auto" crossorigin>
             <source [src]="videoUrl" type="video/mp4">
         </video>
 
         <vg-controls>
             <vg-play-pause></vg-play-pause>
+            <vg-playback-button></vg-playback-button>
             <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
             <vg-scrub-bar>
                 <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
             </vg-scrub-bar>
             <vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
             <vg-track-selector></vg-track-selector>
-            <vg-volume>
-                <vg-mute></vg-mute>
-            </vg-volume>
+            <vg-mute></vg-mute>
+            <vg-volume></vg-volume>
             <button mat-button [matMenuTriggerFor]="qualityBtn">{{ selectedResolution }}</button>
             <mat-menu #qualityBtn="matMenu" yPosition="above">
-                <button mat-menu-item (click)="updateVideoQuality('4K')">4K</button>
+                <button mat-menu-item (click)="onResolutionChange('4K')">4K</button>
                 <button mat-menu-item *ngFor="let res of video.resolutions"
-                    (click)="updateVideoQuality(res.resolution)">
+                    (click)="onResolutionChange(res.resolution)">
                     {{ res.resolution }}
                 </button>
+                
             </mat-menu>
+            <vg-fullscreen></vg-fullscreen>
+            <button mat-button (click)="closeDialog()">Close</button>
         </vg-controls>
     </vg-player>
 </mat-dialog-content>
