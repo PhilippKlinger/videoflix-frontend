@@ -1,0 +1,29 @@
+::ng-deep .mat-mdc-dialog-content {
+  width: 80vw;
+  height: 80vh !important;
+  max-height: 80vh !important;
+  background: black !important;
+}
+
+::ng-deep .mdc-button__label {
+  color: white;
+}
+
+
+vg-controls {
+  align-items: center;
+}
+
+.resolution-controls {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+
+  label {
+    margin-right: 10px;
+  }
+
+  select {
+    padding: 5px;
+  }
+}
