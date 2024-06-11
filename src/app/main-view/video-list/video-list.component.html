@@ -2,14 +2,18 @@
   <div *ngFor="let video of videos; index as i" class="video-container">
     <div class="video" [class.hovered]="hoveredIndex === i" (mouseenter)="hoverVideo(i)" (mouseleave)="hoverVideo(-1)">
       <img [src]="showThumbnailUrl(video.thumbnail)" alt="Thumbnail of {{ video.title }}" class="video-thumbnail">
-      <div *ngIf="hoveredIndex === i" class="video-detail">
-        <h2>{{ video.title }}</h2>
+      <h2>{{ video.title }}</h2>
+      <div class="video-detail" *ngIf="hoveredIndex === i">
+        <div class="button-section">
+          <img src="assets/icons/play-button.png" (click)="openDialog(video)" class="button">
+          <img src="assets/icons/add-profile.png" (click)="toggleFavorite(video)"  class="button" matTooltipPosition="above" matTooltip="{{ isFavorite(video) ? 'Remove from My List' : 'Add to My List' }}">
+        </div>
         <p>{{ video.description }}</p>
-        <button (click)="openDialog(video)" class="play-button">Play</button>
-        <button (click)="toggleFavorite(video)" class="favorite-button">
-          {{ isFavorite(video) ? 'Remove from My List' : 'Add to My List' }}
-        </button>
+        <p>{{ video.genre }} --- {{ video.category }}</p>
       </div>
     </div>
   </div>
 </div>
+
+<!--  -->
+

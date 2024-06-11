@@ -10,7 +10,7 @@ import { ApiService } from 'src/app/services/api.service';
 })
 export class VideoPlayerComponent implements OnInit {
   video!: Video;
-  selectedResolution: string = '4K';
+  selectedResolution: string = '2160p';
   videoUrl: string = '';
 
   @ViewChild('videoPlayer', { static: true }) videoPlayer!: ElementRef<HTMLVideoElement>;
@@ -24,11 +24,16 @@ export class VideoPlayerComponent implements OnInit {
 
   ngOnInit(): void {
     this.video = this.data.video;
+    this.sortResolutionsDescending();
     this.setVideoUrl();
   }
 
+  sortResolutionsDescending(): void {
+    this.video.resolutions.sort((a, b) => parseInt(b.resolution) - parseInt(a.resolution));
+  }
+
   setVideoUrl(): void {
-    if (this.selectedResolution === '4K') {
+    if (this.selectedResolution === '2160p') {
       this.videoUrl = this.showVideoUrl(this.video.video_file);
     } else {
       const resolution = this.video.resolutions.find(res => res.resolution === this.selectedResolution);
@@ -51,15 +56,13 @@ export class VideoPlayerComponent implements OnInit {
 
   updateVideoSource(): void {
     const videoElement = this.videoPlayer.nativeElement;
+    const currentTime = videoElement.currentTime;
     videoElement.src = this.videoUrl;
-    // Listen for the video to be ready before playing
-    videoElement.oncanplay = () => {
-      videoElement.play().catch((error) => {
-        console.error('Error playing video:', error);
-      });
-    };
-
     videoElement.load();
+    videoElement.onloadeddata = () => {
+      videoElement.currentTime = currentTime; // Set the current time after loading the new source
+      videoElement.play().catch(error => console.error('Error playing video:', error));
+    };
   }
 
   closeDialog(): void {

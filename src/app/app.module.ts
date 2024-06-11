@@ -9,7 +9,8 @@ import { FormsModule } from '@angular/forms';
 
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import {MatMenuModule} from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -58,7 +59,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserAnimationsModule,
     MatDialogModule,
     MatButtonModule,
-    MatMenuModule
+    MatMenuModule,
+    MatTooltipModule
   ],
   providers: [
     {

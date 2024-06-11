@@ -5,8 +5,10 @@
       <div *ngIf="hoveredIndex === i" class="video-detail">
         <h2>{{ video.title }}</h2>
         <p>{{ video.description }}</p>
-        <button (click)="playVideo(video.video_file)" class="play-button">Play</button>
-        <button (click)="toggleFavorite(video)" class="favorite-button">delete from list</button>
+        <button (click)="openDialog(video)" class="play-button">Play</button>
+        <button (click)="toggleFavorite(video)" class="favorite-button">
+          {{ isFavorite(video) ? 'Remove from My List' : 'Add to My List' }}
+        </button>
       </div>
     </div>
   </div>

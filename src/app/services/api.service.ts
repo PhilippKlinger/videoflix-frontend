@@ -75,4 +75,13 @@ export class ApiService {
   deleteVideo(videoId: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/videos/${videoId}/`);
   }
+
+  clearCache(): Observable<any> {
+    return this.http.post(`${this.baseUrl}/clear-cache/`, {}).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Cache clear failed', error);
+        return throwError(() => new Error('Cache clear failed'));
+      })
+    );
+  }
 }

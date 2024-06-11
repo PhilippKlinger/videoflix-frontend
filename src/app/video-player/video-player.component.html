@@ -12,14 +12,15 @@
             <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
             <vg-scrub-bar>
                 <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
             </vg-scrub-bar>
             <vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
-            <vg-track-selector></vg-track-selector>
+            
             <vg-mute></vg-mute>
             <vg-volume></vg-volume>
             <button mat-button [matMenuTriggerFor]="qualityBtn">{{ selectedResolution }}</button>
             <mat-menu #qualityBtn="matMenu" yPosition="above">
-                <button mat-menu-item (click)="onResolutionChange('4K')">4K</button>
+                <button mat-menu-item (click)="onResolutionChange('2160p')">2160p</button>
                 <button mat-menu-item *ngFor="let res of video.resolutions"
                     (click)="onResolutionChange(res.resolution)">
                     {{ res.resolution }}
