@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { GENRE_CHOICES, CATEGORY_CHOICES } from 'src/app/models/video.model';
+import { interval, switchMap } from 'rxjs';
+
 
 @Component({
   selector: 'app-video-upload',
@@ -15,6 +17,8 @@ export class VideoUploadComponent implements OnInit {
   selectedFile!: File | null;
   genreChoices = GENRE_CHOICES;
   categoryChoices = CATEGORY_CHOICES;
+  uploadProgress: number = 0;
+  conversionProgress: number = 0;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -30,7 +34,16 @@ export class VideoUploadComponent implements OnInit {
       category: ['', Validators.required],
       videoFile: [null, Validators.required]
     });
+
+    this.apiService.uploadProgress.subscribe(progress => {
+      this.uploadProgress = progress;
+    });
+
+    this.apiService.conversionProgress.subscribe(progress => {
+      this.conversionProgress = progress;
+    });
   }
+
 
   onFileChange(event: any) {
     if (event.target.files.length > 0) {
@@ -58,6 +71,10 @@ export class VideoUploadComponent implements OnInit {
           console.log('Video Upload successful', response);
           this.requestloading = false;
           // this.router.navigate(['/login']);
+          if (response) {
+            this.pollConversionProgress(response.id);
+          }
+
         },
         error: (error) => {
           console.error('Video Upload failed', error);
@@ -67,6 +84,14 @@ export class VideoUploadComponent implements OnInit {
     }
   }
 
-}
+  pollConversionProgress(videoId: number) {
+    interval(5000).pipe(
+      switchMap(() => this.apiService.getConversionProgress(videoId))
+    ).subscribe((progress: number) => {
+      this.conversionProgress = progress;
+    });
 
+  }
+
+}
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
+import { Observable, catchError, throwError, map, BehaviorSubject, Subject } from 'rxjs';
 import { Profile } from '../models/profile.model';
 import { Video } from '../models/video.model';
 
@@ -9,7 +9,11 @@ import { Video } from '../models/video.model';
   providedIn: 'root'
 })
 export class ApiService {
-  public baseUrl = 'http://127.0.0.1:8000';
+  // public baseUrl = 'http://127.0.0.1:8000';
+  public baseUrl = 'https://backend-videoflix.philipp-klinger.com';
+  public uploadProgress: Subject<number> = new Subject<number>();
+  public conversionProgress: Subject<number> = new Subject<number>();
+
 
   constructor(private http: HttpClient) { }
 
@@ -64,8 +68,36 @@ export class ApiService {
     return this.http.get<Video[]>(`${this.baseUrl}/videos/`);
   }
 
-  addVideo(videoData: FormData): Observable<Video> {
-    return this.http.post<Video>(`${this.baseUrl}/upload/`, videoData);
+  addVideo(videoData: FormData): Observable<Video | undefined> {
+    return this.http.post<Video>(`${this.baseUrl}/upload/`, videoData, {
+      reportProgress: true,
+      observe: 'events'
+    }).pipe(
+      map((event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            if (event.total) {
+              const progress = Math.round((100 * event.loaded) / event.total);
+              this.uploadProgress.next(progress);
+            }
+            break;
+          case HttpEventType.Response:
+            return event.body as Video;
+        }
+        return undefined;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Video Upload failed', error);
+        return throwError(() => new Error('Video Upload failed'));
+      })
+    );
+  }
+
+  getConversionProgress(videoId: number): Observable<number> {
+    return this.http.get<{ progress: number }>(`${this.baseUrl}/conversion-progress/${videoId}/`)
+      .pipe(
+        map(response => response.progress)
+      );
   }
 
   updateVideo(videoId: number, videoData: Partial<Video>): Observable<Video> {

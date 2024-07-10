@@ -1,46 +1,58 @@
-
 <div class="video-upload-section">
-    <div *ngIf="requestloading" class="shape-loader"></div>
-    <div class="upload-form-section">
-        <h2>Video upload</h2>
-        <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
-            <div class="form-group">
-                <input type="text" id="title" class="form-control name-content" formControlName="title"
-                    placeholder="Your title">
-                <div *ngIf="(uploadForm.controls['title'].dirty || uploadForm.controls['title'].touched)  && uploadForm.controls['title'].invalid "
-                    class="text-danger">
-                    Please enter a valid title.
-                </div>
-            </div>
-            <div class="form-group">
-                <input type="text" id="description" class="form-control name-content" formControlName="description"
-                    placeholder="Your description">
-                <div *ngIf="(uploadForm.controls['description'].dirty || uploadForm.controls['description'].touched)  && uploadForm.controls['description'].invalid "
-                    class="text-danger">
-                    Please enter a valid description.
-                </div>
-            </div>
-            <div class="form-group">
-                <select id="genre" class="form-control" formControlName="genre">
-                  <option *ngFor="let choice of genreChoices" [value]="choice.value">{{ choice.label }}</option>
-                </select>
-                <div *ngIf="uploadForm.controls['genre'].invalid && (uploadForm.controls['genre'].dirty || uploadForm.controls['genre'].touched)" class="text-danger">
-                  Please select a genre.
-                </div>
-              </div>
-              <div class="form-group">
-                <select id="category" class="form-control" formControlName="category">
-                  <option *ngFor="let choice of categoryChoices" [value]="choice.value">{{ choice.label }}</option>
-                </select>
-                <div *ngIf="uploadForm.controls['category'].invalid && (uploadForm.controls['category'].dirty || uploadForm.controls['category'].touched)" class="text-danger">
-                  Please select a category.
-                </div>
-              </div>
-            <div class="form-group">
-                <input type="file" (change)="onFileChange($event)" />
-            </div>
-            <div class="button-section">
-                <button type="submit" [disabled]="!uploadForm.valid">start upload</button>
-            </div>
-        </form>
-    </div>
+  <div *ngIf="requestloading" class="shape-loader"></div>
+  <div class="upload-form-section">
+    <h2>Video upload</h2>
+    <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <input type="text" id="title" class="form-control name-content" formControlName="title"
+          placeholder="Your title">
+        <div
+          *ngIf="(uploadForm.controls['title'].dirty || uploadForm.controls['title'].touched)  && uploadForm.controls['title'].invalid "
+          class="text-danger">
+          Please enter a valid title.
+        </div>
+      </div>
+      <div class="form-group">
+        <input type="text" id="description" class="form-control name-content" formControlName="description"
+          placeholder="Your description">
+        <div
+          *ngIf="(uploadForm.controls['description'].dirty || uploadForm.controls['description'].touched)  && uploadForm.controls['description'].invalid "
+          class="text-danger">
+          Please enter a valid description.
+        </div>
+      </div>
+      <div class="form-group">
+        <select id="genre" class="form-control" formControlName="genre">
+          <option *ngFor="let choice of genreChoices" [value]="choice.value">{{ choice.label }}</option>
+        </select>
+        <div
+          *ngIf="uploadForm.controls['genre'].invalid && (uploadForm.controls['genre'].dirty || uploadForm.controls['genre'].touched)"
+          class="text-danger">
+          Please select a genre.
+        </div>
+      </div>
+      <div class="form-group">
+        <select id="category" class="form-control" formControlName="category">
+          <option *ngFor="let choice of categoryChoices" [value]="choice.value">{{ choice.label }}</option>
+        </select>
+        <div
+          *ngIf="uploadForm.controls['category'].invalid && (uploadForm.controls['category'].dirty || uploadForm.controls['category'].touched)"
+          class="text-danger">
+          Please select a category.
+        </div>
+      </div>
+      <div class="form-group">
+        <input type="file" (change)="onFileChange($event)" />
+      </div>
+      <div class="button-section">
+        <button type="submit" [disabled]="!uploadForm.valid">start upload</button>
+      </div>
+    </form>
+  </div>
+  <div *ngIf="uploadProgress > 0" class="progress">
+    <div class="progress-bar" [style.width.%]="uploadProgress">{{uploadProgress}}%</div>
+</div>
+<div *ngIf="conversionProgress > 0" class="progress">
+  <div class="progress-bar" [style.width.%]="conversionProgress">{{conversionProgress}}%</div>
+</div>
+</div>
