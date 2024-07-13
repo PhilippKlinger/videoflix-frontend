@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
-import { Observable, catchError, throwError, map, BehaviorSubject, Subject } from 'rxjs';
+import { Observable, catchError, throwError, map, BehaviorSubject } from 'rxjs';
 import { Profile } from '../models/profile.model';
 import { Video } from '../models/video.model';
 
@@ -11,8 +11,9 @@ import { Video } from '../models/video.model';
 export class ApiService {
   // public baseUrl = 'http://127.0.0.1:8000';
   public baseUrl = 'https://backend-videoflix.philipp-klinger.com';
-  public uploadProgress: Subject<number> = new Subject<number>();
-  public conversionProgress: Subject<number> = new Subject<number>();
+  public uploadProgress: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  public conversionProgress: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  
 
 
   constructor(private http: HttpClient) { }
@@ -93,13 +94,6 @@ export class ApiService {
     );
   }
 
-  getConversionProgress(videoId: number): Observable<number> {
-    return this.http.get<{ progress: number }>(`${this.baseUrl}/conversion-progress/${videoId}/`)
-      .pipe(
-        map(response => response.progress)
-      );
-  }
-
   updateVideo(videoId: number, videoData: Partial<Video>): Observable<Video> {
     return this.http.patch<Video>(`${this.baseUrl}/videos/${videoId}/`, videoData);
   }
@@ -107,6 +101,13 @@ export class ApiService {
   deleteVideo(videoId: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/videos/${videoId}/`);
   }
+
+  getConversionProgress(videoId: number): Observable<{ progress: number, current_resolution: string }> {
+    return this.http.get<{ progress: number, current_resolution: string }>(`${this.baseUrl}/conversion-progress/${videoId}/`);
+  }
+  
+
+  
 
   clearCache(): Observable<any> {
     return this.http.post(`${this.baseUrl}/clear-cache/`, {}).pipe(

@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { GENRE_CHOICES, CATEGORY_CHOICES } from 'src/app/models/video.model';
-import { interval, switchMap } from 'rxjs';
+import { interval, Subscription, switchMap } from 'rxjs';
 
 
 @Component({
@@ -13,12 +13,16 @@ import { interval, switchMap } from 'rxjs';
 })
 export class VideoUploadComponent implements OnInit {
   uploadForm!: FormGroup;
-  requestloading: boolean = false;
+  requestLoading: boolean = false;
   selectedFile!: File | null;
   genreChoices = GENRE_CHOICES;
   categoryChoices = CATEGORY_CHOICES;
   uploadProgress: number = 0;
   conversionProgress: number = 0;
+  currentResolution: string = '';
+  conversionProgressSubscription!: Subscription;
+
+  switchCase: string = "startUpload"
 
   constructor(
     private formBuilder: FormBuilder,
@@ -56,7 +60,8 @@ export class VideoUploadComponent implements OnInit {
 
   onSubmit() {
     if (this.uploadForm.valid) {
-      this.requestloading = true;
+      this.switchCase = "pendingUpload";
+      this.requestLoading = true;
       const formData = new FormData();
       formData.append('title', this.uploadForm.get('title')?.value);
       formData.append('description', this.uploadForm.get('description')?.value);
@@ -68,8 +73,6 @@ export class VideoUploadComponent implements OnInit {
 
       this.apiService.addVideo(formData).subscribe({
         next: (response) => {
-          console.log('Video Upload successful', response);
-          this.requestloading = false;
           // this.router.navigate(['/login']);
           if (response) {
             this.pollConversionProgress(response.id);
@@ -78,19 +81,34 @@ export class VideoUploadComponent implements OnInit {
         },
         error: (error) => {
           console.error('Video Upload failed', error);
-          this.requestloading = false;
+          this.resetForm();
         }
       });
     }
   }
 
   pollConversionProgress(videoId: number) {
-    interval(5000).pipe(
+    this.conversionProgressSubscription = interval(5000).pipe(
       switchMap(() => this.apiService.getConversionProgress(videoId))
-    ).subscribe((progress: number) => {
-      this.conversionProgress = progress;
-    });
+    ).subscribe((response: { progress: number, current_resolution: string }) => {
+      this.apiService.conversionProgress.next(response.progress);
+      this.currentResolution = response.current_resolution;
 
+      if (this.conversionProgress >= 100) {
+        this.conversionProgressSubscription.unsubscribe();
+        this.resetForm();
+        this.switchCase = "finishedUpload";
+      }
+    });
+  }
+
+  startNewUpload() {
+    this.switchCase = "startUpload";
+  }
+
+  resetForm() {
+    this.uploadForm.reset();
+    this.requestLoading = false;
   }
 
 }

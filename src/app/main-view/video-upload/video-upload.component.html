@@ -1,6 +1,6 @@
-<div class="video-upload-section">
-  <div *ngIf="requestloading" class="shape-loader"></div>
-  <div class="upload-form-section">
+<section class="video-upload-section" [ngSwitch]="switchCase">
+  <div *ngIf="requestLoading" class="shape-loader"></div>
+  <div class="upload-form-section" *ngSwitchCase="'startUpload'">
     <h2>Video upload</h2>
     <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
@@ -49,10 +49,34 @@
       </div>
     </form>
   </div>
-  <div *ngIf="uploadProgress > 0" class="progress">
-    <div class="progress-bar" [style.width.%]="uploadProgress">{{uploadProgress}}%</div>
-</div>
-<div *ngIf="conversionProgress > 0" class="progress">
-  <div class="progress-bar" [style.width.%]="conversionProgress">{{conversionProgress}}%</div>
-</div>
-</div>
+
+
+  <div class="upload-processing" *ngSwitchCase="'pendingUpload'">
+    <h2>Video Upload and Conversion in progress</h2>
+    <div *ngIf="uploadProgress > 0" class="progress">
+      <div class="progress-bar" [style.width.%]="uploadProgress">{{uploadProgress}}%</div>
+    </div>
+    <div *ngIf="uploadProgress == 100 && conversionProgress !==100">
+      <ul>
+        <li [ngStyle]="{'color': conversionProgress >= 33 ? 'green' : 'red'}">
+          480p - {{conversionProgress >= 33 ? 'finished converting' : 'active converting'}}
+        </li>
+        <li [ngStyle]="{'color': conversionProgress >= 66 ? 'green' : 'red'}">
+          720p - {{conversionProgress >= 66 ? 'finished converting' : (conversionProgress >= 33 ? 'active converting' :
+          'waiting')}}
+        </li>
+        <li [ngStyle]="{'color': conversionProgress >= 100 ? 'green' : 'red'}">
+          1080p - {{conversionProgress >= 100 ? 'finished converting' : (conversionProgress >= 66 ? 'active converting'
+          : 'waiting')}}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'finishedUpload'">
+    <p>Video Upload and Conversion finished!</p>
+    <div class="button-section">
+      <button (click)="startNewUpload()">add another video</button>
+    </div>
+  </div>
+</section>
