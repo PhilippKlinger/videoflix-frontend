@@ -28,6 +28,8 @@ import { FavoriteListComponent } from './main-view/favorite-list/favorite-list.c
 import { VideoUploadComponent } from './main-view/video-upload/video-upload.component';
 import { VideoPlayerComponent } from './video-player/video-player.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MoviesListComponent } from './main-view/movies-list/movies-list.component';
+import { TvShowsListComponent } from './main-view/tv-shows-list/tv-shows-list.component';
 
 
 
@@ -45,6 +47,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     FavoriteListComponent,
     VideoUploadComponent,
     VideoPlayerComponent,
+    MoviesListComponent,
+    TvShowsListComponent,
   ],
   imports: [
     BrowserModule,

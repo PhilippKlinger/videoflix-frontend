@@ -1,5 +1,7 @@
 nav {
-    position: absolute;
+    position: fixed;
+    top: 0;
+    left: 0;
     height: 60px;
     border-bottom: 2px solid black;
     width: 100%;
@@ -7,7 +9,9 @@ nav {
     flex-direction: row;
     align-items: center;
     justify-content: space-around;
-}
+    background-color: bisque;
+    z-index: 1000;
+  }
 
 button {
     background-color: transparent;

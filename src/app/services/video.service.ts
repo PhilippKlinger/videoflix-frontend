@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Video } from '../models/video.model';
+import { Video, CategorizedVideos } from '../models/video.model';
 import { BehaviorSubject } from 'rxjs';
 import { ApiService } from './api.service';
 import { Profile } from '../models/profile.model';
@@ -12,6 +12,10 @@ export class VideoService {
   private videos = new BehaviorSubject<Video[]>([]);
   videos$ = this.videos.asObservable();
 
+  private categorizedVideos = new BehaviorSubject<CategorizedVideos>({});
+  categorizedVideos$ = this.categorizedVideos.asObservable();
+  
+
   constructor(private apiService: ApiService) { }
 
   loadVideos(): void {
@@ -19,11 +23,23 @@ export class VideoService {
       next: (videos) => {
         this.sortVideosById(videos);
         this.videos.next(videos);
+        this.categorizeVideos(videos);
       },
       error: (error) => {
         console.error('Failed to load videos', error);
       }
     });
+  }
+
+  private categorizeVideos(videos: Video[]): void {
+    const categorized: CategorizedVideos = {};
+    videos.forEach(video => {
+      if (!categorized[video.category]) {
+        categorized[video.category] = [];
+      }
+      categorized[video.category].push(video);
+    });
+    this.categorizedVideos.next(categorized);
   }
 
   getFavoritedVideos(profileId: number): Video[] {

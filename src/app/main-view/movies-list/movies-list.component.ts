@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Profile } from 'src/app/models/profile.model';
-import { Video, CategorizedVideos, CATEGORY_CHOICES } from 'src/app/models/video.model';
+import { Video, CategorizedVideos } from 'src/app/models/video.model';
 import { ApiService } from 'src/app/services/api.service';
 import { VideoService } from 'src/app/services/video.service';
 import { SelectProfileService } from 'src/app/services/select-profile.service';
@@ -11,13 +11,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { VideoPlayerComponent } from 'src/app/video-player/video-player.component';
 
 @Component({
-  selector: 'app-video-list',
-  templateUrl: './video-list.component.html',
-  styleUrls: ['./video-list.component.scss']
+  selector: 'app-movies-list',
+  templateUrl: './movies-list.component.html',
+  styleUrls: ['./movies-list.component.scss']
 })
-export class VideoListComponent implements OnInit, OnDestroy {
+export class MoviesListComponent implements OnInit, OnDestroy {
   categorizedVideos: CategorizedVideos = {};
-  categories: string[] = CATEGORY_CHOICES.map(choice => choice.value);
+  categories: string[] = ['Movie'];
   hoveredIndex: number = -1;
   selectedProfile!: Profile | null;
   private unsubscribe$ = new Subject<void>();
@@ -81,7 +81,4 @@ export class VideoListComponent implements OnInit, OnDestroy {
     });
   }
 
-
-
 }
-

@@ -34,3 +34,7 @@ export const CATEGORY_CHOICES = [
   { value: 'Movie', label: 'Movie' },
   { value: 'TV-Show', label: 'TV-Show' }
 ];
+
+export interface CategorizedVideos {
+  [category: string]: Video[];
+}

@@ -7,7 +7,8 @@ import { MainViewComponent } from './main-view/main-view.component';
 import { FavoriteListComponent } from './main-view/favorite-list/favorite-list.component';
 import { VideoListComponent } from './main-view/video-list/video-list.component';
 import { VideoUploadComponent } from './main-view/video-upload/video-upload.component';
-
+import { MoviesListComponent } from './main-view/movies-list/movies-list.component';
+import { TvShowsListComponent } from './main-view/tv-shows-list/tv-shows-list.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -18,6 +19,8 @@ const routes: Routes = [
     path: 'browse', component: MainViewComponent,
     children: [
       { path: '', component: VideoListComponent },
+      { path: 'tv-shows', component: TvShowsListComponent },
+      { path: 'movies', component: MoviesListComponent },
       { path: 'favorites', component: FavoriteListComponent },
       { path: 'video-upload', component: VideoUploadComponent }
     ]
