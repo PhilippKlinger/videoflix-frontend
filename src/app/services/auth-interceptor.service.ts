@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Token aus dem localStorage holen
@@ -21,15 +21,19 @@ export class AuthInterceptor implements HttpInterceptor {
         }
       });
     }
-
+    // debugger
     return next.handle(request).pipe(
-      catchError(error => {
-        // Bei einem 401-Fehler (Unauthorized) Benutzer zur Login-Seite leiten
+      catchError((error: HttpErrorResponse) => {
+        console.log('Intercepted Request:', request); // Log request details
+        console.log('Error Status:', error.status); // Log error status
+        console.log('Error Response:', error); // Log full error response
         if (error.status === 401) {
-          localStorage.removeItem('token'); // Token entfernen, falls ungültig oder abgelaufen
-          this.router.navigateByUrl('/login');
+          localStorage.removeItem('token');
+          localStorage.removeItem('userId');
+          localStorage.removeItem('selectedProfile');
+          this.router.navigate(['/login']);
         }
-        return throwError(() => new Error(error));
+        return error.status === 401 ? throwError(() => new Error('Unauthorized')) : throwError(() => error);
       })
     );
   }

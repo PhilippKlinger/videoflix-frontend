@@ -30,6 +30,7 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MoviesListComponent } from './main-view/movies-list/movies-list.component';
 import { TvShowsListComponent } from './main-view/tv-shows-list/tv-shows-list.component';
+import { RandomVideoPreviewComponent } from './main-view/random-video-preview/random-video-preview.component';
 
 
 
@@ -49,6 +50,7 @@ import { TvShowsListComponent } from './main-view/tv-shows-list/tv-shows-list.co
     VideoPlayerComponent,
     MoviesListComponent,
     TvShowsListComponent,
+    RandomVideoPreviewComponent,
   ],
   imports: [
     BrowserModule,
