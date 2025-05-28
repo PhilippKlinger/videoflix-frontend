@@ -11,9 +11,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { VideoPlayerComponent } from 'src/app/video-player/video-player.component';
 
 @Component({
-  selector: 'app-favorite-list',
-  templateUrl: './favorite-list.component.html',
-  styleUrls: ['./favorite-list.component.scss']
+    selector: 'app-favorite-list',
+    templateUrl: './favorite-list.component.html',
+    styleUrls: ['./favorite-list.component.scss'],
+    standalone: false
 })
 export class FavoriteListComponent implements OnInit, OnDestroy {
   favoriteVideos: Video[] = [];

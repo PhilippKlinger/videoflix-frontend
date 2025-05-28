@@ -11,9 +11,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { VideoPlayerComponent } from 'src/app/video-player/video-player.component';
 
 @Component({
-  selector: 'app-tv-shows-list',
-  templateUrl: './tv-shows-list.component.html',
-  styleUrls: ['./tv-shows-list.component.scss']
+    selector: 'app-tv-shows-list',
+    templateUrl: './tv-shows-list.component.html',
+    styleUrls: ['./tv-shows-list.component.scss'],
+    standalone: false
 })
 export class TvShowsListComponent implements OnInit, OnDestroy {
   categorizedVideos: CategorizedVideos = {};

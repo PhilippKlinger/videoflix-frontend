@@ -4,9 +4,10 @@ import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss', '../login/login.component.scss']
+    selector: 'app-register',
+    templateUrl: './register.component.html',
+    styleUrls: ['./register.component.scss', '../login/login.component.scss'],
+    standalone: false
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;

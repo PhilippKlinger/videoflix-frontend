@@ -7,9 +7,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 
 @Component({
-  selector: 'app-profiles',
-  templateUrl: './profiles.component.html',
-  styleUrls: ['./profiles.component.scss']
+    selector: 'app-profiles',
+    templateUrl: './profiles.component.html',
+    styleUrls: ['./profiles.component.scss'],
+    standalone: false
 })
 export class ProfilesComponent implements OnInit {
   profiles: Profile[] = [];

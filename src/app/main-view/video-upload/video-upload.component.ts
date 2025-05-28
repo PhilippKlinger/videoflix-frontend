@@ -7,9 +7,10 @@ import { interval, Subscription, switchMap } from 'rxjs';
 
 
 @Component({
-  selector: 'app-video-upload',
-  templateUrl: './video-upload.component.html',
-  styleUrls: ['./video-upload.component.scss', '../../authentication/login/login.component.scss']
+    selector: 'app-video-upload',
+    templateUrl: './video-upload.component.html',
+    styleUrls: ['./video-upload.component.scss', '../../authentication/login/login.component.scss'],
+    standalone: false
 })
 export class VideoUploadComponent implements OnInit {
   uploadForm!: FormGroup;

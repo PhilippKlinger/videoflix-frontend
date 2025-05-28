@@ -6,9 +6,10 @@ import { ApiService } from 'src/app/services/api.service';
 import { VideoService } from 'src/app/services/video.service';
 
 @Component({
-  selector: 'app-random-video-preview',
-  templateUrl: './random-video-preview.component.html',
-  styleUrls: ['./random-video-preview.component.scss']
+    selector: 'app-random-video-preview',
+    templateUrl: './random-video-preview.component.html',
+    styleUrls: ['./random-video-preview.component.scss'],
+    standalone: false
 })
 export class RandomVideoPreviewComponent implements OnInit, OnDestroy {
   @Input() videos: Video[] = [];

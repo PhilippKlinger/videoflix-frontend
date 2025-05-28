@@ -6,9 +6,10 @@ import { Router } from '@angular/router';
 import { VideoService } from 'src/app/services/video.service';
 
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+    selector: 'app-navbar',
+    templateUrl: './navbar.component.html',
+    styleUrls: ['./navbar.component.scss'],
+    standalone: false
 })
 export class NavbarComponent implements OnInit {
   selectedProfile!: Profile | null;

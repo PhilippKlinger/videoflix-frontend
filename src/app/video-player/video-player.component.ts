@@ -4,9 +4,10 @@ import { Video } from 'src/app/models/video.model';
 import { ApiService } from 'src/app/services/api.service';
 
 @Component({
-  selector: 'app-video-player',
-  templateUrl: './video-player.component.html',
-  styleUrls: ['./video-player.component.scss']
+    selector: 'app-video-player',
+    templateUrl: './video-player.component.html',
+    styleUrls: ['./video-player.component.scss'],
+    standalone: false
 })
 export class VideoPlayerComponent implements OnInit {
   video!: Video;

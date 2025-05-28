@@ -6,9 +6,10 @@ import { ActivatedRoute } from '@angular/router';
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
+    standalone: false
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
