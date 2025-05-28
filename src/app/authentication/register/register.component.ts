@@ -69,26 +69,26 @@ export class RegisterComponent implements OnInit {
 
 
 
-  onSubmitEmailCheck() {
-    if (this.emailCheckForm.valid) {
-      this.apiService.registerUserEmail(this.emailCheckForm.value).subscribe({
-        next: (response) => {
-          console.log('Email check successful', response);
-          if (response.user_exists) {
-            this.registerForm.controls['email'].setValue(this.emailCheckForm.controls['email'].value);
-            this.router.navigate(['/login']);
-          } else {
-            this.selectRegisterFormAction = 'registerNewUser';
-            this.registerForm.controls['email'].setValue(this.emailCheckForm.controls['email'].value);
-          }
-          localStorage.setItem('emailForLogin', this.emailCheckForm.controls['email'].value);
-        },
-        error: (error) => {
-          console.error('Email check failed', error);
-        }
-      });
-    }
-  }
+  // onSubmitEmailCheck() {
+  //   if (this.emailCheckForm.valid) {
+  //     this.apiService.registerUserEmail(this.emailCheckForm.value).subscribe({
+  //       next: (response) => {
+  //         console.log('Email check successful', response);
+  //         if (response.user_exists) {
+  //           this.registerForm.controls['email'].setValue(this.emailCheckForm.controls['email'].value);
+  //           this.router.navigate(['/login']);
+  //         } else {
+  //           this.selectRegisterFormAction = 'registerNewUser';
+  //           this.registerForm.controls['email'].setValue(this.emailCheckForm.controls['email'].value);
+  //         }
+  //         localStorage.setItem('emailForLogin', this.emailCheckForm.controls['email'].value);
+  //       },
+  //       error: (error) => {
+  //         console.error('Email check failed', error);
+  //       }
+  //     });
+  //   }
+  // }
 
 
 }

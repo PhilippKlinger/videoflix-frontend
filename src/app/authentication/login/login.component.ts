@@ -106,7 +106,6 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('token', response.token);
           localStorage.setItem('userId', response.user_id);
           localStorage.removeItem('emailForLogin');
-          this.router.navigate(['/profiles']);
           this.requestloading = false;
         },
         error: (error) => {

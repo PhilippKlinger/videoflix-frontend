@@ -17,7 +17,6 @@ import { AppComponent } from './app.component';
 import { RegisterComponent } from './authentication/register/register.component';
 import { LoginComponent } from './authentication/login/login.component';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { ProfilesComponent } from './authentication/profiles/profiles.component';
 import { ImprintComponent } from './imprint/imprint.component';
 import { NavbarComponent } from './main-view/navbar/navbar.component';
 import { MainViewComponent } from './main-view/main-view.component';
@@ -39,7 +38,6 @@ import { RandomVideoPreviewComponent } from './main-view/random-video-preview/ra
         AppComponent,
         RegisterComponent,
         LoginComponent,
-        ProfilesComponent,
         ImprintComponent,
         NavbarComponent,
         MainViewComponent,

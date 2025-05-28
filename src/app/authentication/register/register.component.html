@@ -1,7 +1,7 @@
 <div class="login-section" [ngSwitch]="selectRegisterFormAction">
     <div class="login-form-section" *ngSwitchCase="'enterEmail'">
         <h2>Register</h2>
-        <form [formGroup]="emailCheckForm" (ngSubmit)="onSubmitEmailCheck()">
+        <form [formGroup]="emailCheckForm" (ngSubmit)="onSubmit()">
             <div class="form-group">
                 <input type="email" id="email" class="form-control name-content" formControlName="email"
                     placeholder="youremail@example.com">

@@ -1,29 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 import { Observable, catchError, throwError, map, BehaviorSubject } from 'rxjs';
-import { Profile } from '../models/profile.model';
 import { Video } from '../models/video.model';
+import { User } from '../models/user.model';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  // public baseUrl = 'http://127.0.0.1:8000';
-  public baseUrl = 'https://backend-videoflix.philipp-klinger.com';
+  public baseUrl = 'http://127.0.0.1:8000/api';
+  // public baseUrl = 'https://backend-videoflix.philipp-klinger.com';
   public uploadProgress: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   public conversionProgress: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  
-
 
   constructor(private http: HttpClient) { }
 
-  //user model anlegen??
-  registerUserEmail(data: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/register-email/`, data);
-  }
 
-  registerUser(data: any): Observable<any> {
+  registerUser(data: User): Observable<any> {
     return this.http.post(`${this.baseUrl}/register/`, data);
   }
 
@@ -31,7 +25,7 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/request-new-activation-link/`, data)
   }
 
-  loginUser(data: any): Observable<any> {
+  loginUser(data: Pick<User, 'email' | 'password'>): Observable<any> {
     return this.http.post(`${this.baseUrl}/login/`, data).pipe(
       catchError((error: HttpErrorResponse) => {
         // Extract error message from non_field_errors or default to a general error message
@@ -47,22 +41,6 @@ export class ApiService {
 
   resetPasswordConfirm(code: string, data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/password-reset-confirm/${code}/`, data);
-}
-
-  getProfiles(): Observable<Profile[]> {
-    return this.http.get<Profile[]>(`${this.baseUrl}/profiles/`);
-  }
-
-  createProfile(profileData: Profile): Observable<Profile> {
-    return this.http.post<Profile>(`${this.baseUrl}/profiles/`, profileData);
-  }
-
-  updateProfile(profileId: number, profileData: Profile): Observable<Profile> {
-    return this.http.put<Profile>(`${this.baseUrl}/profiles/${profileId}/`, profileData);
-  }
-
-  deleteProfile(profileId: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/profiles/${profileId}/`);
   }
 
   getVideos(): Observable<Video[]> {
@@ -105,9 +83,9 @@ export class ApiService {
   getConversionProgress(videoId: number): Observable<{ progress: number, current_resolution: string }> {
     return this.http.get<{ progress: number, current_resolution: string }>(`${this.baseUrl}/conversion-progress/${videoId}/`);
   }
-  
 
-  
+
+
 
   clearCache(): Observable<any> {
     return this.http.post(`${this.baseUrl}/clear-cache/`, {}).pipe(

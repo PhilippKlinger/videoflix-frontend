@@ -7,7 +7,7 @@
     <button routerLink="/browse/video-upload">Upload Video</button>
     <button (click)="clearCache()">Clear Cache</button>
     <div class="profile-container" (click)="toggleDropdown()">
-        <img [src]="avatarUrl" alt="Avatar of {{ selectedProfile?.name }}" class="profile-avatar">
+        <!-- <img [src]="avatarUrl" alt="Avatar of {{ selectedProfile?.name }}" class="profile-avatar"> -->
         <div *ngIf="showDropdown" class="dropdown-menu">
             <button (click)="logout()">Logout</button>
             <button (click)="switchProfile()">Switch Profile</button>

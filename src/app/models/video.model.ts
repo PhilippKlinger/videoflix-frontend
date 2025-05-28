@@ -1,4 +1,4 @@
-import { Profile } from "./profile.model";
+
 
 export interface Resolution {
   id: number;
@@ -17,7 +17,7 @@ export interface Video {
   category: string;
   video_file: string;
   thumbnail: string;
-  favorited_by: Profile[];
+
 }
 
 export const GENRE_CHOICES = [

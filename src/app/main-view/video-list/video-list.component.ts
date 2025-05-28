@@ -2,11 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Profile } from 'src/app/models/profile.model';
+
 import { Video, CategorizedVideos, CATEGORY_CHOICES } from 'src/app/models/video.model';
 import { ApiService } from 'src/app/services/api.service';
 import { VideoService } from 'src/app/services/video.service';
-import { SelectProfileService } from 'src/app/services/select-profile.service';
+
 import { MatDialog } from '@angular/material/dialog';
 import { VideoPlayerComponent } from 'src/app/video-player/video-player.component';
 
@@ -20,21 +20,17 @@ export class VideoListComponent implements OnInit, OnDestroy {
   categorizedVideos: CategorizedVideos = {};
   categories: string[] = CATEGORY_CHOICES.map(choice => choice.value);
   hoveredIndex: number = -1;
-  selectedProfile!: Profile | null;
+
   private unsubscribe$ = new Subject<void>();
 
   constructor(private apiService: ApiService,
     private router: Router,
     private videoService: VideoService,
-    private profileService: SelectProfileService,
+ 
     private dialog: MatDialog,) { }
 
   ngOnInit(): void {
-    this.profileService.selectedProfile$.pipe(takeUntil(this.unsubscribe$)).subscribe(
-      profile => {
-        this.selectedProfile = profile;
-      }
-    );
+  
 
     this.videoService.categorizedVideos$.pipe(takeUntil(this.unsubscribe$)).subscribe({
       next: (categorizedVideos) => {
@@ -62,17 +58,7 @@ export class VideoListComponent implements OnInit, OnDestroy {
     this.hoveredIndex = index;
   }
 
-  toggleFavorite(video: Video): void {
-
-    if (this.selectedProfile) {
-      this.videoService.toggleFavorite(video, this.selectedProfile.id);
-    }
-  }
-
-  isFavorite(video: Video): boolean {
-    if (!this.selectedProfile) return false;
-    return video.favorited_by.some(profile => profile.id === this.selectedProfile?.id);
-  }
+  
 
   openDialog(video: Video): void {
     this.dialog.open(VideoPlayerComponent, {
