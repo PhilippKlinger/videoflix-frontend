@@ -16,7 +16,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RegisterComponent } from './authentication/register/register.component';
 import { LoginComponent } from './authentication/login/login.component';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ProfilesComponent } from './authentication/profiles/profiles.component';
 import { ImprintComponent } from './imprint/imprint.component';
 import { NavbarComponent } from './main-view/navbar/navbar.component';
@@ -35,51 +35,45 @@ import { RandomVideoPreviewComponent } from './main-view/random-video-preview/ra
 
 
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    RegisterComponent,
-    LoginComponent,
-    ProfilesComponent,
-    ImprintComponent,
-    NavbarComponent,
-    MainViewComponent,
-    VideoListComponent,
-    FavoriteListComponent,
-    VideoUploadComponent,
-    VideoPlayerComponent,
-    MoviesListComponent,
-    TvShowsListComponent,
-    RandomVideoPreviewComponent,
-  ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    VgCoreModule,
-    VgControlsModule,
-    VgOverlayPlayModule,
-    VgBufferingModule,
-    AppRoutingModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    BrowserAnimationsModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatTooltipModule
-  ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpErrorInterceptor,
-      multi: true
-    },
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        RegisterComponent,
+        LoginComponent,
+        ProfilesComponent,
+        ImprintComponent,
+        NavbarComponent,
+        MainViewComponent,
+        VideoListComponent,
+        FavoriteListComponent,
+        VideoUploadComponent,
+        VideoPlayerComponent,
+        MoviesListComponent,
+        TvShowsListComponent,
+        RandomVideoPreviewComponent,
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        FormsModule,
+        VgCoreModule,
+        VgControlsModule,
+        VgOverlayPlayModule,
+        VgBufferingModule,
+        AppRoutingModule,
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatMenuModule,
+        MatTooltipModule], providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthInterceptor,
+            multi: true
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpErrorInterceptor,
+            multi: true
+        },
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class AppModule { }
