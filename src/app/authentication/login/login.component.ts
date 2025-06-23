@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { ActivatedRoute } from '@angular/router';
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
+import { AuthService } from 'src/app/services/auth-service.service';
+
 
 @Component({
     selector: 'app-login',
@@ -26,42 +28,14 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private apiService: ApiService,
     private router: Router,
+    private authService: AuthService,
     private route: ActivatedRoute,
     private errorService: ErrorHandlingService) { }
 
   ngOnInit(): void {
     this.initLoginForm();
     this.prefillEmail();
-
-    this.errorService.getErrorMessage().subscribe((message) => {
-      this.errorMessage = message;
-    });
-
-    this.route.queryParams.subscribe(params => {
-      switch (params['status']) {
-        case 'activated':
-          this.statusMessage = 'Ihr Konto wurde erfolgreich aktiviert.';
-          break;
-        case 'expired':
-          this.statusMessage = 'Ihr Aktivierungscode ist abgelaufen. Bitte fordern Sie einen neuen an.';
-          break;
-        case 'invalid':
-          this.statusMessage = 'Ungültiger Aktivierungscode. Bitte überprüfen Sie den Link oder fordern Sie einen neuen an.';
-          break;
-        case 'password-reset':
-          this.activationCode = params['code'];
-          this.selectLoginFormAction = 'passwordResetConfirm';
-          break;
-        case 'invalid-reset':
-          this.statusMessage = 'Bereits genutzter Passwortreset-Link. Bitte fordern Sie einen neuen an.';
-          break;
-        case 'expired-reset':
-          this.statusMessage = 'Ihr Passwortreset-Link ist abgelaufen. Bitte fordern Sie einen neuen an.';
-          break;
-        default:
-          this.statusMessage = '';
-      }
-    });
+    
   }
 
   initLoginForm() {
@@ -95,7 +69,6 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  //fehlermeldungen anzeigen lassen die von backend kommen
   onSubmit(): void {
     this.errorMessage = '';
     this.statusMessage = '';
@@ -103,13 +76,18 @@ export class LoginComponent implements OnInit {
       this.requestloading = true;
       this.apiService.loginUser(this.loginForm.value).subscribe({
         next: (response) => {
-          localStorage.setItem('token', response.token);
-          localStorage.setItem('userId', response.user_id);
-          localStorage.removeItem('emailForLogin');
-          this.requestloading = false;
-        },
+          this.authService.setAuthCredentials(
+          response.token,
+          response.user_id,
+          response.username || ''
+        );
+        localStorage.removeItem('emailForLogin');
+        this.requestloading = false;
+        this.router.navigate(['/browse']);
+      },
         error: (error) => {
           this.requestloading = false;
+          this.errorMessage = 'Bitte überprüfe deine Eingaben und versuche es erneut.';
         }
       });
     }

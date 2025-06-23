@@ -7,11 +7,7 @@ import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
-
+import { MaterialModule } from './material/material.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RegisterComponent } from './authentication/register/register.component';
@@ -34,7 +30,8 @@ import { RandomVideoPreviewComponent } from './main-view/random-video-preview/ra
 
 
 
-@NgModule({ declarations: [
+@NgModule({
+    declarations: [
         AppComponent,
         RegisterComponent,
         LoginComponent,
@@ -58,10 +55,9 @@ import { RandomVideoPreviewComponent } from './main-view/random-video-preview/ra
         AppRoutingModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatMenuModule,
-        MatTooltipModule], providers: [
+        MaterialModule],
+
+    providers: [
         {
             provide: HTTP_INTERCEPTORS,
             useClass: AuthInterceptor,
@@ -73,5 +69,6 @@ import { RandomVideoPreviewComponent } from './main-view/random-video-preview/ra
             multi: true
         },
         provideHttpClient(withInterceptorsFromDi()),
-    ] })
+    ]
+})
 export class AppModule { }

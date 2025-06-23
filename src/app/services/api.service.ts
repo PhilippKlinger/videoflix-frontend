@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpEvent, HttpEventType, HttpResponse }
 import { Observable, catchError, throwError, map, BehaviorSubject } from 'rxjs';
 import { Video } from '../models/video.model';
 import { User } from '../models/user.model';
-
+import { LoginResponse } from  '../models/login-response';
 
 @Injectable({
   providedIn: 'root'
@@ -25,10 +25,9 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/request-new-activation-link/`, data)
   }
 
-  loginUser(data: Pick<User, 'email' | 'password'>): Observable<any> {
-    return this.http.post(`${this.baseUrl}/login/`, data).pipe(
+  loginUser(data: Pick<User, 'email' | 'password'>): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.baseUrl}/login/`, data).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Extract error message from non_field_errors or default to a general error message
         const errorMsg = error.error.non_field_errors ? error.error.non_field_errors[0] : 'An unexpected error occurred';
         return throwError(() => errorMsg);
       })
