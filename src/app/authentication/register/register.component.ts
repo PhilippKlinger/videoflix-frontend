@@ -1,53 +1,60 @@
-import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
-import { Router } from '@angular/router';
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
+import { MaterialModule } from 'src/app/material/material.module';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
 
 @Component({
   selector: 'app-register',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MaterialModule,
+    AuthLayoutComponent
+  ],
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss', '../login/login.component.scss'],
-  standalone: false
+  styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
-  emailCheckForm!: FormGroup;
   registerForm!: FormGroup;
-  selectRegisterFormAction: string = 'enterEmail';
   requestloading = false;
   registerSuccess = false;
   errorMessage = '';
-  statusMessage = '';
   timeLeft = 5;
   countdownTimer: any;
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor(
-    private formBuilder: FormBuilder,
-    private apiService: ApiService,
-    private router: Router,
-    private errorService: ErrorHandlingService
+    private fb: FormBuilder,
+    private api: ApiService,
+    private errorService: ErrorHandlingService,
+    private snackBar: MatSnackBar,
   ) { }
 
   ngOnInit(): void {
-    this.initForms();
+    const emailFromStorage = localStorage.getItem('emailForLogin') || '';
 
-    this.errorService.getErrorMessage().subscribe(message => {
-      this.errorMessage = message;
-    });
-  }
-
-  initForms(): void {
-    this.emailCheckForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-    });
-
-    this.registerForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      username: ['', [Validators.required, Validators.minLength(4)]],
+    this.registerForm = this.fb.group({
+      email: [emailFromStorage],
+      username: [emailFromStorage, [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       password_confirm: ['', Validators.required]
     }, { validators: this.passwordMatchValidator });
+
+    this.registerForm.get('username')!.valueChanges.subscribe(value => {
+      this.registerForm.get('email')!.setValue(value, { emitEvent: false });
+    });
+
+    this.errorService.getErrorMessage().subscribe(message => {
+      if (message) this.snackBar.open(message, 'Close', { duration: 4000, panelClass: ['error-snackbar'] });
+    });
   }
+
 
   passwordMatchValidator(form: AbstractControl): ValidationErrors | null {
     const password = form.get('password')?.value;
@@ -55,45 +62,34 @@ export class RegisterComponent implements OnInit {
     return password === confirm ? null : { mismatch: true };
   }
 
-  onSubmitEmailCheck(): void {
-    this.errorMessage = '';
-    if (this.emailCheckForm.valid) {
-      this.selectRegisterFormAction = 'registerNewUser';
-      this.registerForm.controls['email'].setValue(this.emailCheckForm.controls['email'].value);
-      localStorage.setItem('emailForLogin', this.emailCheckForm.controls['email'].value);
-    }
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   onSubmit(): void {
-    this.errorMessage = '';
-    this.statusMessage = '';
+    if (this.registerForm.invalid) return;
 
-    if (this.registerForm.valid) {
-      this.requestloading = true;
-      this.apiService.registerUser(this.registerForm.value).subscribe({
-        next: () => {
-          this.registerSuccess = true;
-          this.requestloading = false;
+    this.requestloading = true;
 
-          this.countdownTimer = setInterval(() => {
-            this.timeLeft--;
-            if (this.timeLeft <= 0) {
-              clearInterval(this.countdownTimer);
-              this.router.navigate(['/login']);
-            }
-          }, 1000);
-        },
-        error: (error) => {
-          this.requestloading = false;
-          this.errorMessage = 'Registrierung fehlgeschlagen. Bitte versuche es erneut.';
-        }
-      });
-    }
-  }
+    this.api.registerUser(this.registerForm.value).subscribe({
+      next: () => {
+        this.registerSuccess = true;
+        this.requestloading = false;
 
-  ngOnDestroy(): void {
-    if (this.countdownTimer) {
-      clearInterval(this.countdownTimer);
-    }
+        this.snackBar.open('Registrierung erfolgreich! Weiterleitung...', 'OK', { duration: 3000 });
+
+      },
+      error: () => {
+        this.requestloading = false;
+        this.snackBar.open('Registrierung fehlgeschlagen. Bitte erneut versuchen.', 'OK', {
+          duration: 4000,
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
   }
 }

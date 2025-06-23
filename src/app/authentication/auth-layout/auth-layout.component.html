@@ -1,0 +1,15 @@
+<div class="auth-container" [ngStyle]="{ 'background-image': 'url(' + backgroundImage + ')' }">
+  <header class="auth-header">
+    <img src="/assets/logo.svg" alt="Logo" class="logo" />
+    <a routerLink="/login" class="login-link">Log in</a>
+  </header>
+
+  <main class="auth-content">
+    <ng-content></ng-content>
+  </main>
+
+  <footer class="auth-footer">
+    <a routerLink="/datenschutz">Datenschutz</a> |
+    <a routerLink="/impressum">Impressum</a>
+  </footer>
+</div>

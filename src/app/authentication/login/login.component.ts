@@ -1,17 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { ActivatedRoute } from '@angular/router';
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 import { AuthService } from 'src/app/services/auth-service.service';
+import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
-    selector: 'app-login',
-    templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss'],
-    standalone: false
+  standalone: true,
+  selector: 'app-login',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    AuthLayoutComponent
+  ],
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
+
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
@@ -35,7 +43,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.initLoginForm();
     this.prefillEmail();
-    
+
   }
 
   initLoginForm() {
@@ -77,14 +85,14 @@ export class LoginComponent implements OnInit {
       this.apiService.loginUser(this.loginForm.value).subscribe({
         next: (response) => {
           this.authService.setAuthCredentials(
-          response.token,
-          response.user_id,
-          response.username || ''
-        );
-        localStorage.removeItem('emailForLogin');
-        this.requestloading = false;
-        this.router.navigate(['/browse']);
-      },
+            response.token,
+            response.user_id,
+            response.username || ''
+          );
+          localStorage.removeItem('emailForLogin');
+          this.requestloading = false;
+          this.router.navigate(['/browse']);
+        },
         error: (error) => {
           this.requestloading = false;
           this.errorMessage = 'Bitte überprüfe deine Eingaben und versuche es erneut.';

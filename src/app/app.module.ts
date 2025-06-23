@@ -6,12 +6,11 @@ import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 import { MaterialModule } from './material/material.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { RegisterComponent } from './authentication/register/register.component';
-import { LoginComponent } from './authentication/login/login.component';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ImprintComponent } from './imprint/imprint.component';
 import { NavbarComponent } from './main-view/navbar/navbar.component';
@@ -21,7 +20,7 @@ import { AuthInterceptor } from './services/auth-interceptor.service';
 import { HttpErrorInterceptor } from './services/http-error-interceptor.service';
 import { FavoriteListComponent } from './main-view/favorite-list/favorite-list.component';
 import { VideoUploadComponent } from './main-view/video-upload/video-upload.component';
-import { VideoPlayerComponent } from './video-player/video-player.component';
+// import { VideoPlayerComponent } from './video-player/video-player.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MoviesListComponent } from './main-view/movies-list/movies-list.component';
 import { TvShowsListComponent } from './main-view/tv-shows-list/tv-shows-list.component';
@@ -33,15 +32,13 @@ import { RandomVideoPreviewComponent } from './main-view/random-video-preview/ra
 @NgModule({
     declarations: [
         AppComponent,
-        RegisterComponent,
-        LoginComponent,
         ImprintComponent,
         NavbarComponent,
         MainViewComponent,
         VideoListComponent,
         FavoriteListComponent,
         VideoUploadComponent,
-        VideoPlayerComponent,
+        // VideoPlayerComponent,
         MoviesListComponent,
         TvShowsListComponent,
         RandomVideoPreviewComponent,
@@ -55,7 +52,8 @@ import { RandomVideoPreviewComponent } from './main-view/random-video-preview/ra
         AppRoutingModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
-        MaterialModule],
+        MaterialModule,
+    CommonModule],
 
     providers: [
         {

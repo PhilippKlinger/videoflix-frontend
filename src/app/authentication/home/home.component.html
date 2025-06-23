@@ -1,1 +1,25 @@
-<p>home works!</p>
+<app-auth-layout [backgroundImage]="'/assets/backgrounds/start.jpg'">
+    <div class="home-content">
+        <h1>Movies, TV shows, and more</h1>
+        <p>Enter your email to create or restart your subscription.</p>
+
+        <form [formGroup]="emailCheckForm" (ngSubmit)="onSubmitEmailCheck()">
+            <mat-form-field appearance="outline" class="email-field" floatLabel="always">
+                <mat-label>Email Address</mat-label>
+                <input matInput type="email" formControlName="email" placeholder="Email Address" />
+                <mat-error *ngIf="emailCheckForm.controls['email'].hasError('required')">
+                    Email is required
+                </mat-error>
+                <mat-error *ngIf="emailCheckForm.controls['email'].hasError('email')">
+                    Please enter a valid email address
+                </mat-error>
+            </mat-form-field>
+
+            <button mat-raised-button color="primary" class="signup-button" type="submit"
+                [disabled]="!emailCheckForm.valid || requestloading">
+                Sign Up
+                <mat-icon>arrow_forward_ios</mat-icon>
+            </button>
+        </form>
+    </div>
+</app-auth-layout>

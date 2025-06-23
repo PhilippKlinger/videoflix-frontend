@@ -1,59 +1,53 @@
-<div class="login-section" [ngSwitch]="selectRegisterFormAction">
+<app-auth-layout [backgroundImage]="'/assets/backgrounds/signin.jpg'">
 
-  <!-- EMAIL-EINGABE -->
-  <div class="login-form-section" *ngSwitchCase="'enterEmail'">
-    <h2>Register</h2>
-    <form [formGroup]="emailCheckForm" (ngSubmit)="onSubmitEmailCheck()">
-      <div *ngIf="errorMessage" class="text-danger">{{ errorMessage }}</div>
-      <div class="form-group">
-        <input type="email" formControlName="email" placeholder="youremail@example.com">
-        <div *ngIf="emailCheckForm.controls['email'].invalid && emailCheckForm.controls['email'].touched" class="text-danger">
-          Please enter a valid email.
-        </div>
-      </div>
-      <div class="button-section">
-        <button type="submit" [disabled]="!emailCheckForm.valid || requestloading">Let's start!</button>
-      </div>
-    </form>
+<div class="register-wrapper" *ngIf="!registerSuccess; else successTemplate">
+  
+  <div *ngIf="requestloading" class="shape-loader-container">
+    <div class="shape-loader"></div>
   </div>
 
-  <!-- REGISTRIER-FORMULAR -->
-  <div class="login-form-section" *ngSwitchCase="'registerNewUser'">
-    <h2>Register</h2>
-    <div *ngIf="requestloading" class="shape-loader"></div>
+  <form *ngIf="!requestloading" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <h1>Sign up</h1>
 
-    <form *ngIf="!requestloading && !registerSuccess" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-      <div *ngIf="errorMessage" class="text-danger">{{ errorMessage }}</div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email Address</mat-label>
+      <input matInput formControlName="username" placeholder="Email Address">
+      <mat-icon matPrefix>mail</mat-icon>
+    </mat-form-field>
 
-      <div class="form-group">
-        <input type="text" formControlName="username" placeholder="username">
-        <div *ngIf="registerForm.controls['username'].invalid && registerForm.controls['username'].touched" class="text-danger">
-          Username is required (minimum 4 characters).
-        </div>
-      </div>
 
-      <div class="form-group">
-        <input type="password" formControlName="password" placeholder="password">
-        <div *ngIf="registerForm.controls['password'].invalid && registerForm.controls['password'].touched" class="text-danger">
-          Password is required (minimum 6 characters).
-        </div>
-      </div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Password</mat-label>
+      <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Password">
+      <mat-icon matPrefix>lock</mat-icon>
+      <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()">
+        <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+    </mat-form-field>
 
-      <div class="form-group">
-        <input type="password" formControlName="password_confirm" placeholder="confirm password">
-        <div *ngIf="registerForm.errors?.['mismatch'] && registerForm.controls['password_confirm'].touched" class="text-danger">
-          Passwords do not match.
-        </div>
-      </div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Confirm Password</mat-label>
+      <input matInput [type]="showConfirmPassword ? 'text' : 'password'" formControlName="password_confirm" placeholder="Confirm Password">
+      <mat-icon matPrefix>lock</mat-icon>
+      <button mat-icon-button matSuffix type="button" (click)="toggleConfirmPasswordVisibility()">
+        <mat-icon>{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      <mat-hint *ngIf="registerForm.errors?.['mismatch']" class="text-danger">
+        <mat-icon color="warn">warning</mat-icon> Passwords must match.
+      </mat-hint>
+    </mat-form-field>
 
-      <div class="button-section">
-        <button type="submit" [disabled]="!registerForm.valid || requestloading">Register</button>
-      </div>
-    </form>
-
-    <div *ngIf="registerSuccess">
-      Vielen Dank für Ihre Registrierung! Eine Aktivierungs-E-Mail wurde an Ihre Adresse gesendet.<br>
-      Sie werden in <span>{{ timeLeft }}</span> Sekunden zum Login weitergeleitet.
-    </div>
-  </div>
+    <button mat-flat-button color="primary" type="submit" [disabled]="registerForm.invalid">
+      Get Started
+    </button>
+  </form>
 </div>
+
+<ng-template #successTemplate>
+  <div class="success-message">
+    Vielen Dank für Deine Registrierung!<br>
+    Bitte aktiviere deine Email!<br>
+  </div>
+</ng-template>
+
+</app-auth-layout>

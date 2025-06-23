@@ -1,107 +1,110 @@
-<div class="login-section" [ngSwitch]="selectLoginFormAction">
-    <div class="login-form-section" *ngSwitchCase="'login'">
-        <h2>Login</h2>
-        <!-- <div *ngIf="requestloading" class="lds-ripple"><div></div><div></div></div> -->
-        <div *ngIf="requestloading" class="shape-loader"></div>
-        <div *ngIf="statusMessage" class="alert alert-success">
-            {{ statusMessage }}
-          </div>
-          <div *ngIf="errorMessage" class="text-danger">
-            {{ errorMessage }}
-        </div>
-        <form *ngIf="!requestloading" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <div class="form-group">
-                <input type="email" id="email" class="form-control name-content" formControlName="email"
-                    placeholder="Your email">
-                <div *ngIf="(loginForm.controls['email'].dirty || loginForm.controls['email'].touched)  && loginForm.controls['email'].invalid "
-                    class="text-danger">
-                    Please enter a valid email.
+<app-auth-layout [backgroundImage]="'/assets/backgrounds/login.jpg'">
+    <div class="login-section" [ngSwitch]="selectLoginFormAction">
+        <div class="login-form-section" *ngSwitchCase="'login'">
+            <h2>Login</h2>
+            <div *ngIf="requestloading" class="shape-loader"></div>
+            <div *ngIf="statusMessage" class="alert alert-success">
+                {{ statusMessage }}
+            </div>
+            <div *ngIf="errorMessage" class="text-danger">
+                {{ errorMessage }}
+            </div>
+            <form *ngIf="!requestloading" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                    <input type="email" id="email" class="form-control name-content" formControlName="email"
+                        placeholder="Your email">
+                    <div *ngIf="(loginForm.controls['email'].dirty || loginForm.controls['email'].touched)  && loginForm.controls['email'].invalid "
+                        class="text-danger">
+                        Please enter a valid email.
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <input type="password" id="password" formControlName="password" placeholder="Your password">
-                <div *ngIf="(loginForm.controls['password'].dirty || loginForm.controls['password'].touched) && loginForm.controls['password'].invalid"
-                    class="text-danger">
-                    Password is required.
+                <div class="form-group">
+                    <input type="password" id="password" formControlName="password" placeholder="Your password">
+                    <div *ngIf="(loginForm.controls['password'].dirty || loginForm.controls['password'].touched) && loginForm.controls['password'].invalid"
+                        class="text-danger">
+                        Password is required.
+                    </div>
                 </div>
+                <div class="button-section">
+                    <button type="submit" [disabled]="!loginForm.valid">Login</button>
+                </div>
+            </form>
+            <div class="password-reset">
+                <p (click)="togglePasswordResetForm()">forgot password?</p>
             </div>
-            <div class="button-section">
-                <button type="submit" [disabled]="!loginForm.valid">Login</button>
+            <div class="password-reset">
+                <a routerLink="/register">Not a member? <b>register here</b></a>
             </div>
-        </form>
-        <div class="password-reset">
-            <p (click)="togglePasswordResetForm()">forgot password?</p>
         </div>
-        <div class="password-reset">
-            <a routerLink="/register">Not a member? <b>register here</b></a>
-        </div>
-    </div>
 
-    <div class="login-form-section" *ngSwitchCase="'passwordReset'">
-        <h2>Reset Password</h2>
-        <div *ngIf="requestloading" class="shape-loader"></div>
-        <div *ngIf="statusMessage" class="alert alert-success">
-            {{ statusMessage }}
-          </div>
-          <div *ngIf="errorMessage" class="text-danger">
-            {{ errorMessage }}
-        </div>
-        <form [formGroup]="passwordResetForm" (ngSubmit)="onSubmitPasswordResetRequest()">
-            <div class="form-group">
-                <input [(ngModel)]="resetEmail" type="email" id="reset-email" class="form-control"
-                    formControlName="email" placeholder="Enter your email">
-                <div *ngIf="passwordResetForm.controls['email'].errors && (passwordResetForm.controls['email'].dirty || passwordResetForm.controls['email'].touched)"
-                    class="text-danger">
-                    Please enter a valid email.
+        <div class="login-form-section" *ngSwitchCase="'passwordReset'">
+            <h2>Reset Password</h2>
+            <div *ngIf="requestloading" class="shape-loader"></div>
+            <div *ngIf="statusMessage" class="alert alert-success">
+                {{ statusMessage }}
+            </div>
+            <div *ngIf="errorMessage" class="text-danger">
+                {{ errorMessage }}
+            </div>
+            <form [formGroup]="passwordResetForm" (ngSubmit)="onSubmitPasswordResetRequest()">
+                <div class="form-group">
+                    <input [(ngModel)]="resetEmail" type="email" id="reset-email" class="form-control"
+                        formControlName="email" placeholder="Enter your email">
+                    <div *ngIf="passwordResetForm.controls['email'].errors && (passwordResetForm.controls['email'].dirty || passwordResetForm.controls['email'].touched)"
+                        class="text-danger">
+                        Please enter a valid email.
+                    </div>
                 </div>
+                <div class="button-section">
+                    <button type="submit" [disabled]="!passwordResetForm.valid">Send Reset Link</button>
+                </div>
+            </form>
+            <div class="password-reset">
+                <p (click)="toggleLoginForm()">Back to Login</p>
             </div>
-            <div class="button-section">
-                <button type="submit" [disabled]="!passwordResetForm.valid">Send Reset Link</button>
-            </div>
-        </form>
-        <div class="password-reset">
-            <p (click)="toggleLoginForm()">Back to Login</p>
         </div>
-    </div>
 
-    <div class="login-form-section" *ngSwitchCase="'passwordResetRequestSuccessful'">
-        <h2>E-mail sent</h2>
-        <p>An E-Mail with instructions how to reset your password has been sent to {{resetEmail}}.</p>
-        <div class="password-reset">
-            <p (click)="toggleLoginForm()">Back to Login</p>
+        <div class="login-form-section" *ngSwitchCase="'passwordResetRequestSuccessful'">
+            <h2>E-mail sent</h2>
+            <p>An E-Mail with instructions how to reset your password has been sent to {{resetEmail}}.</p>
+            <div class="password-reset">
+                <p (click)="toggleLoginForm()">Back to Login</p>
+            </div>
         </div>
-    </div>
 
-    <div class="login-form-section" *ngSwitchCase="'passwordResetConfirm'">
-        <h2>Enter New Password</h2>
-        <div *ngIf="requestloading" class="shape-loader"></div>
-        <div *ngIf="statusMessage" class="alert alert-success">
-            {{ statusMessage }}
-          </div>
-          <div *ngIf="errorMessage" class="text-danger">
-            {{ errorMessage }}
-        </div>
-        <form [formGroup]="passwordResetConfirmForm" (ngSubmit)="onSubmitPasswordResetConfirm()">
-            <div class="form-group">
-                <input type="password" id="new_password" formControlName="new_password" class="form-control name-content"
-                    placeholder="password">
-                <div *ngIf="passwordResetConfirmForm.controls['new_password'].invalid && passwordResetConfirmForm.controls['new_password'].touched">
-                    Password is required (minimum 6 characters).
+        <div class="login-form-section" *ngSwitchCase="'passwordResetConfirm'">
+            <h2>Enter New Password</h2>
+            <div *ngIf="requestloading" class="shape-loader"></div>
+            <div *ngIf="statusMessage" class="alert alert-success">
+                {{ statusMessage }}
+            </div>
+            <div *ngIf="errorMessage" class="text-danger">
+                {{ errorMessage }}
+            </div>
+            <form [formGroup]="passwordResetConfirmForm" (ngSubmit)="onSubmitPasswordResetConfirm()">
+                <div class="form-group">
+                    <input type="password" id="new_password" formControlName="new_password"
+                        class="form-control name-content" placeholder="password">
+                    <div
+                        *ngIf="passwordResetConfirmForm.controls['new_password'].invalid && passwordResetConfirmForm.controls['new_password'].touched">
+                        Password is required (minimum 6 characters).
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <input type="password" id="confirm_password" formControlName="confirm_password"
-                    class="form-control name-content" placeholder="confirm password">
-                <div *ngIf="passwordResetConfirmForm.errors?.['mismatch'] && passwordResetConfirmForm.controls['confirm_password'].touched">
-                    Passwords do not match.
+                <div class="form-group">
+                    <input type="password" id="confirm_password" formControlName="confirm_password"
+                        class="form-control name-content" placeholder="confirm password">
+                    <div
+                        *ngIf="passwordResetConfirmForm.errors?.['mismatch'] && passwordResetConfirmForm.controls['confirm_password'].touched">
+                        Passwords do not match.
+                    </div>
                 </div>
+                <div class="button-section">
+                    <button type="submit" [disabled]="!passwordResetConfirmForm.valid">Change Password</button>
+                </div>
+            </form>
+            <div class="password-reset">
+                <p (click)="toggleLoginForm()">Back to Login</p>
             </div>
-            <div class="button-section">
-                <button type="submit" [disabled]="!passwordResetConfirmForm.valid">Change Password</button>
-            </div>
-        </form>
-        <div class="password-reset">
-            <p (click)="toggleLoginForm()">Back to Login</p>
         </div>
     </div>
-</div>
+</app-auth-layout>
