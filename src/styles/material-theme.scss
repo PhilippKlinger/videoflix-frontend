@@ -1,0 +1,123 @@
+@use "@angular/material" as mat;
+
+html {
+  color-scheme: light dark;
+
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$blue-palette,
+        theme-type: color-scheme,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+body {
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
+}
+
+.card-bg {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 48px;
+  backdrop-filter: blur(10px);
+  gap: 24px;
+
+}
+
+.mat-mdc-button,
+.mat-mdc-flat-button,
+.mat-mdc-raised-button {
+  border-radius: 40px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.03em;
+  color: white;
+  &:disabled {
+    background: #3a3a3a;
+    color: #c0c0c0;
+    opacity: 1;
+  }
+}
+
+.mat-mdc-flat-button.mat-primary,
+.mat-mdc-raised-button.mat-primary,
+.mat-mdc-button.mat-primary {
+  color: white !important;
+  background: linear-gradient(90deg, #2d3edf 0%, #512da8 100%);
+  border-radius: 40px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+
+  &:hover, &:focus {
+    background: linear-gradient(90deg, #3e4fff 0%, #6346e3 100%);
+    color: white !important;
+    filter: brightness(1.2);
+    box-shadow: 0 4px 18px rgba(45, 62, 223, 0.3);
+  }
+}
+
+.mat-mdc-flat-button.mat-primary:disabled,
+.mat-mdc-raised-button.mat-primary:disabled,
+.mat-mdc-button.mat-primary:disabled {
+  background: #3a3a3a !important;
+  color: #c0c0c0 !important;
+  opacity: 1;
+  box-shadow: none;
+}
+
+
+.mat-mdc-form-field {
+  --mdc-outlined-text-field-outline-width: 1px;
+  --mdc-outlined-text-field-container-shape: 12px;
+  --mdc-outlined-text-field-outline-color: white;
+  --mdc-outlined-text-field-focus-outline-color: #2d3edf; // focus
+  --mdc-outlined-text-field-error-outline-color: #ff032e; // error
+  --mdc-outlined-text-field-label-text-color: white;
+  --mdc-outlined-text-field-focus-label-text-color: #2d3edf; // focus
+  --mdc-outlined-text-field-error-label-text-color: #ff032e; // error
+  --mdc-outlined-text-field-input-text-color: white;
+  --mdc-filled-text-field-label-text-color: white;
+  --mdc-filled-text-field-input-text-color: white;
+}
+
+// Icon: per Input-State
+.mat-mdc-form-field .mat-icon {
+  color: white !important;
+}
+.mat-mdc-form-field.mat-focused .mat-icon {
+  color: #2d3edf !important;
+}
+.mat-mdc-form-field.mat-mdc-form-field-invalid .mat-icon {
+  color: #ff032e !important;
+}
+
+
+
+// .mat-mdc-snack-bar-container.error-snackbar {
+//   color: white;
+// }
+
+
+// Sorgt für immer gleichbleibenden Abstand für Fehlermeldungen/Hint unter Inputs
+.mat-mdc-form-field-subscript-wrapper {
+  min-height: 14px;
+  display: flex;
+  align-items: flex-end;
+  // Optional: für noch mehr Abstand zu den Inputs, nutze padding-bottom:
+  // padding-bottom: 8px;
+}
+
+// Abstand zwischen den Inputs erhöhen (optional, aber visuell sehr angenehm)
+.full-width {
+  margin-bottom: 12px; // Zwischen Inputs (du kannst 20-24px nehmen für noch mehr Luft)
+}
+
+// Optional: Button etwas nach unten verschieben
+button[type="submit"] {
+  margin-top: 12px;
+}

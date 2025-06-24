@@ -1,53 +1,68 @@
 <app-auth-layout [backgroundImage]="'/assets/backgrounds/signin.jpg'">
 
-<div class="register-wrapper" *ngIf="!registerSuccess; else successTemplate">
-  
-  <div *ngIf="requestloading" class="shape-loader-container">
-    <div class="shape-loader"></div>
+  <div class="register-wrapper card-bg" *ngIf="!registerSuccess; else successTemplate">
+
+    <div *ngIf="requestloading" class="shape-loader-container">
+      <div class="shape-loader"></div>
+    </div>
+
+    <form *ngIf="!requestloading" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <h1>Sign up</h1>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email Address</mat-label>
+        <input matInput formControlName="username">
+        <mat-icon matPrefix>mail</mat-icon>
+        <mat-error *ngIf="registerForm.get('username')?.hasError('required') && registerForm.get('username')?.touched">
+          Email is required
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('username')?.hasError('email') && registerForm.get('username')?.touched">
+          Please enter a valid email
+        </mat-error>
+      </mat-form-field>
+
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password">
+        <mat-icon matPrefix>lock</mat-icon>
+        <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()">
+          <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched">
+          Password is required
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('password')?.hasError('minlength') && registerForm.get('password')?.touched">
+          Your password must contain between 4 and 60 characters.
+        </mat-error>
+      </mat-form-field>
+
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Confirm Password</mat-label>
+        <input matInput [type]="showConfirmPassword ? 'text' : 'password'" formControlName="password_confirm">
+        <mat-icon matPrefix>lock</mat-icon>
+        <button mat-icon-button matSuffix type="button" (click)="toggleConfirmPasswordVisibility()">
+          <mat-icon>{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="(registerForm.get('password_confirm')?.touched || registerForm.get('password')?.touched)
+          && registerForm.errors?.['mismatch']">
+          Passwords must match.
+        </mat-error>
+
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="registerForm.invalid">
+        Get Started
+      </button>
+    </form>
   </div>
 
-  <form *ngIf="!requestloading" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <h1>Sign up</h1>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Email Address</mat-label>
-      <input matInput formControlName="username" placeholder="Email Address">
-      <mat-icon matPrefix>mail</mat-icon>
-    </mat-form-field>
-
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Password</mat-label>
-      <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Password">
-      <mat-icon matPrefix>lock</mat-icon>
-      <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()">
-        <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-      </button>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Confirm Password</mat-label>
-      <input matInput [type]="showConfirmPassword ? 'text' : 'password'" formControlName="password_confirm" placeholder="Confirm Password">
-      <mat-icon matPrefix>lock</mat-icon>
-      <button mat-icon-button matSuffix type="button" (click)="toggleConfirmPasswordVisibility()">
-        <mat-icon>{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-      </button>
-      <mat-hint *ngIf="registerForm.errors?.['mismatch']" class="text-danger">
-        <mat-icon color="warn">warning</mat-icon> Passwords must match.
-      </mat-hint>
-    </mat-form-field>
-
-    <button mat-flat-button color="primary" type="submit" [disabled]="registerForm.invalid">
-      Get Started
-    </button>
-  </form>
-</div>
-
-<ng-template #successTemplate>
-  <div class="success-message">
-    Vielen Dank für Deine Registrierung!<br>
-    Bitte aktiviere deine Email!<br>
-  </div>
-</ng-template>
+  <ng-template #successTemplate>
+    <div class="success-message">
+      Vielen Dank für Deine Registrierung!<br>
+      Bitte aktiviere deine Email!<br>
+    </div>
+  </ng-template>
 
 </app-auth-layout>

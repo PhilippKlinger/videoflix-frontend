@@ -50,6 +50,14 @@ export class RegisterComponent implements OnInit {
       this.registerForm.get('email')!.setValue(value, { emitEvent: false });
     });
 
+    this.registerForm.get('password')!.valueChanges.subscribe(() => {
+      this.registerForm.updateValueAndValidity();
+    });
+    
+    this.registerForm.get('password_confirm')!.valueChanges.subscribe(() => {
+      this.registerForm.updateValueAndValidity();
+    });
+
     this.errorService.getErrorMessage().subscribe(message => {
       if (message) this.snackBar.open(message, 'Close', { duration: 4000, panelClass: ['error-snackbar'] });
     });
