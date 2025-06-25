@@ -1,7 +1,11 @@
 <div class="auth-container" [ngStyle]="{ 'background-image': 'url(' + backgroundImage + ')' }">
   <header class="auth-header">
-    <img src="/assets/logo.svg" alt="Logo" class="logo" />
-    <a routerLink="/login" class="login-link">Log in</a>
+    <img src="/assets/logo.svg" routerLink="/" alt="Logo" class="logo" />
+    <a routerLink="/login" class="login-link" *ngIf="!isLoginPage()">
+      Log in
+    </a>
+
+
   </header>
 
   <main class="auth-content">

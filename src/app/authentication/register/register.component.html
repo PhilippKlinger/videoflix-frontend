@@ -2,7 +2,7 @@
 
   <div class="register-wrapper card-bg" *ngIf="!registerSuccess; else successTemplate">
 
-    <div *ngIf="requestloading" class="shape-loader-container">
+    <div *ngIf="requestloading">
       <div class="shape-loader"></div>
     </div>
 
@@ -60,8 +60,8 @@
 
   <ng-template #successTemplate>
     <div class="success-message">
-      Vielen Dank für Deine Registrierung!<br>
-      Bitte aktiviere deine Email!<br>
+      Thank you for registering for Videoflix<br>
+      please confirm your email before you can use the service!<br>
     </div>
   </ng-template>
 

@@ -31,3 +31,72 @@
     z-index: 2;
   }
 }
+
+.auth-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 48px 0 48px;
+
+  .logo {
+    height: 40px;
+    width: auto;
+    cursor: pointer;
+    &:hover,
+    &:focus {
+      filter: brightness(1.4);
+      transform: scale(1.03);
+      transition: ease-in-out all 125ms;
+    }
+  }
+
+  .login-link {
+    display: inline-block;
+    padding: 10px 32px;
+    background: linear-gradient(90deg, #2d3edf 0%, #512da8 100%);
+    border-radius: 40px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(45, 62, 223, 0.1);
+    transition: filter 0.2s, background 0.2s;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      filter: brightness(1.2);
+      background: linear-gradient(90deg, #3e4fff 0%, #6346e3 100%);
+    }
+  }
+}
+
+.auth-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.auth-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 40px;
+  padding-bottom: 28px;
+  padding-top: 18px;
+
+  a {
+    color: #fff;
+    font-size: 0.98rem;
+    text-decoration: none;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+    cursor: pointer;
+    &:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+  }
+}

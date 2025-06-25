@@ -34,7 +34,7 @@ export class ApiService {
     );
   }
 
-  resetPassword(data: any): Observable<any> {
+  forgotPassword(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/password-reset/`, data);
   }
 

@@ -29,12 +29,12 @@ export class RegisterComponent implements OnInit {
   showPassword = false;
   showConfirmPassword = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private errorService: ErrorHandlingService,
-    private snackBar: MatSnackBar,
-  ) { }
+  fb = inject(FormBuilder);
+  api = inject(ApiService);
+  errorService = inject(ErrorHandlingService);
+  snackBar = inject(MatSnackBar);
+
+  constructor() { }
 
   ngOnInit(): void {
     const emailFromStorage = localStorage.getItem('emailForLogin') || '';
@@ -53,7 +53,7 @@ export class RegisterComponent implements OnInit {
     this.registerForm.get('password')!.valueChanges.subscribe(() => {
       this.registerForm.updateValueAndValidity();
     });
-    
+
     this.registerForm.get('password_confirm')!.valueChanges.subscribe(() => {
       this.registerForm.updateValueAndValidity();
     });
@@ -88,12 +88,12 @@ export class RegisterComponent implements OnInit {
         this.registerSuccess = true;
         this.requestloading = false;
 
-        this.snackBar.open('Registrierung erfolgreich! Weiterleitung...', 'OK', { duration: 3000 });
+        this.snackBar.open('Registration successful! Redirect...', 'OK', { duration: 3000 });
 
       },
       error: () => {
         this.requestloading = false;
-        this.snackBar.open('Registrierung fehlgeschlagen. Bitte erneut versuchen.', 'OK', {
+        this.snackBar.open('Registration unsuccessful! Please try again.', 'OK', {
           duration: 4000,
           panelClass: ['error-snackbar']
         });

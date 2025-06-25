@@ -1,5 +1,5 @@
 
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -18,19 +18,20 @@ export class HomeComponent {
   emailCheckForm!: FormGroup;
   requestloading = false;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private snackBar: MatSnackBar
-  ) { }
+
+  fb = inject(FormBuilder);
+  router = inject(Router);
+  snackBar = inject(MatSnackBar);
+  
+  constructor() { }
 
   ngOnInit(): void {
-     this.emailCheckForm = this.formBuilder.group({
+    this.emailCheckForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
     });
   }
 
- onSubmitEmailCheck(): void {
+  onSubmitEmailCheck(): void {
     if (this.emailCheckForm.invalid) return;
 
     const email = this.emailCheckForm.controls['email'].value;
@@ -39,7 +40,7 @@ export class HomeComponent {
     this.router.navigate(['/register']);
   }
 
-   showError(message: string): void {
+  showError(message: string): void {
     this.snackBar.open(message, 'Close', {
       duration: 3000,
       panelClass: ['error-snackbar'],
