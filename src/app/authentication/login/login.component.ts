@@ -62,7 +62,7 @@ export class LoginComponent implements OnInit {
     this.requestloading = true;
     this.api.loginUser(this.loginForm.value).subscribe({
       next: (response) => {
-        this.authService.setAuthCredentials(response.token, response.user_id, response.username || '');
+        this.authService.setAuthCredentials(response.token, response.user_id, response.email || '');
         localStorage.removeItem('emailForLogin');
         this.requestloading = false;
         this.router.navigate(['/browse']);

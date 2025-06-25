@@ -12,6 +12,7 @@ import { VideoListComponent } from './main-view/video-list/video-list.component'
 import { VideoUploadComponent } from './main-view/video-upload/video-upload.component';
 import { MoviesListComponent } from './main-view/movies-list/movies-list.component';
 import { TvShowsListComponent } from './main-view/tv-shows-list/tv-shows-list.component';
+import { AuthGuard } from './services/auth-guard.service';
 
 
 
@@ -22,7 +23,7 @@ const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password/:code', component: ResetPasswordComponent },
   {
-    path: 'browse', component: MainViewComponent,
+    path: 'browse', component: MainViewComponent, canActivate: [AuthGuard],
     children: [
       { path: '', component: VideoListComponent },
       { path: 'tv-shows', component: TvShowsListComponent },

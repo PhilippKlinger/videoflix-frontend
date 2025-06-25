@@ -4,18 +4,18 @@ import { Injectable } from '@angular/core';
 export class AuthService {
   private tokenKey = 'token';
   private userIdKey = 'userId';
-  private usernameKey = 'auth-user';
+  private emailKey = 'auth-user';
 
-  setAuthCredentials(token: string, userId: string, username: string): void {
+  setAuthCredentials(token: string, userId: string, email: string): void {
     localStorage.setItem(this.tokenKey, token);
     localStorage.setItem(this.userIdKey, userId);
-    localStorage.setItem(this.usernameKey, username);
+    localStorage.setItem(this.emailKey, email);
   }
 
   removeAuthCredentials(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userIdKey);
-    localStorage.removeItem(this.usernameKey);
+    localStorage.removeItem(this.emailKey);
   }
 
   getAuthToken(): string | null {
@@ -27,7 +27,7 @@ export class AuthService {
   }
 
   getUsername(): string | null {
-    return localStorage.getItem(this.usernameKey);
+    return localStorage.getItem(this.emailKey);
   }
 
   isAuthenticated(): boolean {
