@@ -1,0 +1,30 @@
+<div class="details-overlay video-overlay">
+  <div class="overlay-content">
+    <div class="overlay-header">
+      <button class="close-btn" (click)="close.emit()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <h1 class="overlay-title">{{ video.title }}</h1>
+      <!-- hier könnte noch dein Logo oder Ähnliches stehen -->
+    </div>
+
+    <div class="video-wrapper">
+      <video controls [src]="getBgUrl()"></video>
+    </div>
+
+    <div class="overlay-controls">
+      <label for="setResolution">Resolution:</label>
+      <select id="setResolution" (change)="handleResChange($event)">
+        <option value="480p">480p</option>
+        <option value="720p">720p</option>
+        <option value="1080p">1080p</option>
+      </select>
+    </div>
+
+    <div class="details-meta">
+      <p>{{ video.description }}</p>
+      <span>Genre: {{ video.genre }}</span>
+      <span>Category: {{ video.category }}</span>
+    </div>
+  </div>
+</div>

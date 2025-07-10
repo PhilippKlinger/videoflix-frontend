@@ -14,14 +14,14 @@ export class VideoService {
 
   private categorizedVideos = new BehaviorSubject<CategorizedVideos>({});
   categorizedVideos$ = this.categorizedVideos.asObservable();
-  
+
 
   constructor(private apiService: ApiService) { }
 
   loadVideos(): void {
     this.apiService.getVideos().subscribe({
       next: (videos) => {
-        this.sortVideosById(videos);
+        this.sortVideosByDate(videos);
         this.videos.next(videos);
         this.categorizeVideos(videos);
       },
@@ -42,11 +42,8 @@ export class VideoService {
     this.categorizedVideos.next(categorized);
   }
 
-
-
-  
-
-  private sortVideosById(videos: Video[]): void {
-    videos.sort((a, b) => a.id - b.id);
+  private sortVideosByDate(videos: Video[]): void {
+    videos.sort((a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime());
   }
+
 }

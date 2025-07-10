@@ -1,29 +1,32 @@
-::ng-deep .mat-mdc-dialog-content {
-  width: 80vw;
-  height: 80vh !important;
-  max-height: 80vh !important;
-  background: black !important;
-}
-
-::ng-deep .mdc-button__label {
-  color: white;
-}
-
-
-vg-controls {
-  align-items: center;
-}
-
-.resolution-controls {
-  margin-top: 10px;
+.player-overlay {
+  position: fixed;
+  z-index: 100000;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
   display: flex;
+  justify-content: center;
   align-items: center;
-
-  label {
-    margin-right: 10px;
+  .close-btn {
+    position: absolute;
+    top: 28px;
+    right: 38px;
+    background: rgba(0,0,0,0.67);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 44px; height: 44px;
+    font-size: 1.7rem;
+    cursor: pointer;
+    z-index: 2;
+    transition: background 0.12s;
+    &:hover { background: rgba(44,44,44,0.92); }
   }
-
-  select {
-    padding: 5px;
+  vg-player {
+    width: 92vw;
+    height: 72vh;
+    margin: 0 auto;
+    box-shadow: 0 0 24px 4px rgba(0,0,0,0.22);
   }
 }

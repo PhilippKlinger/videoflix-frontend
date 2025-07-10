@@ -1,0 +1,20 @@
+<div class="main-container">
+    <header class="main-header">
+        <img src="/assets/logo_small.svg" routerLink="/browse" alt="Logo" class="logo" />
+        <a class="logout-link" (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            Log out
+        </a>
+
+
+    </header>
+
+    <main class="main-content">
+        <ng-content></ng-content>
+    </main>
+
+    <footer class="main-footer">
+        <a routerLink="/datenschutz">Datenschutz</a> |
+        <a routerLink="/impressum">Impressum</a>
+    </footer>
+</div>

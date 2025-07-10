@@ -1,15 +1,13 @@
 
-
-export interface Resolution {
+export interface VideoResolution {
   id: number;
+  original_video: number;
   resolution: string;
   converted_file: string;
-  original_video: number;
 }
 
 export interface Video {
   id: number;
-  resolutions: Resolution[];
   uploaded_at: string;
   title: string;
   description: string;
@@ -17,7 +15,11 @@ export interface Video {
   category: string;
   video_file: string;
   thumbnail: string;
-
+  conversion_progress: number;
+  current_resolution: string | null;
+  status?: string;
+  resolutions: VideoResolution[];
+  _hovered?: boolean;
 }
 
 export const GENRE_CHOICES = [
@@ -35,6 +37,4 @@ export const CATEGORY_CHOICES = [
   { value: 'TV-Show', label: 'TV-Show' }
 ];
 
-export interface CategorizedVideos {
-  [category: string]: Video[];
-}
+export type CategorizedVideos = { [category: string]: Video[] };

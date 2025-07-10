@@ -2,7 +2,7 @@
 
 html {
   color-scheme: light dark;
-
+  height: 100%;
   @include mat.theme(
     (
       color: (
@@ -16,9 +16,11 @@ html {
 }
 
 body {
+  height: 100%;
   background: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
   font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
 }
 
 .card-bg {
@@ -26,7 +28,6 @@ body {
   border-radius: 48px;
   backdrop-filter: blur(10px);
   gap: 24px;
-
 }
 
 .mat-mdc-button,
@@ -53,7 +54,8 @@ body {
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     background: linear-gradient(90deg, #3e4fff 0%, #6346e3 100%);
     color: white !important;
     filter: brightness(1.2);
@@ -69,7 +71,6 @@ body {
   opacity: 1;
   box-shadow: none;
 }
-
 
 .mat-mdc-form-field {
   --mdc-outlined-text-field-outline-width: 1px;
@@ -96,7 +97,6 @@ body {
   color: #ff032e !important;
 }
 
-
 // Sorgt für immer gleichbleibenden Abstand für Fehlermeldungen/Hint unter Inputs
 .mat-mdc-form-field-subscript-wrapper {
   min-height: 14px;
@@ -116,3 +116,33 @@ button[type="submit"] {
   margin-top: 12px;
 }
 
+.video-dialog-panel .mat-mdc-dialog-container {
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: stretch !important;
+  overflow: hidden !important;
+}
+
+// Falls du noch alte Dialog-Container-Klassen hast, füge sie als Fallback hinzu:
+.video-dialog-panel .mat-dialog-container {
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: stretch !important;
+  overflow: hidden !important;
+}

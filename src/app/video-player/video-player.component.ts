@@ -1,13 +1,27 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from '../material/material.module';
+import { VgCoreModule } from '@videogular/ngx-videogular/core';
+import { VgControlsModule } from '@videogular/ngx-videogular/controls';
+import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
+import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { Video } from 'src/app/models/video.model';
-import { ApiService } from 'src/app/services/api.service';
+import { toAbsoluteUrl } from 'src/app/utils/url-utils';
 
 @Component({
-    selector: 'app-video-player',
-    templateUrl: './video-player.component.html',
-    styleUrls: ['./video-player.component.scss'],
-    standalone: false
+  standalone: true,
+  selector: 'app-video-player',
+  imports: [
+    CommonModule,
+    MaterialModule,
+    VgCoreModule,
+    VgControlsModule,
+    VgOverlayPlayModule,
+    VgBufferingModule
+  ],
+  templateUrl: './video-player.component.html',
+  styleUrls: ['./video-player.component.scss']
 })
 export class VideoPlayerComponent implements OnInit {
   video!: Video;
@@ -16,38 +30,31 @@ export class VideoPlayerComponent implements OnInit {
 
   @ViewChild('videoPlayer', { static: true }) videoPlayer!: ElementRef<HTMLVideoElement>;
 
-
   constructor(
-    private apiService: ApiService,
     public dialogRef: MatDialogRef<VideoPlayerComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { video: Video }
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.video = this.data.video;
-    this.sortResolutionsDescending();
+    if (this.video.resolutions?.length) {
+      this.video.resolutions.sort((a, b) => parseInt(b.resolution) - parseInt(a.resolution));
+    }
     this.setVideoUrl();
+    document.body.style.overflow = 'hidden';
   }
-
-  sortResolutionsDescending(): void {
-    this.video.resolutions.sort((a, b) => parseInt(b.resolution) - parseInt(a.resolution));
+  ngOnDestroy(): void {
+    document.body.style.overflow = '';
   }
 
   setVideoUrl(): void {
-    if (this.selectedResolution === '2160p') {
-      this.videoUrl = this.showVideoUrl(this.video.video_file);
+    if (this.selectedResolution === '2160p' || !this.video.resolutions?.length) {
+      this.videoUrl = toAbsoluteUrl(this.video.video_file);
     } else {
-      const resolution = this.video.resolutions.find(res => res.resolution === this.selectedResolution);
-      if (resolution) {
-        this.videoUrl = this.showVideoUrl(resolution.converted_file);
-      }
+      const res = this.video.resolutions.find(r => r.resolution === this.selectedResolution);
+      this.videoUrl = res ? toAbsoluteUrl(res.converted_file) : toAbsoluteUrl(this.video.video_file);
     }
     this.updateVideoSource();
-  }
-
-  showVideoUrl(videoPath: string): string {
-    const baseUrl = this.apiService.baseUrl;
-    return `${baseUrl}${videoPath}`;
   }
 
   onResolutionChange(resolution: string): void {
@@ -56,13 +63,14 @@ export class VideoPlayerComponent implements OnInit {
   }
 
   updateVideoSource(): void {
-    const videoElement = this.videoPlayer.nativeElement;
-    const currentTime = videoElement.currentTime;
+    const videoElement = this.videoPlayer?.nativeElement;
+    if (!videoElement) return;
+    const currentTime = videoElement.currentTime || 0;
     videoElement.src = this.videoUrl;
     videoElement.load();
     videoElement.onloadeddata = () => {
-      videoElement.currentTime = currentTime; // Set the current time after loading the new source
-      videoElement.play().catch(error => console.error('Error playing video:', error));
+      try { videoElement.currentTime = currentTime; } catch {}
+      videoElement.play().catch(() => {});
     };
   }
 

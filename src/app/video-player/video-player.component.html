@@ -1,34 +1,32 @@
-<!-- <mat-dialog-content>
-    <vg-player>
-        <vg-overlay-play></vg-overlay-play>
-        <vg-buffering></vg-buffering>
-        <video #videoPlayer [vgMedia]="$any(media)" #media id="singleVideo" preload="auto" crossorigin>
-            <source [src]="videoUrl" type="video/mp4">
-        </video>
-
-        <vg-controls>
-            <vg-play-pause></vg-play-pause>
-            <vg-playback-button></vg-playback-button>
-            <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
-            <vg-scrub-bar>
-                <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-                <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
-            </vg-scrub-bar>
-            <vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
-            
-            <vg-mute></vg-mute>
-            <vg-volume></vg-volume>
-            <button mat-button [matMenuTriggerFor]="qualityBtn">{{ selectedResolution }}</button>
-            <mat-menu #qualityBtn="matMenu" yPosition="above">
-                <button mat-menu-item (click)="onResolutionChange('2160p')">2160p</button>
-                <button mat-menu-item *ngFor="let res of video.resolutions"
-                    (click)="onResolutionChange(res.resolution)">
-                    {{ res.resolution }}
-                </button>
-                
-            </mat-menu>
-            <vg-fullscreen></vg-fullscreen>
-            <button mat-button (click)="closeDialog()">Close</button>
-        </vg-controls>
-    </vg-player>
-</mat-dialog-content> -->
+<div class="player-overlay">
+  <button class="close-btn" (click)="closeDialog()">
+    <mat-icon>close</mat-icon>
+  </button>
+  <vg-player>
+    <vg-overlay-play></vg-overlay-play>
+    <vg-buffering></vg-buffering>
+    <video #videoPlayer [vgMedia]="$any(media)" #media id="singleVideo" preload="auto" crossorigin>
+      <source [src]="videoUrl" type="video/mp4">
+    </video>
+    <vg-controls>
+      <vg-play-pause></vg-play-pause>
+      <vg-playback-button></vg-playback-button>
+      <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+      <vg-scrub-bar>
+        <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+        <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+      </vg-scrub-bar>
+      <vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
+      <vg-mute></vg-mute>
+      <vg-volume></vg-volume>
+      <button mat-button [matMenuTriggerFor]="qualityBtn">{{ selectedResolution }}</button>
+      <mat-menu #qualityBtn="matMenu" yPosition="above">
+        <button mat-menu-item (click)="onResolutionChange('2160p')">2160p</button>
+        <button mat-menu-item *ngFor="let res of video.resolutions" (click)="onResolutionChange(res.resolution)">
+          {{ res.resolution }}
+        </button>
+      </mat-menu>
+      <vg-fullscreen></vg-fullscreen>
+    </vg-controls>
+  </vg-player>
+</div>

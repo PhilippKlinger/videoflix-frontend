@@ -1,0 +1,17 @@
+<div class="thumb-item"
+     [ngStyle]="{ 'background-image': 'url(' + getThumbnailUrl() + ')' }"
+     (mouseenter)="hovered = true"
+     (mouseleave)="hovered = false">
+  <div class="thumb-title">{{ video.title }}</div>
+  <div class="thumb-overlay" *ngIf="hovered">
+    <button class="action-btn play" (click)="play.emit(video); $event.stopPropagation()">
+      <mat-icon>play_arrow</mat-icon>
+    </button>
+    <button class="action-btn" (click)="favorite.emit(video); $event.stopPropagation()">
+      <mat-icon>favorite_border</mat-icon>
+    </button>
+    <button class="action-btn" (click)="openDetails.emit(video); $event.stopPropagation()">
+      <mat-icon>expand_more</mat-icon>
+    </button>
+  </div>
+</div>

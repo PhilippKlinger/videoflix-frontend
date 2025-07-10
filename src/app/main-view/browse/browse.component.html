@@ -1,0 +1,64 @@
+<app-main-layout>
+  <main class="browse-container">
+
+    <!-- Hero-Section -->
+    <section class="hero" *ngIf="!loading && featured">
+      <div
+        class="hero-bg"
+        [ngStyle]="{ 'background-image': 'url(' + getMediaUrl(featured.thumbnail) + ')' }">
+      </div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1>{{ featured.title }}</h1>
+        <p>{{ featured.description }}</p>
+        <button mat-flat-button color="primary" (click)="playVideo(featured)">
+          <mat-icon>play_arrow</mat-icon>
+          Play
+        </button>
+      </div>
+    </section>
+
+    <!-- Scrollable Listen -->
+    <section class="list_section" *ngIf="!loading">
+
+      <!-- New on Videoflix -->
+      <section class="video_list">
+        <h2>New on Videoflix</h2>
+        <div class="scroll-wrapper">
+          <ul id="newest">
+            <li *ngFor="let vid of newestVideos">
+              <img
+                [src]="getThumbnailUrl(vid.thumbnail)"
+                [alt]="vid.title"
+                (click)="playVideo(vid)" />
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Dynamische Genres -->
+      <section
+        class="video_list dynamic-category"
+        *ngFor="let genre of genreOrder">
+        <h2>{{ genre }}</h2>
+        <div class="scroll-wrapper">
+          <ul [id]="genre.toLowerCase()">
+            <li *ngFor="let vid of genreMap[genre]">
+              <img
+                [src]="getThumbnailUrl(vid.thumbnail)"
+                [alt]="vid.title"
+                (click)="playVideo(vid)" />
+            </li>
+          </ul>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- Fallback -->
+    <div class="no_videos" *ngIf="!loading && !newestVideos.length">
+      Keine Videos gefunden.
+    </div>
+
+  </main>
+</app-main-layout>

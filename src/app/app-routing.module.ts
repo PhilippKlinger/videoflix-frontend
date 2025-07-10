@@ -6,13 +6,12 @@ import { LoginComponent } from './authentication/login/login.component';
 import { ForgotPasswordComponent } from './authentication/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './authentication/reset-password/reset-password.component';
 
-import { MainViewComponent } from './main-view/main-view.component';
-import { FavoriteListComponent } from './main-view/favorite-list/favorite-list.component';
-import { VideoListComponent } from './main-view/video-list/video-list.component';
+
 import { VideoUploadComponent } from './main-view/video-upload/video-upload.component';
-import { MoviesListComponent } from './main-view/movies-list/movies-list.component';
-import { TvShowsListComponent } from './main-view/tv-shows-list/tv-shows-list.component';
+
 import { AuthGuard } from './services/auth-guard.service';
+
+import { BrowseComponent } from './main-view/browse/browse.component';
 
 
 
@@ -23,12 +22,8 @@ const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password/:code', component: ResetPasswordComponent },
   {
-    path: 'browse', component: MainViewComponent, canActivate: [AuthGuard],
+    path: 'browse', component: BrowseComponent, canActivate: [AuthGuard],
     children: [
-      { path: '', component: VideoListComponent },
-      { path: 'tv-shows', component: TvShowsListComponent },
-      { path: 'movies', component: MoviesListComponent },
-      { path: 'favorites', component: FavoriteListComponent },
       { path: 'video-upload', component: VideoUploadComponent }
     ]
   },
