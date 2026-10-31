@@ -1,4 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
+import { TEST_VIDEO } from '../testing/video.fixture';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { VideoPlayerComponent } from './video-player.component';
 
@@ -8,7 +13,10 @@ describe('VideoPlayerComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [VideoPlayerComponent]
+      imports: [VideoPlayerComponent],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]),
+        { provide: MatDialogRef, useValue: { close: () => {} } },
+        { provide: MAT_DIALOG_DATA, useValue: { video: TEST_VIDEO } }]
     });
     fixture = TestBed.createComponent(VideoPlayerComponent);
     component = fixture.componentInstance;
