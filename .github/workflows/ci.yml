@@ -1,0 +1,44 @@
+# Actions are pinned by commit SHA; the comment shows the readable version.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Angular 19 supports Node 22 at most; raise together with the Angular upgrade.
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      # Coverage thresholds live in karma.conf.js and fail the run when coverage drops.
+      - name: Run tests with coverage
+        run: npm test -- --watch=false --browsers=ChromeHeadlessCI --code-coverage
+
+      # Strict templates make the production build the type check as well.
+      - name: Build for production
+        run: npm run build -- --configuration production
