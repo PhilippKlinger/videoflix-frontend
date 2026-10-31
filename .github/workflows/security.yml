@@ -6,6 +6,11 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # Scheduled and manual runs scan the full git history and catch
+  # vulnerabilities that were published after the last push.
+  schedule:
+    - cron: "41 4 * * 1"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -26,7 +31,8 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # Full history so gitleaks can scan every commit, not only the latest one.
+          # gitleaks needs the history: pushes and pull requests scan their new
+          # commits, scheduled and manual runs scan every commit.
           fetch-depth: 0
           persist-credentials: false
 
