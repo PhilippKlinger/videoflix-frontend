@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
@@ -10,6 +10,7 @@ import { interval, Subscription, switchMap } from 'rxjs';
     selector: 'app-video-upload',
     templateUrl: './video-upload.component.html',
     styleUrls: ['./video-upload.component.scss', '../../authentication/login/login.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class VideoUploadComponent implements OnInit {

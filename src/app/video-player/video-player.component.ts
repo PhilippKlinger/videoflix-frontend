@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { MaterialModule } from '../material/material.module';
@@ -12,6 +12,7 @@ import { toAbsoluteUrl } from 'src/app/utils/url-utils';
     MaterialModule
 ],
   templateUrl: './video-player.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./video-player.component.scss']
 })
 export class VideoPlayerComponent implements OnInit {

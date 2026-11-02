@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { MaterialModule } from 'src/app/material/material.module';
 import { Video } from 'src/app/models/video.model';
 import { toAbsoluteUrl } from 'src/app/utils/url-utils';
@@ -9,6 +9,7 @@ import { toAbsoluteUrl } from 'src/app/utils/url-utils';
   selector: 'app-video-thumbnail',
   templateUrl: './video-thumbnail.component.html',
   styleUrls: ['./video-thumbnail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MaterialModule, CommonModule]
 })
 export class VideoThumbnailComponent {

@@ -1,5 +1,5 @@
 
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { MaterialModule } from 'src/app/material/material.module';
 import { Video } from 'src/app/models/video.model';
 import { toAbsoluteUrl } from 'src/app/utils/url-utils';
@@ -9,6 +9,7 @@ import { toAbsoluteUrl } from 'src/app/utils/url-utils';
   selector: 'app-video-details-overlay',
   templateUrl: './video-details-overlay.component.html',
   styleUrls: ['./video-details-overlay.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MaterialModule]
 })
 export class VideoDetailsOverlayComponent {

@@ -7,14 +7,13 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from './material/material.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { ImprintComponent } from './imprint/imprint.component';
 
 import { AuthInterceptor } from './services/auth-interceptor.service';
 import { HttpErrorInterceptor } from './services/http-error-interceptor.service';
 
 import { VideoUploadComponent } from './main-view/video-upload/video-upload.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
@@ -31,7 +30,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         FormsModule,
         AppRoutingModule,
         ReactiveFormsModule,
-        BrowserAnimationsModule,
         MaterialModule,
     CommonModule],
 
@@ -46,7 +44,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
             useClass: HttpErrorInterceptor,
             multi: true
         },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
     ]
 })
 export class AppModule { }
