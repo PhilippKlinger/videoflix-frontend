@@ -35,14 +35,16 @@ import { VideoUploadComponent } from './main-view/video-upload/video-upload.comp
     CommonModule],
 
     providers: [
+        // Order matters: the error interceptor sits outside, so it only sees
+        // errors that remain after the auth interceptor tried a token refresh.
         {
             provide: HTTP_INTERCEPTORS,
-            useClass: AuthInterceptor,
+            useClass: HttpErrorInterceptor,
             multi: true
         },
         {
             provide: HTTP_INTERCEPTORS,
-            useClass: HttpErrorInterceptor,
+            useClass: AuthInterceptor,
             multi: true
         },
         provideAppHttpClient(),

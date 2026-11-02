@@ -1,16 +1,40 @@
 import { TestBed } from '@angular/core/testing';
+import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { HttpErrorInterceptor } from './http-error-interceptor.service';
+import { ErrorHandlingService } from './error-handling.service';
+import { provideAppHttpClient } from '../http.providers';
 
 describe('HttpErrorInterceptorService', () => {
-  let service: HttpErrorInterceptor;
+  let http: HttpClient;
+  let httpMock: HttpTestingController;
+  let logSpy: jasmine.Spy;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [HttpErrorInterceptor] });
-    service = TestBed.inject(HttpErrorInterceptor);
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
+        provideAppHttpClient(),
+        provideHttpClientTesting(),
+      ]
+    });
+    http = TestBed.inject(HttpClient);
+    httpMock = TestBed.inject(HttpTestingController);
+    logSpy = spyOn(TestBed.inject(ErrorHandlingService), 'log');
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+  afterEach(() => httpMock.verify());
+
+  it('does not log 401', () => {
+    http.get('/api/me/').subscribe({ error: () => undefined });
+    httpMock.expectOne('/api/me/').flush({ detail: 'Authentication credentials were not provided.' }, { status: 401, statusText: 'Unauthorized' });
+    expect(logSpy).not.toHaveBeenCalled();
+  });
+
+  it('logs 403 detail', () => {
+    http.post('/api/upload/', {}).subscribe({ error: () => undefined });
+    httpMock.expectOne('/api/upload/').flush({ detail: 'CSRF Failed: CSRF token missing.' }, { status: 403, statusText: 'Forbidden' });
+    expect(logSpy).toHaveBeenCalledWith('CSRF Failed: CSRF token missing.');
   });
 });

@@ -12,6 +12,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     return next.handle(request)
       .pipe(
         catchError((error: HttpErrorResponse) => {
+          // An ended session is handled by the AuthInterceptor (redirect), not shown as an error.
+          if (error.status === 401) {
+            return throwError(() => error);
+          }
           let errorMessage = 'An unknown error occurred!';
           if (error.error instanceof ErrorEvent) {
             // Client-seitiger oder Netzwerkfehler
