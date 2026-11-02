@@ -62,10 +62,10 @@ jobs:
         with:
           comment-summary-in-pr: on-failure
 
-  # Report only: the known findings need the Angular major upgrade.
-  # Switch to a failing check once that upgrade is done.
+  # Runtime dependencies end up in the public bundle, so high findings fail the run.
+  # Dev tooling (Karma, build) is reported only.
   npm-audit:
-    name: Dependency audit (npm audit, report only)
+    name: Dependency audit (npm audit)
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -79,10 +79,13 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Audit npm dependencies
+      - name: Audit runtime dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Audit all dependencies (report only)
         run: |
           if ! npm audit --audit-level=high; then
-            echo "::warning title=npm audit::Known vulnerabilities, fix planned with the Angular upgrade"
+            echo "::warning title=npm audit::Known vulnerabilities in dev dependencies"
           fi
 
   workflow-lint:
