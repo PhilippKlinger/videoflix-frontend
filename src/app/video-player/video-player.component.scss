@@ -23,7 +23,15 @@
     transition: background 0.12s;
     &:hover { background: rgba(44,44,44,0.92); }
   }
-  vg-player {
+  .quality-btn {
+    position: absolute;
+    top: 28px;
+    left: 38px;
+    background: rgba(0,0,0,0.67);
+    color: white;
+    z-index: 2;
+  }
+  video {
     width: 92vw;
     height: 72vh;
     margin: 0 auto;
