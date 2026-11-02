@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { VideoService } from 'src/app/services/video.service';
 import { Video } from 'src/app/models/video.model';
@@ -18,6 +18,7 @@ import { environment } from 'src/app/environments/environment';
     MainLayoutComponent,
   ],
   templateUrl: './browse.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./browse.component.scss'],
 })
 export class BrowseComponent implements OnInit {

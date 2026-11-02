@@ -1,11 +1,6 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../material/material.module';
-import { VgCoreModule } from '@videogular/ngx-videogular/core';
-import { VgControlsModule } from '@videogular/ngx-videogular/controls';
-import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
-import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { Video } from 'src/app/models/video.model';
 import { toAbsoluteUrl } from 'src/app/utils/url-utils';
 
@@ -13,14 +8,10 @@ import { toAbsoluteUrl } from 'src/app/utils/url-utils';
   standalone: true,
   selector: 'app-video-player',
   imports: [
-    CommonModule,
-    MaterialModule,
-    VgCoreModule,
-    VgControlsModule,
-    VgOverlayPlayModule,
-    VgBufferingModule
+    MaterialModule
   ],
   templateUrl: './video-player.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./video-player.component.scss']
 })
 export class VideoPlayerComponent implements OnInit {

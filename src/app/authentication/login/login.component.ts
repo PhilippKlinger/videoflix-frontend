@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
@@ -6,20 +6,19 @@ import { AuthService } from 'src/app/services/auth-service.service';
 import { Router, RouterModule } from '@angular/router';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material/material.module';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MaterialModule,
     AuthLayoutComponent,
     RouterModule
   ],
   templateUrl: './login.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {

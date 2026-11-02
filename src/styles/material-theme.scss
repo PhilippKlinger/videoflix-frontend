@@ -73,17 +73,17 @@ body {
 }
 
 .mat-mdc-form-field {
-  --mdc-outlined-text-field-outline-width: 1px;
-  --mdc-outlined-text-field-container-shape: 12px;
-  --mdc-outlined-text-field-outline-color: white;
-  --mdc-outlined-text-field-focus-outline-color: #2d3edf; // focus
-  --mdc-outlined-text-field-error-outline-color: #ff032e; // error
-  --mdc-outlined-text-field-label-text-color: white;
-  --mdc-outlined-text-field-focus-label-text-color: #2d3edf; // focus
-  --mdc-outlined-text-field-error-label-text-color: #ff032e; // error
-  --mdc-outlined-text-field-input-text-color: white;
-  --mdc-filled-text-field-label-text-color: white;
-  --mdc-filled-text-field-input-text-color: white;
+  --mat-form-field-outlined-outline-width: 1px;
+  --mat-form-field-outlined-container-shape: 12px;
+  --mat-form-field-outlined-outline-color: white;
+  --mat-form-field-outlined-focus-outline-color: #2d3edf; // focus
+  --mat-form-field-outlined-error-outline-color: #ff032e; // error
+  --mat-form-field-outlined-label-text-color: white;
+  --mat-form-field-outlined-focus-label-text-color: #2d3edf; // focus
+  --mat-form-field-outlined-error-label-text-color: #ff032e; // error
+  --mat-form-field-outlined-input-text-color: white;
+  --mat-form-field-filled-label-text-color: white;
+  --mat-form-field-filled-input-text-color: white;
 }
 
 // Icon: per Input-State
