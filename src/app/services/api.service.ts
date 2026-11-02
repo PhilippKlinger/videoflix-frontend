@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 import { Observable, catchError, throwError, map, BehaviorSubject } from 'rxjs';
 import { Video } from '../models/video.model';
-import { User } from '../models/user.model';
-import { LoginResponse } from  '../models/login-response';
+import { CurrentUser, LoginRequest, PasswordConfirmRequest, RegisterRequest } from '../models/user.model';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -17,16 +16,20 @@ export class ApiService {
   constructor(private http: HttpClient) { }
 
 
-  registerUser(data: User): Observable<any> {
+  registerUser(data: RegisterRequest): Observable<any> {
     return this.http.post(`${this.baseUrl}/register/`, data);
+  }
+
+  activateAccount(uid: string, token: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/activate/${uid}/${token}/`);
   }
 
   getNewActivationEmail(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/request-new-activation-link/`, data)
   }
 
-  loginUser(data: Pick<User, 'email' | 'password'>): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.baseUrl}/login/`, data).pipe(
+  loginUser(data: LoginRequest): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/login/`, data).pipe(
       catchError((error: HttpErrorResponse) => {
         const errorMsg = error.error.non_field_errors ? error.error.non_field_errors[0] : 'An unexpected error occurred';
         return throwError(() => errorMsg);
@@ -34,16 +37,24 @@ export class ApiService {
     );
   }
 
-  forgotPassword(data: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/password-reset/`, data);
+  logoutUser(): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/logout/`, {});
   }
 
-  resetPasswordConfirm(code: string, data: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/password-reset-confirm/${code}/`, data);
+  getMe(): Observable<CurrentUser> {
+    return this.http.get<CurrentUser>(`${this.baseUrl}/me/`);
+  }
+
+  forgotPassword(data: { email: string }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/password_reset/`, data);
+  }
+
+  resetPasswordConfirm(uid: string, token: string, data: PasswordConfirmRequest): Observable<any> {
+    return this.http.post(`${this.baseUrl}/password_confirm/${uid}/${token}/`, data);
   }
 
   getVideos(): Observable<Video[]> {
-    return this.http.get<Video[]>(`${this.baseUrl}/videos/`);
+    return this.http.get<Video[]>(`${this.baseUrl}/video/`);
   }
 
   addVideo(videoData: FormData): Observable<Video | undefined> {
@@ -72,11 +83,7 @@ export class ApiService {
   }
 
   updateVideo(videoId: number, videoData: Partial<Video>): Observable<Video> {
-    return this.http.patch<Video>(`${this.baseUrl}/videos/${videoId}/`, videoData);
-  }
-
-  deleteVideo(videoId: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/videos/${videoId}/`);
+    return this.http.patch<Video>(`${this.baseUrl}/video/${videoId}/`, videoData);
   }
 
   getConversionProgress(videoId: number): Observable<{ progress: number, current_resolution: string }> {
