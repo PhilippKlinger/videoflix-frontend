@@ -3,14 +3,14 @@ import { FormBuilder, Validators, FormGroup, ReactiveFormsModule } from '@angula
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { MaterialModule } from 'src/app/material/material.module';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
 
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MaterialModule, AuthLayoutComponent],
+  imports: [ReactiveFormsModule, MaterialModule, AuthLayoutComponent],
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.scss']
 })

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MaterialModule } from 'src/app/material/material.module';
 import { Video } from 'src/app/models/video.model';
@@ -9,7 +9,7 @@ import { toAbsoluteUrl } from 'src/app/utils/url-utils';
   selector: 'app-video-details-overlay',
   templateUrl: './video-details-overlay.component.html',
   styleUrls: ['./video-details-overlay.component.scss'],
-  imports: [MaterialModule, CommonModule]
+  imports: [MaterialModule]
 })
 export class VideoDetailsOverlayComponent {
 handleResChange($event: Event) {

@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { CommonModule } from '@angular/common';
+
 import { MaterialModule } from '../material/material.module';
 import { Video } from 'src/app/models/video.model';
 import { toAbsoluteUrl } from 'src/app/utils/url-utils';
@@ -9,9 +9,8 @@ import { toAbsoluteUrl } from 'src/app/utils/url-utils';
   standalone: true,
   selector: 'app-video-player',
   imports: [
-    CommonModule,
     MaterialModule
-  ],
+],
   templateUrl: './video-player.component.html',
   styleUrls: ['./video-player.component.scss']
 })

@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
@@ -11,11 +11,10 @@ import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
   selector: 'app-register',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MaterialModule,
     AuthLayoutComponent
-  ],
+],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })

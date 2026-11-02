@@ -1,7 +1,7 @@
 
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
@@ -10,7 +10,7 @@ import { MaterialModule } from 'src/app/material/material.module';
 @Component({
   standalone: true,
   selector: 'app-home',
-  imports: [CommonModule, ReactiveFormsModule, AuthLayoutComponent, MaterialModule],
+  imports: [ReactiveFormsModule, AuthLayoutComponent, MaterialModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

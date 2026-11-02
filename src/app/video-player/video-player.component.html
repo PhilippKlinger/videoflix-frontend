@@ -5,9 +5,11 @@
   <button class="quality-btn" mat-button [matMenuTriggerFor]="qualityBtn" [attr.aria-label]="'Auflösung ' + selectedResolution">{{ selectedResolution }}</button>
   <mat-menu #qualityBtn="matMenu">
     <button mat-menu-item (click)="onResolutionChange('2160p')">2160p</button>
-    <button mat-menu-item *ngFor="let res of video.resolutions" (click)="onResolutionChange(res.resolution)">
-      {{ res.resolution }}
-    </button>
+    @for (res of video.resolutions; track res.id) {
+      <button mat-menu-item (click)="onResolutionChange(res.resolution)">
+        {{ res.resolution }}
+      </button>
+    }
   </mat-menu>
   <video #videoPlayer controls preload="auto" crossorigin></video>
 </div>
