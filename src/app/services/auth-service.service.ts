@@ -1,36 +1,41 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, catchError, finalize, of, switchMap, tap } from 'rxjs';
+import { ApiService } from './api.service';
+import { CurrentUser, LoginRequest } from '../models/user.model';
 
+/**
+ * Session state. The JWT lives in HttpOnly cookies the browser cannot read,
+ * so the logged-in account comes from GET /api/me/.
+ */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private tokenKey = 'token';
-  private userIdKey = 'userId';
-  private emailKey = 'auth-user';
+  private currentUser = new BehaviorSubject<CurrentUser | null>(null);
+  currentUser$ = this.currentUser.asObservable();
 
-  setAuthCredentials(token: string, userId: string, email: string): void {
-    localStorage.setItem(this.tokenKey, token);
-    localStorage.setItem(this.userIdKey, userId);
-    localStorage.setItem(this.emailKey, email);
+  constructor(private api: ApiService) { }
+
+  loadCurrentUser(): Observable<CurrentUser> {
+    const user = this.currentUser.value;
+    if (user) {
+      return of(user);
+    }
+    return this.api.getMe().pipe(tap(me => this.currentUser.next(me)));
   }
 
-  removeAuthCredentials(): void {
-    localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.userIdKey);
-    localStorage.removeItem(this.emailKey);
+  login(data: LoginRequest): Observable<CurrentUser> {
+    this.clearSession();
+    return this.api.loginUser(data).pipe(switchMap(() => this.loadCurrentUser()));
   }
 
-  getAuthToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+  /** Ends the session locally even if the server call fails (e.g. expired cookie). */
+  logout(): Observable<void> {
+    return this.api.logoutUser().pipe(
+      catchError(() => of(undefined)),
+      finalize(() => this.clearSession())
+    );
   }
 
-  getUserId(): string | null {
-    return localStorage.getItem(this.userIdKey);
-  }
-
-  getUsername(): string | null {
-    return localStorage.getItem(this.emailKey);
-  }
-
-  isAuthenticated(): boolean {
-    return !!this.getAuthToken();
+  clearSession(): void {
+    this.currentUser.next(null);
   }
 }
