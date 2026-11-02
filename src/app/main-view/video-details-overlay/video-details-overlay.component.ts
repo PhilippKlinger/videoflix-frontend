@@ -1,4 +1,3 @@
-
 import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { MaterialModule } from 'src/app/material/material.module';
 import { Video } from 'src/app/models/video.model';

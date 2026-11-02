@@ -1,4 +1,3 @@
-
 import { Component, inject, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material/material.module';

@@ -34,40 +34,38 @@
                     [src]="getThumbnailUrl(vid.thumbnail)"
                     [alt]="vid.title"
                     (click)="playVideo(vid)" />
+                </li>
+              }
+            </ul>
+          </div>
+        </section>
+        <!-- Dynamische Genres -->
+        @for (genre of genreOrder; track genre) {
+          <section class="video_list dynamic-category">
+            <h2>{{ genre }}</h2>
+            <div class="scroll-wrapper">
+              <ul [id]="genre.toLowerCase()">
+                @for (vid of genreMap[genre]; track vid.id) {
+                  <li>
+                    <img
+                      [src]="getThumbnailUrl(vid.thumbnail)"
+                      [alt]="vid.title"
+                      (click)="playVideo(vid)" />
                   </li>
                 }
               </ul>
             </div>
           </section>
-          <!-- Dynamische Genres -->
-          @for (genre of genreOrder; track genre) {
-            <section
-              class="video_list dynamic-category"
-              >
-              <h2>{{ genre }}</h2>
-              <div class="scroll-wrapper">
-                <ul [id]="genre.toLowerCase()">
-                  @for (vid of genreMap[genre]; track vid.id) {
-                    <li>
-                      <img
-                        [src]="getThumbnailUrl(vid.thumbnail)"
-                        [alt]="vid.title"
-                        (click)="playVideo(vid)" />
-                      </li>
-                    }
-                  </ul>
-                </div>
-              </section>
-            }
-          </section>
         }
+      </section>
+    }
 
-        <!-- Fallback -->
-        @if (!loading && !newestVideos.length) {
-          <div class="no_videos">
-            Keine Videos gefunden.
-          </div>
-        }
+    <!-- Fallback -->
+    @if (!loading && !newestVideos.length) {
+      <div class="no_videos">
+        Keine Videos gefunden.
+      </div>
+    }
 
-      </main>
-    </app-main-layout>
+  </main>
+</app-main-layout>

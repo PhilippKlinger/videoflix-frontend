@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-
 import { MaterialModule } from '../material/material.module';
 import { Video } from 'src/app/models/video.model';
 import { toAbsoluteUrl } from 'src/app/utils/url-utils';
@@ -10,7 +9,7 @@ import { toAbsoluteUrl } from 'src/app/utils/url-utils';
   selector: 'app-video-player',
   imports: [
     MaterialModule
-],
+  ],
   templateUrl: './video-player.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./video-player.component.scss']

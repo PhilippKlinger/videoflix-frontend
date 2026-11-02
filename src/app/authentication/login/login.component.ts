@@ -6,7 +6,6 @@ import { AuthService } from 'src/app/services/auth-service.service';
 import { Router, RouterModule } from '@angular/router';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
 import { MaterialModule } from 'src/app/material/material.module';
 
 @Component({
@@ -17,7 +16,7 @@ import { MaterialModule } from 'src/app/material/material.module';
     MaterialModule,
     AuthLayoutComponent,
     RouterModule
-],
+  ],
   templateUrl: './login.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./login.component.scss'],

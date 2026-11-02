@@ -3,7 +3,6 @@ import { FormBuilder, Validators, FormGroup, ReactiveFormsModule } from '@angula
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
-
 import { MaterialModule } from 'src/app/material/material.module';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
 

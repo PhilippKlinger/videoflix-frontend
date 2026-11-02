@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectionStrategy } from '@angular/core';
-
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MaterialModule } from 'src/app/material/material.module';
@@ -14,7 +13,7 @@ import { ApiService } from 'src/app/services/api.service';
     ReactiveFormsModule,
     MaterialModule,
     AuthLayoutComponent
-],
+  ],
   templateUrl: './reset-password.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./reset-password.component.scss']
