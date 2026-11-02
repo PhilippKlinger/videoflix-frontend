@@ -20,6 +20,6 @@ export class VideoThumbnailComponent {
   hovered = false;
 
   getThumbnailUrl() {
-    return toAbsoluteUrl(this.video.thumbnail);
+    return toAbsoluteUrl(this.video.thumbnail_url ?? '');
   }
 }

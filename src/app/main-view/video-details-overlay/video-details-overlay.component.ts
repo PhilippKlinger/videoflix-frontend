@@ -20,6 +20,6 @@ throw new Error('Method not implemented.');
   @Output() play = new EventEmitter<Video>();
 
   getBgUrl() {
-    return toAbsoluteUrl(this.video.thumbnail);
+    return toAbsoluteUrl(this.video.thumbnail_url ?? '');
   }
 }
