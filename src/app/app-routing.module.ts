@@ -5,6 +5,7 @@ import { RegisterComponent } from './authentication/register/register.component'
 import { LoginComponent } from './authentication/login/login.component';
 import { ForgotPasswordComponent } from './authentication/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './authentication/reset-password/reset-password.component';
+import { ActivateComponent } from './authentication/activate/activate.component';
 
 
 import { VideoUploadComponent } from './main-view/video-upload/video-upload.component';
@@ -20,7 +21,8 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: 'reset-password/:code', component: ResetPasswordComponent },
+  { path: 'activate/:uid/:token', component: ActivateComponent },
+  { path: 'reset-password/:uid/:token', component: ResetPasswordComponent },
   {
     path: 'browse', component: BrowseComponent, canActivate: [AuthGuard],
     children: [

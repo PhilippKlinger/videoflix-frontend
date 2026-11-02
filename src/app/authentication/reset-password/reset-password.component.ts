@@ -59,8 +59,8 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   };
 
   passwordMatchValidator(form: AbstractControl): ValidationErrors | null {
-    const password = form.get('password')?.value;
-    const confirm = form.get('password_confirm')?.value;
+    const password = form.get('new_password')?.value;
+    const confirm = form.get('confirm_password')?.value;
     return password === confirm ? null : { mismatch: true };
   }
 
