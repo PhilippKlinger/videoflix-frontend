@@ -16,4 +16,8 @@ describe('ApiService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  it('uses the relative /api base', () => {
+    expect(service.baseUrl).toBe('/api');
+  });
 });

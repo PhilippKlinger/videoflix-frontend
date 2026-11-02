@@ -4,13 +4,13 @@ import { Observable, catchError, throwError, map, BehaviorSubject } from 'rxjs';
 import { Video } from '../models/video.model';
 import { User } from '../models/user.model';
 import { LoginResponse } from  '../models/login-response';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  public baseUrl = 'http://127.0.0.1:8000/api';
-  // public baseUrl = 'https://backend-videoflix.philipp-klinger.com';
+  public baseUrl = environment.apiUrl;
   public uploadProgress: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   public conversionProgress: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
