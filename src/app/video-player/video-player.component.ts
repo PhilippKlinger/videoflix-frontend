@@ -37,9 +37,11 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   // Not every browser can put an element into fullscreen (iPhone).
   readonly canFullscreen = document.fullscreenEnabled;
   private hls: Hls | null = null;
+  // Created once, even if a resolution change starts while hls.js is still loading.
+  private hlsReady: Promise<Hls | null> | null = null;
+  private destroyed = false;
 
   @ViewChild('videoPlayer') videoPlayer?: ElementRef<HTMLVideoElement>;
-  @ViewChild('playerOverlay', { static: true }) playerOverlay!: ElementRef<HTMLElement>;
 
   constructor(
     public dialogRef: MatDialogRef<VideoPlayerComponent>,
@@ -64,7 +66,11 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     this.hls?.destroy();
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    }
     document.body.style.overflow = '';
   }
 
@@ -94,24 +100,32 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resumeAt = null;
   }
 
+  /**
+   * The player lives in a MatDialog inside the CDK overlay container, and its menus open there too.
+   * Only the whole page as fullscreen element keeps dialog, close button and resolution menu visible.
+   */
+  fullscreenTarget(): HTMLElement {
+    return document.documentElement;
+  }
+
   toggleFullscreen(): void {
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
     } else {
-      this.playerOverlay.nativeElement.requestFullscreen().catch(() => {});
+      this.fullscreenTarget().requestFullscreen().catch(() => {});
     }
   }
 
   @HostListener('document:fullscreenchange')
   onFullscreenChange(): void {
     // Firefox ignores controlsList and a double click fullscreens the bare video:
-    // move fullscreen to the overlay so close and resolution stay reachable.
+    // move fullscreen to the page so close and resolution stay reachable.
     if (document.fullscreenElement && document.fullscreenElement === this.videoPlayer?.nativeElement) {
       document.exitFullscreen()
-        .then(() => this.playerOverlay.nativeElement.requestFullscreen())
+        .then(() => this.fullscreenTarget().requestFullscreen())
         .catch(() => {});
     }
-    this.isFullscreen = document.fullscreenElement === this.playerOverlay.nativeElement;
+    this.isFullscreen = document.fullscreenElement === this.fullscreenTarget();
   }
 
   closeDialog(): void {
@@ -123,7 +137,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       // hls.js loads past the HTTP interceptors: this request refreshes an expired access cookie first.
       await firstValueFrom(this.api.getMe());
     } catch {
-      this.showPlaybackError();
+      if (!this.destroyed) this.showPlaybackError();
       return;
     }
     await this.loadStream();
@@ -131,24 +145,36 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private async loadStream(): Promise<void> {
     const videoElement = this.videoPlayer?.nativeElement;
-    if (!videoElement || !this.selectedResolution) return;
+    if (this.destroyed || !videoElement || !this.selectedResolution) return;
+    const hls = await this.getHls(videoElement);
+    // The player may have closed or failed while hls.js was loading.
+    if (this.destroyed || this.playbackError || !this.selectedResolution) return;
     const url = this.streamUrl(this.selectedResolution);
-    if (!this.hls) {
-      this.hls = await this.createHls();
-      if (this.hls) {
-        this.hls.attachMedia(videoElement);
-        this.hls.on('hlsError' as Events.ERROR, (_event: Events.ERROR, data: ErrorData) => {
-          if (data.fatal) this.showPlaybackError();
-        });
-      }
-    }
-    if (this.hls) {
-      this.hls.loadSource(url);
+    if (hls) {
+      hls.loadSource(url);
     } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
       videoElement.src = url;
     } else {
       this.showPlaybackError();
     }
+  }
+
+  private getHls(videoElement: HTMLVideoElement): Promise<Hls | null> {
+    this.hlsReady ??= this.createHls().then(hls => {
+      if (!hls) return null;
+      if (this.destroyed) {
+        hls.destroy();
+        return null;
+      }
+      hls.attachMedia(videoElement);
+      // Value of Hls.Events.ERROR; the enum itself is only available after the lazy import.
+      hls.on('hlsError' as Events.ERROR, (_event: Events.ERROR, data: ErrorData) => {
+        if (data.fatal) this.showPlaybackError();
+      });
+      this.hls = hls;
+      return hls;
+    });
+    return this.hlsReady;
   }
 
   private showPlaybackError(): void {

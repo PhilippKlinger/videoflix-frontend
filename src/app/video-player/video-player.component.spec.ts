@@ -166,6 +166,26 @@ describe('VideoPlayerComponent', () => {
       expect(button?.getAttribute('aria-label')).toBe('Exit fullscreen');
     });
 
+    it('puts the whole page into fullscreen, so dialog and menu stay visible', () => {
+      httpMock.expectOne('/api/me/').flush({});
+      expect(component.fullscreenTarget()).toBe(document.documentElement);
+    });
+
+    it('does not start hls.js when the player closes during the session check', async () => {
+      fixture.destroy();
+      await sessionOk();
+      expect(hls.attachMedia).not.toHaveBeenCalled();
+      expect(hls.loadSource).not.toHaveBeenCalled();
+    });
+
+    it('creates hls.js only once when the resolution changes during loading', async () => {
+      const switching = component.onResolutionChange('1080p');
+      await sessionOk();
+      await switching;
+      expect(component.createHls).toHaveBeenCalledTimes(1);
+      expect(hls.attachMedia).toHaveBeenCalledTimes(1);
+    });
+
     it('destroys hls.js when the player closes', async () => {
       await sessionOk();
       fixture.destroy();
