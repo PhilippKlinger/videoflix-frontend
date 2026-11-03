@@ -2,16 +2,20 @@
   <button class="close-btn" (click)="closeDialog()" aria-label="Close player">
     <mat-icon>close</mat-icon>
   </button>
-  @if (selectedResolution) {
+  @if (playbackError) {
+    <p class="processing-message">This video cannot be played right now. Please try again later.</p>
+  } @else if (selectedResolution) {
     <button class="quality-btn" mat-button [matMenuTriggerFor]="qualityBtn" [attr.aria-label]="'Resolution ' + selectedResolution">{{ selectedResolution }}</button>
     <mat-menu #qualityBtn="matMenu">
       @for (res of resolutions; track res) {
         <button mat-menu-item (click)="onResolutionChange(res)">{{ res }}</button>
       }
     </mat-menu>
-    <button class="fullscreen-btn" (click)="toggleFullscreen()" aria-label="Fullscreen">
-      <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
-    </button>
+    @if (canFullscreen) {
+      <button class="fullscreen-btn" (click)="toggleFullscreen()" [attr.aria-label]="isFullscreen ? 'Exit fullscreen' : 'Fullscreen'">
+        <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+      </button>
+    }
     <video #videoPlayer controls autoplay controlslist="nofullscreen" [attr.poster]="video.thumbnail_url"
       (loadedmetadata)="onLoadedMetadata()"></video>
   } @else {
