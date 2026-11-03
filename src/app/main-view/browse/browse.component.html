@@ -20,7 +20,7 @@
       </section>
     }
 
-    <!-- Scrollable Listen -->
+    <!-- Scrollable lists -->
     @if (!loading) {
       <section class="list_section">
         <!-- New on Videoflix -->
@@ -39,7 +39,7 @@
             </ul>
           </div>
         </section>
-        <!-- Dynamische Genres -->
+        <!-- Dynamic genres -->
         @for (genre of genreOrder; track genre) {
           <section class="video_list dynamic-category">
             <h2>{{ genre }}</h2>

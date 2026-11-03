@@ -20,7 +20,14 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 ## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+The end-to-end tests use [Playwright](https://playwright.dev) and run against the local dev stack:
+
+1. Start the backend with `docker compose --profile dev up -d` (includes Mailpit for the activation mails).
+2. Start the frontend with `npm start`.
+3. Once: `npx playwright install chromium`.
+4. Run `npm run e2e`. The report is written to `playwright-report/`.
+
+The backend allows 5 registration mails per hour and IP, so the auth smoke can run up to 5 times per hour.
 
 ## Further help
 
