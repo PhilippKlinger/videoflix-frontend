@@ -1,114 +1,95 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component, DestroyRef, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HttpErrorResponse, HttpEventType } from '@angular/common/http';
+import { Router, RouterModule } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { CATEGORY_CHOICES } from 'src/app/models/video.model';
-import { interval, Subscription, switchMap } from 'rxjs';
+import { MaterialModule } from 'src/app/material/material.module';
+import { MainLayoutComponent } from '../main-layout/main-layout.component';
 
+/** Same limit as the backend (VFX-27); checked here to avoid a pointless upload. */
+const MAX_FILE_SIZE = 50 * 1024 * 1024;
 
 @Component({
-    selector: 'app-video-upload',
-    templateUrl: './video-upload.component.html',
-    styleUrls: ['./video-upload.component.scss', '../../authentication/login/login.component.scss'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+  standalone: true,
+  selector: 'app-video-upload',
+  imports: [ReactiveFormsModule, RouterModule, MaterialModule, MainLayoutComponent],
+  templateUrl: './video-upload.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrls: ['./video-upload.component.scss'],
 })
-export class VideoUploadComponent implements OnInit {
-  uploadForm!: FormGroup;
-  requestLoading: boolean = false;
-  selectedFile!: File | null;
-  categoryChoices = CATEGORY_CHOICES;
-  uploadProgress: number = 0;
-  conversionProgress: number = 0;
-  currentResolution: string = '';
-  conversionProgressSubscription!: Subscription;
+export class VideoUploadComponent {
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
-  switchCase: string = "startUpload"
+  readonly categoryChoices = CATEGORY_CHOICES;
+  readonly uploadForm = inject(FormBuilder).nonNullable.group({
+    title: ['', [Validators.required, Validators.minLength(4)]],
+    description: ['', [Validators.required, Validators.minLength(4)]],
+    category: ['', Validators.required],
+  });
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private apiService: ApiService,
-    private router: Router) { }
+  selectedFile: File | null = null;
+  readonly uploading = signal(false);
+  readonly uploadProgress = signal(0);
+  readonly errorMessage = signal('');
 
-
-  ngOnInit(): void {
-    this.uploadForm = this.formBuilder.group({
-      title: ['', [Validators.required, Validators.minLength(4)]],
-      description: ['', [Validators.required, Validators.minLength(4)]],
-      category: ['', Validators.required],
-      videoFile: [null, Validators.required]
-    });
-
-    this.apiService.uploadProgress.subscribe(progress => {
-      this.uploadProgress = progress;
-    });
-
-    this.apiService.conversionProgress.subscribe(progress => {
-      this.conversionProgress = progress;
-    });
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.selectedFile = input.files?.[0] ?? null;
+    this.errorMessage.set('');
   }
 
-
-  onFileChange(event: any) {
-    if (event.target.files.length > 0) {
-      this.selectedFile = event.target.files[0];
-      this.uploadForm.patchValue({
-        videoFile: this.selectedFile
-      });
+  onSubmit(): void {
+    if (this.uploadForm.invalid || !this.selectedFile || this.uploading()) return;
+    if (this.selectedFile.size > MAX_FILE_SIZE) {
+      this.errorMessage.set('The file must not be larger than 50 MB.');
+      return;
     }
-  }
-
-  onSubmit() {
-    if (this.uploadForm.valid) {
-      this.switchCase = "pendingUpload";
-      this.requestLoading = true;
-      const formData = new FormData();
-      formData.append('title', this.uploadForm.get('title')?.value);
-      formData.append('description', this.uploadForm.get('description')?.value);
-      formData.append('category', this.uploadForm.get('category')?.value);
-      if (this.selectedFile) {
-        formData.append('video_file', this.selectedFile);
-      }
-
-      this.apiService.addVideo(formData).subscribe({
-        next: (response) => {
-          // this.router.navigate(['/login']);
-          if (response) {
-            this.pollConversionProgress(response.id);
+    this.errorMessage.set('');
+    this.uploading.set(true);
+    this.uploadProgress.set(0);
+    this.api.addVideo(this.buildFormData(this.selectedFile))
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: event => {
+          if (event.type === HttpEventType.UploadProgress && event.total) {
+            this.uploadProgress.set(Math.round((100 * event.loaded) / event.total));
+          } else if (event.type === HttpEventType.Response) {
+            // The conversion runs in the background; browse shows its progress.
+            this.router.navigate(['/browse']);
           }
-
         },
-        error: (error) => {
-          console.error('Video Upload failed', error);
-          this.resetForm();
-        }
+        error: (error: HttpErrorResponse) => {
+          this.uploading.set(false);
+          this.errorMessage.set(this.messageFor(error));
+        },
       });
+  }
+
+  private buildFormData(file: File): FormData {
+    const { title, description, category } = this.uploadForm.getRawValue();
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('category', category);
+    formData.append('video_file', file);
+    return formData;
+  }
+
+  /** The backend's 400 messages are written for users; everything else gets a general text. */
+  private messageFor(error: HttpErrorResponse): string {
+    if (error.status === 400) {
+      const fileError = error.error?.video_file?.[0];
+      const detail = error.error?.detail;
+      if (typeof fileError === 'string') return fileError;
+      if (typeof detail === 'string') return detail;
     }
+    if (error.status === 429) {
+      return 'You have uploaded a lot of videos recently. Please try again later.';
+    }
+    return 'The upload did not work. Please try again later.';
   }
-
-  pollConversionProgress(videoId: number) {
-    this.conversionProgressSubscription = interval(5000).pipe(
-      switchMap(() => this.apiService.getConversionProgress(videoId))
-    ).subscribe((response: { progress: number, current_resolution: string }) => {
-      this.apiService.conversionProgress.next(response.progress);
-      this.currentResolution = response.current_resolution;
-
-      if (this.conversionProgress >= 100) {
-        this.conversionProgressSubscription.unsubscribe();
-        this.resetForm();
-        this.switchCase = "finishedUpload";
-      }
-    });
-  }
-
-  startNewUpload() {
-    this.switchCase = "startUpload";
-  }
-
-  resetForm() {
-    this.uploadForm.reset();
-    this.requestLoading = false;
-  }
-
 }
-

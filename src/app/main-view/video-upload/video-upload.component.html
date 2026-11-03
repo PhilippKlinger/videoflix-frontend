@@ -1,82 +1,45 @@
-<!-- <section class="video-upload-section" [ngSwitch]="switchCase">
-  <div *ngIf="requestLoading" class="shape-loader"></div>
-  <div class="upload-form-section" *ngSwitchCase="'startUpload'">
-    <h2>Video upload</h2>
+<app-main-layout>
+  <section class="upload-wrapper card-bg">
+    <h1>Upload video</h1>
     <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <input type="text" id="title" class="form-control name-content" formControlName="title"
-          placeholder="Your title">
-        <div
-          *ngIf="(uploadForm.controls['title'].dirty || uploadForm.controls['title'].touched)  && uploadForm.controls['title'].invalid "
-          class="text-danger">
-          Please enter a valid title.
-        </div>
-      </div>
-      <div class="form-group">
-        <input type="text" id="description" class="form-control name-content" formControlName="description"
-          placeholder="Your description">
-        <div
-          *ngIf="(uploadForm.controls['description'].dirty || uploadForm.controls['description'].touched)  && uploadForm.controls['description'].invalid "
-          class="text-danger">
-          Please enter a valid description.
-        </div>
-      </div>
-      <div class="form-group">
-        <select id="genre" class="form-control" formControlName="genre">
-          <option *ngFor="let choice of genreChoices" [value]="choice.value">{{ choice.label }}</option>
-        </select>
-        <div
-          *ngIf="uploadForm.controls['genre'].invalid && (uploadForm.controls['genre'].dirty || uploadForm.controls['genre'].touched)"
-          class="text-danger">
-          Please select a genre.
-        </div>
-      </div>
-      <div class="form-group">
-        <select id="category" class="form-control" formControlName="category">
-          <option *ngFor="let choice of categoryChoices" [value]="choice.value">{{ choice.label }}</option>
-        </select>
-        <div
-          *ngIf="uploadForm.controls['category'].invalid && (uploadForm.controls['category'].dirty || uploadForm.controls['category'].touched)"
-          class="text-danger">
-          Please select a category.
-        </div>
-      </div>
-      <div class="form-group">
-        <input type="file" (change)="onFileChange($event)" />
-      </div>
-      <div class="button-section">
-        <button type="submit" [disabled]="!uploadForm.valid">start upload</button>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title">
+        <mat-error>Please enter a title with at least 4 characters.</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3"></textarea>
+        <mat-error>Please enter a description with at least 4 characters.</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Genre</mat-label>
+        <mat-select formControlName="category">
+          @for (choice of categoryChoices; track choice.value) {
+            <mat-option [value]="choice.value">{{ choice.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-error>Please choose a genre.</mat-error>
+      </mat-form-field>
+      <label class="file-field">
+        <span>Video file (MP4 or MOV, up to 50 MB and 2 minutes)</span>
+        <input type="file" accept="video/mp4,video/quicktime" (change)="onFileChange($event)" [disabled]="uploading()">
+      </label>
+
+      @if (errorMessage()) {
+        <p class="form-error" role="alert">{{ errorMessage() }}</p>
+      }
+      @if (uploading()) {
+        <mat-progress-bar mode="determinate" [value]="uploadProgress()"></mat-progress-bar>
+        <p class="upload-status" aria-live="polite">Uploading… {{ uploadProgress() }} %</p>
+      }
+
+      <div class="actions">
+        <a mat-button routerLink="/browse">Cancel</a>
+        <button mat-flat-button color="primary" type="submit" [disabled]="uploadForm.invalid || !selectedFile || uploading()">
+          Upload
+        </button>
       </div>
     </form>
-  </div>
-
-
-  <div class="upload-processing" *ngSwitchCase="'pendingUpload'">
-    <h2>Video Upload and Conversion in progress</h2>
-    <div *ngIf="uploadProgress > 0" class="progress">
-      <div class="progress-bar" [style.width.%]="uploadProgress">{{uploadProgress}}%</div>
-    </div>
-    <div *ngIf="uploadProgress == 100 && conversionProgress !==100">
-      <ul>
-        <li [ngStyle]="{'color': conversionProgress >= 33 ? 'green' : 'red'}">
-          480p - {{conversionProgress >= 33 ? 'finished converting' : 'active converting'}}
-        </li>
-        <li [ngStyle]="{'color': conversionProgress >= 66 ? 'green' : 'red'}">
-          720p - {{conversionProgress >= 66 ? 'finished converting' : (conversionProgress >= 33 ? 'active converting' :
-          'waiting')}}
-        </li>
-        <!-- <li [ngStyle]="{'color': conversionProgress >= 100 ? 'green' : 'red'}">
-          1080p - {{conversionProgress >= 100 ? 'finished converting' : (conversionProgress >= 66 ? 'active converting'
-          : 'waiting')}}
-        </li> -->
-      <!-- </ul>
-    </div>
-  </div>
-
-  <div *ngSwitchCase="'finishedUpload'">
-    <p>Video Upload and Conversion finished!</p>
-    <div class="button-section">
-      <button (click)="startNewUpload()">add another video</button>
-    </div>
-  </div>
-</section> --> -->
+  </section>
+</app-main-layout>
