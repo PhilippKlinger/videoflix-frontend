@@ -7,7 +7,6 @@ export const TEST_VIDEO: Video = {
   title: 'Test video',
   description: 'Test description',
   category: 'Action',
-  video_file: '/media/videos/test.mp4',
   thumbnail_url: '/api/video/1/thumbnail/',
   conversion_progress: 100,
   current_resolution: '1080p',
