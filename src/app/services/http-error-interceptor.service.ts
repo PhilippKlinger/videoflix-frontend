@@ -18,7 +18,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           }
           let errorMessage = 'An unknown error occurred!';
           if (error.error instanceof ErrorEvent) {
-            // Client-seitiger oder Netzwerkfehler
+            // Client-side or network error
             errorMessage = `An error occurred: ${error.error.message}`;
           } else if (error.error.non_field_errors) {
             errorMessage = error.error.non_field_errors[0];
@@ -30,8 +30,8 @@ export class HttpErrorInterceptor implements HttpInterceptor {
             errorMessage = 'Your session could not be verified. Please reload the page and try again.';
           }
           else {
-            // Der Backend kehrte einen erfolglosen Response-Code zurück.
-            // Fehlermeldung aus dem Response ist, falls vorhanden, error.error.detail.
+            // The backend returned an unsuccessful response code.
+            // The error message is in error.error.detail, if present.
             errorMessage = error.error.detail || error.message || error.statusText;
           }
           this.errorService.log(errorMessage);

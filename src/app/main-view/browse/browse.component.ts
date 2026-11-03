@@ -23,7 +23,7 @@ import { MaterialModule } from 'src/app/material/material.module';
 export class BrowseComponent implements OnInit {
   /** Videos gruppiert nach Genre */
   genreMap: { [genre: string]: Video[] } = {};
-  /** Dynamische Reihenfolge der Genres */
+  /** Dynamic order of the genres */
   genreOrder: string[] = [];
   /** Neueste Videos */
   newestVideos: Video[] = [];
@@ -47,7 +47,7 @@ export class BrowseComponent implements OnInit {
       // Featured = erstes Element
       this.featured = this.newestVideos[0];
 
-      // Genres extrahieren und gruppieren (the backend calls the genre "category")
+      // Extract and group genres (the backend calls the genre "category")
       const genres = Array.from(new Set(videos.map(v => v.category))).sort();
       this.genreOrder = genres;
       this.genreMap = {};
@@ -59,7 +59,7 @@ export class BrowseComponent implements OnInit {
     });
   }
 
-  /** Öffnet den Player als Dialog */
+  /** Opens the player as a dialog */
   playVideo(video: Video): void {
     this.dialog.open(VideoPlayerComponent, {
       data: { video },
