@@ -26,4 +26,10 @@ describe('VideoDetailsOverlayComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('shows the category once', () => {
+    const meta: HTMLElement = fixture.nativeElement.querySelector('.details-meta');
+    expect(meta.querySelectorAll('span').length).toBe(1);
+    expect(meta.textContent).toContain('Category: Action');
+  });
 });
