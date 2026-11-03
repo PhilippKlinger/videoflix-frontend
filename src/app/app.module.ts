@@ -8,6 +8,7 @@ import { MaterialModule } from './material/material.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { FullscreenOverlayContainer, OverlayContainer } from '@angular/cdk/overlay';
 import { provideAppHttpClient } from './http.providers';
 import { ImprintComponent } from './imprint/imprint.component';
 
@@ -48,6 +49,8 @@ import { VideoUploadComponent } from './main-view/video-upload/video-upload.comp
             multi: true
         },
         provideAppHttpClient(),
+        // Overlays (e.g. the player's resolution menu) must render inside the fullscreen element.
+        { provide: OverlayContainer, useClass: FullscreenOverlayContainer },
     ]
 })
 export class AppModule { }
