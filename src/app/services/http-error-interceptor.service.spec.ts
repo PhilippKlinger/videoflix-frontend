@@ -32,9 +32,15 @@ describe('HttpErrorInterceptorService', () => {
     expect(logSpy).not.toHaveBeenCalled();
   });
 
-  it('logs 403 detail', () => {
+  it('logs a friendly message instead of the CSRF detail', () => {
     http.post('/api/upload/', {}).subscribe({ error: () => undefined });
     httpMock.expectOne('/api/upload/').flush({ detail: 'CSRF Failed: CSRF token missing.' }, { status: 403, statusText: 'Forbidden' });
-    expect(logSpy).toHaveBeenCalledWith('CSRF Failed: CSRF token missing.');
+    expect(logSpy).toHaveBeenCalledWith('Your session could not be verified. Please reload the page and try again.');
+  });
+
+  it('logs other 403 details unchanged', () => {
+    http.post('/api/upload/', {}).subscribe({ error: () => undefined });
+    httpMock.expectOne('/api/upload/').flush({ detail: 'You do not have permission to perform this action.' }, { status: 403, statusText: 'Forbidden' });
+    expect(logSpy).toHaveBeenCalledWith('You do not have permission to perform this action.');
   });
 });

@@ -25,6 +25,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           } else if (error.error.email) {
             errorMessage = error.error.email[0];
           }
+          else if (error.status === 403 && error.error.detail?.startsWith('CSRF Failed')) {
+            // Missing or stale CSRF cookie: a reload fetches a new one.
+            errorMessage = 'Your session could not be verified. Please reload the page and try again.';
+          }
           else {
             // Der Backend kehrte einen erfolglosen Response-Code zurück.
             // Fehlermeldung aus dem Response ist, falls vorhanden, error.error.detail.
