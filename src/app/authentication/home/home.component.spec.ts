@@ -21,6 +21,10 @@ describe('HomeComponent', () => {
     fixture.detectChanges();
   });
 
+  it('offers the demo next to the sign-up', () => {
+    expect(fixture.nativeElement.querySelector('app-demo-button')).not.toBeNull();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });

@@ -5,11 +5,12 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
 import { MaterialModule } from 'src/app/material/material.module';
+import { DemoButtonComponent } from '../demo-button/demo-button.component';
 
 @Component({
   standalone: true,
   selector: 'app-home',
-  imports: [ReactiveFormsModule, AuthLayoutComponent, MaterialModule],
+  imports: [ReactiveFormsModule, AuthLayoutComponent, MaterialModule, DemoButtonComponent],
   templateUrl: './home.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './home.component.scss'

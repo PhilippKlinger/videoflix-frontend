@@ -6,6 +6,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'src/app/material/material.module';
+import { DemoButtonComponent } from '../demo-button/demo-button.component';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,8 @@ import { MaterialModule } from 'src/app/material/material.module';
     ReactiveFormsModule,
     MaterialModule,
     AuthLayoutComponent,
-    RouterModule
+    RouterModule,
+    DemoButtonComponent
   ],
   templateUrl: './login.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,

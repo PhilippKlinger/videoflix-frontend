@@ -1,0 +1,10 @@
+<div class="demo">
+  <button mat-stroked-button type="button" class="demo-button" (click)="startDemo()" [disabled]="starting()">
+    <mat-icon>play_circle</mat-icon>
+    {{ starting() ? 'Starting demo…' : 'Try demo' }}
+  </button>
+  <p class="demo-hint">No sign-up needed. The demo account is deleted after 2 hours.</p>
+  @if (errorMessage()) {
+    <p class="demo-error" role="alert">{{ errorMessage() }}</p>
+  }
+</div>
