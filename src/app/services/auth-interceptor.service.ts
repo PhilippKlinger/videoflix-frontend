@@ -28,15 +28,21 @@ export class AuthInterceptor implements HttpInterceptor {
           return throwError(() => error);
         }
         return this.refresh(next).pipe(
-          catchError(() => {
-            this.authService.clearSession();
-            this.router.navigate(['/']);
-            return throwError(() => error);
-          }),
-          switchMap(() => next.handle(request))
+          catchError(() => this.endSession(error)),
+          // Still 401 after a fresh token (e.g. account deactivated): the session is over.
+          switchMap(() => next.handle(request).pipe(
+            catchError((retryError: HttpErrorResponse) =>
+              retryError.status === 401 ? this.endSession(retryError) : throwError(() => retryError))
+          ))
         );
       })
     );
+  }
+
+  private endSession(error: HttpErrorResponse): Observable<never> {
+    this.authService.clearSession();
+    this.router.navigate(['/']);
+    return throwError(() => error);
   }
 
   private refresh(next: HttpHandler): Observable<HttpEvent<unknown>> {

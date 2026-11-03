@@ -76,6 +76,20 @@ describe('AuthInterceptor', () => {
     expect(error?.status).toBe(401);
   });
 
+  it('ends the session when the retried request is still 401', () => {
+    let error: HttpErrorResponse | undefined;
+    http.get('/api/video/').subscribe({ error: e => error = e });
+
+    httpMock.expectOne('/api/video/').flush({}, unauthorized);
+    httpMock.expectOne('/api/token/refresh/').flush({ message: 'access token refreshed' });
+    httpMock.expectOne('/api/video/').flush({ detail: 'User inactive or deleted.' }, unauthorized);
+
+    httpMock.expectNone('/api/token/refresh/');
+    expect(clearSpy).toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith(['/']);
+    expect(error?.status).toBe(401);
+  });
+
   it('does not refresh on 401 from /api/login/', () => {
     http.post('/api/login/', {}).subscribe({ error: () => undefined });
     httpMock.expectOne('/api/login/').flush({}, unauthorized);
