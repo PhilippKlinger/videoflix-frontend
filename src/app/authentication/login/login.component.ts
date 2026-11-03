@@ -1,6 +1,5 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ApiService } from 'src/app/services/api.service';
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 import { AuthService } from 'src/app/services/auth-service.service';
 import { Router, RouterModule } from '@angular/router';
@@ -27,7 +26,6 @@ export class LoginComponent implements OnInit {
   showPassword = false;
 
   fb = inject(FormBuilder);
-  api = inject(ApiService);
   authService = inject(AuthService);
   router = inject(Router);
   errorService = inject(ErrorHandlingService);
@@ -59,9 +57,8 @@ export class LoginComponent implements OnInit {
       return;
     }
     this.requestloading = true;
-    this.api.loginUser(this.loginForm.value).subscribe({
-      next: (response) => {
-        this.authService.setAuthCredentials(response.token, response.user_id, response.email || '');
+    this.authService.login(this.loginForm.value).subscribe({
+      next: () => {
         localStorage.removeItem('emailForLogin');
         this.requestloading = false;
         this.router.navigate(['/browse']);

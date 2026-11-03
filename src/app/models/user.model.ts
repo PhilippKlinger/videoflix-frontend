@@ -1,8 +1,24 @@
-export interface User {
+export interface LoginRequest {
   email: string;
-  username: string;
   password: string;
-  password_confirm?: string;
-  is_active?: boolean;
-  activation_code?: string;
+}
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  confirmed_password: string;
+}
+
+export interface PasswordConfirmRequest {
+  new_password: string;
+  confirm_password: string;
+}
+
+export type Role = 'admin' | 'member' | 'demo';
+
+/** Logged-in account as returned by GET /api/me/. */
+export interface CurrentUser {
+  id: number;
+  email: string;
+  role: Role;
 }

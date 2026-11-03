@@ -82,7 +82,8 @@ export class RegisterComponent implements OnInit {
 
     this.requestloading = true;
 
-    this.api.registerUser(this.registerForm.value).subscribe({
+    const { email, password, password_confirm } = this.registerForm.value;
+    this.api.registerUser({ email, password, confirmed_password: password_confirm }).subscribe({
       next: () => {
         this.registerSuccess = true;
         this.requestloading = false;

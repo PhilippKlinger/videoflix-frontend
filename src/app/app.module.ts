@@ -7,7 +7,8 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from './material/material.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { provideAppHttpClient } from './http.providers';
 import { ImprintComponent } from './imprint/imprint.component';
 
 import { AuthInterceptor } from './services/auth-interceptor.service';
@@ -34,17 +35,19 @@ import { VideoUploadComponent } from './main-view/video-upload/video-upload.comp
     CommonModule],
 
     providers: [
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: AuthInterceptor,
-            multi: true
-        },
+        // Order matters: the error interceptor sits outside, so it only sees
+        // errors that remain after the auth interceptor tried a token refresh.
         {
             provide: HTTP_INTERCEPTORS,
             useClass: HttpErrorInterceptor,
             multi: true
         },
-        provideHttpClient(withXhr(), withInterceptorsFromDi()),
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthInterceptor,
+            multi: true
+        },
+        provideAppHttpClient(),
     ]
 })
 export class AppModule { }

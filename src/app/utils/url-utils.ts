@@ -1,9 +1,9 @@
 import { environment } from "../environments/environment";
 
-/** Gibt immer eine absolute URL für Bilder/Videos zurück */
+/** Always returns an absolute URL for images/videos */
 export function toAbsoluteUrl(path: string): string {
   if (!path) return '';
-  // Wenn schon http(s), dann ist es bereits absolut
+  // Already http(s), so it is absolute
   if (path.startsWith('http://') || path.startsWith('https://')) return path;
   // Fallback: Trailing slash entfernen, falls doppelt
   const base = environment.mediaBaseUrl.replace(/\/$/, '');

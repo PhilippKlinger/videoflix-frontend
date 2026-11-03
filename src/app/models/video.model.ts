@@ -8,21 +8,20 @@ export interface VideoResolution {
 
 export interface Video {
   id: number;
-  uploaded_at: string;
+  created_at: string;
   title: string;
   description: string;
-  genre: string;
   category: string;
+  // Not sent by the backend anymore (upload only); the player drops it with HLS (VFX-34).
   video_file: string;
-  thumbnail: string;
+  thumbnail_url: string | null;
   conversion_progress: number;
   current_resolution: string | null;
-  status?: string;
   resolutions: VideoResolution[];
   _hovered?: boolean;
 }
 
-export const GENRE_CHOICES = [
+export const CATEGORY_CHOICES = [
   { value: 'Action', label: 'Action' },
   { value: 'Comedy', label: 'Comedy' },
   { value: 'Crime', label: 'Crime' },
@@ -30,11 +29,6 @@ export const GENRE_CHOICES = [
   { value: 'Mystery', label: 'Mystery' },
   { value: 'Romance', label: 'Romance' },
   { value: 'Sports', label: 'Sports' }
-];
-
-export const CATEGORY_CHOICES = [
-  { value: 'Movie', label: 'Movie' },
-  { value: 'TV-Show', label: 'TV-Show' }
 ];
 
 export type CategorizedVideos = { [category: string]: Video[] };

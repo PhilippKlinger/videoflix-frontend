@@ -1,0 +1,17 @@
+<app-auth-layout [backgroundImage]="'/assets/backgrounds/login.jpg'">
+  <div class="forgot-wrapper card-bg">
+    @if (activated) {
+      <h1>Welcome!</h1>
+      <p class="subtitle">Your account is active.</p>
+      <a mat-flat-button color="primary" class="submit-btn" routerLink="/login">Log in</a>
+    } @else if (failed) {
+      <h1>Link not valid</h1>
+      <p class="subtitle">This activation link is invalid or has expired.</p>
+      <a mat-flat-button color="primary" class="submit-btn" routerLink="/login">Back to login</a>
+    } @else {
+      <div class="shape-loader-container">
+        <div class="shape-loader"></div>
+      </div>
+    }
+  </div>
+</app-auth-layout>

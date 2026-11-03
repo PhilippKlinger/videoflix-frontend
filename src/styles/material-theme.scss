@@ -97,18 +97,18 @@ body {
   color: #ff032e !important;
 }
 
-// Sorgt für immer gleichbleibenden Abstand für Fehlermeldungen/Hint unter Inputs
+// Keeps a constant space for error messages/hints below inputs
 .mat-mdc-form-field-subscript-wrapper {
   min-height: 14px;
   display: flex;
   align-items: flex-end;
-  // Optional: für noch mehr Abstand zu den Inputs, nutze padding-bottom:
+  // Optional: use padding-bottom for even more space to the inputs:
   // padding-bottom: 8px;
 }
 
-// Abstand zwischen den Inputs erhöhen (optional, aber visuell sehr angenehm)
+// Increase the space between inputs (optional, but visually pleasant)
 .full-width {
-  margin-bottom: 12px; // Zwischen Inputs (du kannst 20-24px nehmen für noch mehr Luft)
+  margin-bottom: 12px; // Between inputs (20-24px gives even more room)
 }
 
 // Optional: Button etwas nach unten verschieben
@@ -131,7 +131,7 @@ button[type="submit"] {
   overflow: hidden !important;
 }
 
-// Falls du noch alte Dialog-Container-Klassen hast, füge sie als Fallback hinzu:
+// Fallback for old dialog container classes:
 .video-dialog-panel .mat-dialog-container {
   padding: 0 !important;
   border-radius: 0 !important;

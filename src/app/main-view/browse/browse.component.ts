@@ -6,7 +6,6 @@ import { MainLayoutComponent } from '../main-layout/main-layout.component';
 import { VideoPlayerComponent } from 'src/app/video-player/video-player.component';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material/material.module';
-import { environment } from 'src/app/environments/environment';
 
 
 @Component({
@@ -24,7 +23,7 @@ import { environment } from 'src/app/environments/environment';
 export class BrowseComponent implements OnInit {
   /** Videos gruppiert nach Genre */
   genreMap: { [genre: string]: Video[] } = {};
-  /** Dynamische Reihenfolge der Genres */
+  /** Dynamic order of the genres */
   genreOrder: string[] = [];
   /** Neueste Videos */
   newestVideos: Video[] = [];
@@ -42,25 +41,25 @@ export class BrowseComponent implements OnInit {
 
       // Neueste 10 Videos
       this.newestVideos = [...videos]
-        .sort((a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime())
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
         .slice(0, 10);
 
       // Featured = erstes Element
       this.featured = this.newestVideos[0];
 
-      // Genres extrahieren und gruppieren
-      const genres = Array.from(new Set(videos.map(v => v.genre))).sort();
+      // Extract and group genres (the backend calls the genre "category")
+      const genres = Array.from(new Set(videos.map(v => v.category))).sort();
       this.genreOrder = genres;
       this.genreMap = {};
       genres.forEach(g => {
-        this.genreMap[g] = videos.filter(v => v.genre === g);
+        this.genreMap[g] = videos.filter(v => v.category === g);
       });
 
       this.loading = false;
     });
   }
 
-  /** Öffnet den Player als Dialog */
+  /** Opens the player as a dialog */
   playVideo(video: Video): void {
     this.dialog.open(VideoPlayerComponent, {
       data: { video },
@@ -72,18 +71,6 @@ export class BrowseComponent implements OnInit {
       hasBackdrop: true,
       autoFocus: false
     });
-  }
-
-  /** Baut die vollständige URL für Thumbnails und Videos */
-  getMediaUrl(path: string): string {
-    if (!path) return '';
-    if (path.startsWith('http://') || path.startsWith('https://')) return path;
-    return `${environment.mediaBaseUrl.replace(/\/$/, '')}${path}`;
-  }
-
-  /** Für’s Template: direktes Thumbnail holen */
-  getThumbnailUrl(path: string): string {
-    return this.getMediaUrl(path);
   }
 
   favoriteVideo(video: Video) {

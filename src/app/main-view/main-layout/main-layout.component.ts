@@ -19,8 +19,7 @@ export class MainLayoutComponent {
   constructor() { }
 
   logout(): void {
-    this.authService.removeAuthCredentials();
-    this.router.navigate(['/']);
+    this.authService.logout().subscribe(() => this.router.navigate(['/']));
   }
 
 }

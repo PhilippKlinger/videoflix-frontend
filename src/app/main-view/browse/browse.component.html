@@ -6,7 +6,7 @@
       <section class="hero">
         <div
           class="hero-bg"
-          [ngStyle]="{ 'background-image': 'url(' + getMediaUrl(featured.thumbnail) + ')' }">
+          [ngStyle]="{ 'background-image': 'url(' + (featured.thumbnail_url ?? '') + ')' }">
         </div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
@@ -31,7 +31,7 @@
               @for (vid of newestVideos; track vid.id) {
                 <li>
                   <img
-                    [src]="getThumbnailUrl(vid.thumbnail)"
+                    [src]="vid.thumbnail_url"
                     [alt]="vid.title"
                     (click)="playVideo(vid)" />
                 </li>
@@ -48,7 +48,7 @@
                 @for (vid of genreMap[genre]; track vid.id) {
                   <li>
                     <img
-                      [src]="getThumbnailUrl(vid.thumbnail)"
+                      [src]="vid.thumbnail_url"
                       [alt]="vid.title"
                       (click)="playVideo(vid)" />
                   </li>

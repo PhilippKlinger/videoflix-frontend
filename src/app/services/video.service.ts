@@ -43,7 +43,7 @@ export class VideoService {
   }
 
   private sortVideosByDate(videos: Video[]): void {
-    videos.sort((a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime());
+    videos.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   }
 
 }

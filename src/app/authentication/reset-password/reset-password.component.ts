@@ -26,7 +26,8 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   countdownTimer: any;
   showPassword = false;
   showConfirmPassword = false;
-  code: string = '';
+  uid = '';
+  token = '';
 
 
   fb = inject(FormBuilder);
@@ -44,9 +45,11 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     }, { validators: this.passwordMatchValidator });
 
     this.route.paramMap.subscribe(params => {
-      const codeParam = params.get('code');
-      if (codeParam) {
-        this.code = codeParam;
+      const uid = params.get('uid');
+      const token = params.get('token');
+      if (uid && token) {
+        this.uid = uid;
+        this.token = token;
       } else {
 
         this.router.navigate(['/forgot-password']);
@@ -56,8 +59,8 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   };
 
   passwordMatchValidator(form: AbstractControl): ValidationErrors | null {
-    const password = form.get('password')?.value;
-    const confirm = form.get('password_confirm')?.value;
+    const password = form.get('new_password')?.value;
+    const confirm = form.get('confirm_password')?.value;
     return password === confirm ? null : { mismatch: true };
   }
 
@@ -72,7 +75,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     if (this.resetForm.invalid) return;
     this.loading = true;
-    this.api.resetPasswordConfirm(this.code, this.resetForm.value).subscribe({
+    this.api.resetPasswordConfirm(this.uid, this.token, this.resetForm.value).subscribe({
       next: () => {
         this.loading = false;
         this.resetSuccess = true;
