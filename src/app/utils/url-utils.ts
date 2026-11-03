@@ -5,7 +5,7 @@ export function toAbsoluteUrl(path: string): string {
   if (!path) return '';
   // Already http(s), so it is absolute
   if (path.startsWith('http://') || path.startsWith('https://')) return path;
-  // Fallback: Trailing slash entfernen, falls doppelt
+  // Fallback: remove a doubled trailing slash
   const base = environment.mediaBaseUrl.replace(/\/$/, '');
   return `${base}${path}`;
 }

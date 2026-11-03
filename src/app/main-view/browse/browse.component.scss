@@ -97,7 +97,7 @@
       list-style: none;
     }
 
-    /* Fade am rechten Rand */
+    /* Fade at the right edge */
     &::after {
       content: "";
       position: absolute;
@@ -107,7 +107,7 @@
       pointer-events: none;
     }
 
-    /* Scrollbar ausblenden */
+    /* Hide the scrollbar */
     &::-webkit-scrollbar { display: none; }
     -ms-overflow-style: none;
     scrollbar-width: none;

@@ -21,11 +21,11 @@ import { MaterialModule } from 'src/app/material/material.module';
   styleUrls: ['./browse.component.scss'],
 })
 export class BrowseComponent implements OnInit {
-  /** Videos gruppiert nach Genre */
+  /** Videos grouped by genre */
   genreMap: { [genre: string]: Video[] } = {};
   /** Dynamic order of the genres */
   genreOrder: string[] = [];
-  /** Neueste Videos */
+  /** Newest videos */
   newestVideos: Video[] = [];
   /** Hero-Video */
   featured?: Video;
@@ -39,12 +39,12 @@ export class BrowseComponent implements OnInit {
     this.videoService.videos$.subscribe((videos) => {
       if (!videos.length) return;
 
-      // Neueste 10 Videos
+      // Newest 10 videos
       this.newestVideos = [...videos]
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
         .slice(0, 10);
 
-      // Featured = erstes Element
+      // Featured = first element
       this.featured = this.newestVideos[0];
 
       // Extract and group genres (the backend calls the genre "category")
