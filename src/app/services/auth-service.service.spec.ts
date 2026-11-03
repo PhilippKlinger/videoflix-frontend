@@ -32,6 +32,17 @@ describe('AuthService', () => {
     expect(localStorage.length).toBe(0);
   });
 
+  it('startDemo replaces the session with the demo account', () => {
+    let current = null as CurrentUser | null;
+    service.currentUser$.subscribe(u => current = u);
+
+    service.startDemo().subscribe();
+    httpMock.expectOne('/api/demo/').flush({ detail: 'demo started' }, { status: 201, statusText: 'Created' });
+    httpMock.expectOne('/api/me/').flush({ id: 2, email: 'demo-1@demo.invalid', role: 'demo' });
+
+    expect(current?.role).toBe('demo');
+  });
+
   it('loadCurrentUser calls /api/me/ only once', () => {
     service.loadCurrentUser().subscribe();
     httpMock.expectOne('/api/me/').flush(user);

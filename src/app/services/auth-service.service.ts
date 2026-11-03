@@ -27,6 +27,11 @@ export class AuthService {
     return this.api.loginUser(data).pipe(switchMap(() => this.loadCurrentUser()));
   }
 
+  startDemo(): Observable<CurrentUser> {
+    this.clearSession();
+    return this.api.startDemo().pipe(switchMap(() => this.loadCurrentUser()));
+  }
+
   /** Ends the session locally even if the server call fails (e.g. expired cookie). */
   logout(): Observable<void> {
     return this.api.logoutUser().pipe(

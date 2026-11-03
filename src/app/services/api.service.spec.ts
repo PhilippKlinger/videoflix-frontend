@@ -94,6 +94,29 @@ describe('ApiService', () => {
     req.flush([]);
   });
 
+  it('startDemo posts an empty JSON body to /api/demo/', () => {
+    service.startDemo().subscribe();
+    const req = httpMock.expectOne('/api/demo/');
+    expect(req.request.method).toBe('POST');
+    // The backend accepts JSON only, so a plain HTML form cannot start a demo.
+    expect(req.request.body).toEqual({});
+    req.flush({ detail: 'demo started' }, { status: 201, statusText: 'Created' });
+  });
+
+  it('deleteVideo deletes /api/video/1/', () => {
+    service.deleteVideo(1).subscribe();
+    const req = httpMock.expectOne('/api/video/1/');
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null, { status: 204, statusText: 'No Content' });
+  });
+
+  it('getConversionProgress returns the status', () => {
+    let status: string | undefined;
+    service.getConversionProgress(1).subscribe(p => status = p.status);
+    httpMock.expectOne('/api/conversion-progress/1/').flush({ progress: 40, current_resolution: '480p', status: 'processing' });
+    expect(status).toBe('processing');
+  });
+
   it('updateVideo patches /api/video/1/', () => {
     service.updateVideo(1, { title: 'New' }).subscribe();
     const req = httpMock.expectOne('/api/video/1/');

@@ -5,6 +5,15 @@ export interface VideoResolution {
   resolution: string;
 }
 
+/** Set by the conversion task; "ready" means at least one resolution is playable. */
+export type VideoStatus = 'processing' | 'ready' | 'failed';
+
+export interface ConversionProgress {
+  progress: number;
+  current_resolution: string | null;
+  status: VideoStatus;
+}
+
 export interface Video {
   id: number;
   created_at: string;
@@ -15,6 +24,10 @@ export interface Video {
   conversion_progress: number;
   current_resolution: string | null;
   resolutions: VideoResolution[];
+  status: VideoStatus;
+  // Standard videos are public, uploads private (owner and admin only).
+  visibility: 'public' | 'private';
+  is_own: boolean;
   _hovered?: boolean;
 }
 
