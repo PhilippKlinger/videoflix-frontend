@@ -1,15 +1,20 @@
-<div class="player-overlay">
+<div class="player-overlay" #playerOverlay>
   <button class="close-btn" (click)="closeDialog()" aria-label="Close player">
     <mat-icon>close</mat-icon>
   </button>
-  <button class="quality-btn" mat-button [matMenuTriggerFor]="qualityBtn" [attr.aria-label]="'Resolution ' + selectedResolution">{{ selectedResolution }}</button>
-  <mat-menu #qualityBtn="matMenu">
-    <button mat-menu-item (click)="onResolutionChange('2160p')">2160p</button>
-    @for (res of video.resolutions; track res.id) {
-      <button mat-menu-item (click)="onResolutionChange(res.resolution)">
-        {{ res.resolution }}
-      </button>
-    }
-  </mat-menu>
-  <video #videoPlayer controls preload="auto" crossorigin></video>
+  @if (selectedResolution) {
+    <button class="quality-btn" mat-button [matMenuTriggerFor]="qualityBtn" [attr.aria-label]="'Resolution ' + selectedResolution">{{ selectedResolution }}</button>
+    <mat-menu #qualityBtn="matMenu">
+      @for (res of resolutions; track res) {
+        <button mat-menu-item (click)="onResolutionChange(res)">{{ res }}</button>
+      }
+    </mat-menu>
+    <button class="fullscreen-btn" (click)="toggleFullscreen()" aria-label="Fullscreen">
+      <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+    </button>
+    <video #videoPlayer controls autoplay controlslist="nofullscreen" [attr.poster]="video.thumbnail_url"
+      (loadedmetadata)="onLoadedMetadata()"></video>
+  } @else {
+    <p class="processing-message">This video is still being processed. Please try again in a few minutes.</p>
+  }
 </div>
