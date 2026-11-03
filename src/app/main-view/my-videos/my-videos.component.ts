@@ -1,0 +1,94 @@
+import { Component, DestroyRef, computed, effect, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { Subscription, forkJoin, map, switchMap, timer } from 'rxjs';
+import { ApiService } from 'src/app/services/api.service';
+import { Video } from 'src/app/models/video.model';
+import { MaterialModule } from 'src/app/material/material.module';
+
+/** Same quota as the backend (masterplan G6, MAX_UPLOADS_PER_ACCOUNT). */
+export const MAX_UPLOADS = 2;
+export const POLL_INTERVAL_MS = 3000;
+
+/** The member's own uploads with upload slot, conversion status and delete. */
+@Component({
+  standalone: true,
+  selector: 'app-my-videos',
+  imports: [RouterModule, MaterialModule],
+  templateUrl: './my-videos.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrl: './my-videos.component.scss'
+})
+export class MyVideosComponent {
+  private api = inject(ApiService);
+
+  readonly videos = input.required<Video[]>();
+  readonly play = output<Video>();
+  /** Asks the page to reload the list (conversion done, video deleted). */
+  readonly changed = output<void>();
+
+  readonly maxUploads = MAX_UPLOADS;
+  readonly slotFree = computed(() => this.videos().length < MAX_UPLOADS);
+  readonly progress = signal<Record<number, number>>({});
+  readonly confirmingId = signal<number | null>(null);
+  readonly deletingId = signal<number | null>(null);
+  readonly errorMessage = signal('');
+
+  private polling?: Subscription;
+
+  constructor() {
+    // Restarts with every new list, so finished or deleted videos drop out.
+    effect(() => this.startPolling(this.videos()));
+    inject(DestroyRef).onDestroy(() => this.polling?.unsubscribe());
+  }
+
+  progressOf(video: Video): number {
+    return this.progress()[video.id] ?? video.conversion_progress;
+  }
+
+  askDelete(video: Video): void {
+    this.errorMessage.set('');
+    this.confirmingId.set(video.id);
+  }
+
+  keep(): void {
+    this.confirmingId.set(null);
+  }
+
+  delete(video: Video): void {
+    this.deletingId.set(video.id);
+    this.api.deleteVideo(video.id).subscribe({
+      next: () => this.afterDelete(),
+      error: () => {
+        this.afterDelete();
+        this.errorMessage.set('The video could not be deleted. The list has been refreshed.');
+      },
+    });
+  }
+
+  private afterDelete(): void {
+    this.confirmingId.set(null);
+    this.deletingId.set(null);
+    this.changed.emit();
+  }
+
+  private startPolling(videos: Video[]): void {
+    this.polling?.unsubscribe();
+    const converting = videos.filter(video => video.status === 'processing');
+    if (!converting.length) return;
+    this.polling = timer(POLL_INTERVAL_MS, POLL_INTERVAL_MS).pipe(
+      switchMap(() => forkJoin(converting.map(video =>
+        this.api.getConversionProgress(video.id).pipe(map(result => ({ id: video.id, ...result })))
+      )))
+    ).subscribe({
+      next: results => {
+        this.progress.update(current => ({
+          ...current,
+          ...Object.fromEntries(results.map(result => [result.id, result.progress])),
+        }));
+        if (results.some(result => result.status !== 'processing')) this.changed.emit();
+      },
+      // A video deleted elsewhere returns 404; the reloaded list sorts it out.
+      error: () => this.changed.emit(),
+    });
+  }
+}

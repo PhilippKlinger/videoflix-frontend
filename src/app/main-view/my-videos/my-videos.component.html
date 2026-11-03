@@ -1,0 +1,59 @@
+<section class="my-videos" aria-labelledby="my-videos-title">
+  <div class="my-videos-header">
+    <h2 id="my-videos-title">My videos</h2>
+    <span class="quota">{{ videos().length }} of {{ maxUploads }} used</span>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="my-videos-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  <ul class="tiles">
+    <li>
+      @if (slotFree()) {
+        <a class="tile upload-tile" routerLink="/upload">
+          <mat-icon aria-hidden="true">add</mat-icon>
+          Upload video
+        </a>
+      } @else {
+        <div class="tile upload-tile-disabled">
+          <mat-icon aria-hidden="true">block</mat-icon>
+          Delete a video to upload a new one.
+        </div>
+      }
+    </li>
+
+    @for (video of videos(); track video.id) {
+      <li class="tile video-tile">
+        @if (video.status === 'ready') {
+          <button type="button" class="play-tile" (click)="play.emit(video)" [attr.aria-label]="'Play ' + video.title">
+            <img [src]="video.thumbnail_url" alt="">
+          </button>
+        } @else if (video.status === 'failed') {
+          <p class="tile-status failed">Conversion failed. Delete the video and try again.</p>
+        } @else {
+          <p class="tile-status" aria-live="polite">Converting… {{ progressOf(video) }} %</p>
+        }
+
+        <div class="tile-footer">
+          <span class="tile-title">{{ video.title }}</span>
+          <span class="badge">Private</span>
+        </div>
+
+        @if (confirmingId() === video.id) {
+          <div class="confirm" role="group" [attr.aria-label]="'Delete ' + video.title">
+            <span>Delete this video?</span>
+            <button mat-flat-button color="warn" type="button" class="confirm-delete"
+              (click)="delete(video)" [disabled]="deletingId() === video.id">Delete</button>
+            <button mat-button type="button" (click)="keep()">Keep</button>
+          </div>
+        } @else {
+          <button mat-button type="button" class="delete-btn" (click)="askDelete(video)">
+            <mat-icon aria-hidden="true">delete</mat-icon>
+            Delete
+          </button>
+        }
+      </li>
+    }
+  </ul>
+</section>
