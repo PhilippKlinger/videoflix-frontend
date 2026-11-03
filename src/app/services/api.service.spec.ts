@@ -4,6 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideRouter } from '@angular/router';
 
 import { ApiService } from './api.service';
+import { SHOWS_OWN_ERRORS } from './http-error-interceptor.service';
 
 describe('ApiService', () => {
   let service: ApiService;
@@ -100,13 +101,22 @@ describe('ApiService', () => {
     expect(req.request.method).toBe('POST');
     // The backend accepts JSON only, so a plain HTML form cannot start a demo.
     expect(req.request.body).toEqual({});
+    expect(req.request.context.get(SHOWS_OWN_ERRORS)).toBeTrue();
     req.flush({ detail: 'demo started' }, { status: 201, statusText: 'Created' });
+  });
+
+  it('addVideo lets the upload page show its own errors', () => {
+    service.addVideo(new FormData()).subscribe();
+    const req = httpMock.expectOne('/api/upload/');
+    expect(req.request.context.get(SHOWS_OWN_ERRORS)).toBeTrue();
+    req.flush({});
   });
 
   it('deleteVideo deletes /api/video/1/', () => {
     service.deleteVideo(1).subscribe();
     const req = httpMock.expectOne('/api/video/1/');
     expect(req.request.method).toBe('DELETE');
+    expect(req.request.context.get(SHOWS_OWN_ERRORS)).toBeTrue();
     req.flush(null, { status: 204, statusText: 'No Content' });
   });
 

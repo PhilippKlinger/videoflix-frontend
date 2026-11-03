@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpContext } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
-import { HttpErrorInterceptor } from './http-error-interceptor.service';
+import { HttpErrorInterceptor, SHOWS_OWN_ERRORS } from './http-error-interceptor.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { provideAppHttpClient } from '../http.providers';
 
@@ -25,6 +25,13 @@ describe('HttpErrorInterceptorService', () => {
   });
 
   afterEach(() => httpMock.verify());
+
+  it('does not log errors the calling component shows itself', () => {
+    const context = new HttpContext().set(SHOWS_OWN_ERRORS, true);
+    http.post('/api/demo/', {}, { context }).subscribe({ error: () => undefined });
+    httpMock.expectOne('/api/demo/').flush({ detail: 'Request was throttled. Expected available in 3599 seconds.' }, { status: 429, statusText: 'Too Many Requests' });
+    expect(logSpy).not.toHaveBeenCalled();
+  });
 
   it('does not log 401', () => {
     http.get('/api/me/').subscribe({ error: () => undefined });

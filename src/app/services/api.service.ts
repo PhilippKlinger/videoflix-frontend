@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpEvent } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpErrorResponse, HttpEvent } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { ConversionProgress, Video } from '../models/video.model';
 import { CurrentUser, LoginRequest, PasswordConfirmRequest, RegisterRequest } from '../models/user.model';
 import { environment } from '../environments/environment';
+import { SHOWS_OWN_ERRORS } from './http-error-interceptor.service';
+
+const OWN_ERRORS = () => new HttpContext().set(SHOWS_OWN_ERRORS, true);
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +40,7 @@ export class ApiService {
 
   /** Starts a demo account; the backend sets the session cookies. */
   startDemo(): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/demo/`, {});
+    return this.http.post<void>(`${this.baseUrl}/demo/`, {}, { context: OWN_ERRORS() });
   }
 
   logoutUser(): Observable<void> {
@@ -64,7 +67,8 @@ export class ApiService {
   addVideo(videoData: FormData): Observable<HttpEvent<Video>> {
     return this.http.post<Video>(`${this.baseUrl}/upload/`, videoData, {
       reportProgress: true,
-      observe: 'events'
+      observe: 'events',
+      context: OWN_ERRORS()
     });
   }
 
@@ -73,7 +77,7 @@ export class ApiService {
   }
 
   deleteVideo(videoId: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/video/${videoId}/`);
+    return this.http.delete<void>(`${this.baseUrl}/video/${videoId}/`, { context: OWN_ERRORS() });
   }
 
   getConversionProgress(videoId: number): Observable<ConversionProgress> {
