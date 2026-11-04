@@ -24,8 +24,8 @@ describe('Legal pages', () => {
     await harness.navigateByUrl('/impressum');
     expect(text()).toContain('Angaben gemäß § 5 DDG');
     expect(text()).toContain('Philipp Klinger');
-    expect(text()).toContain('Groß-Umstädter Str. 5');
-    expect(text()).toContain('64747 Breuberg');
+    expect(text()).toContain('Ostlandstraße 11');
+    expect(text()).toContain('49504 Lotte');
     const mail = harness.routeNativeElement?.querySelector<HTMLAnchorElement>('a[href^="mailto:"]');
     expect(mail?.getAttribute('href')).toBe('mailto:hello@philipp-klinger.com');
   });
@@ -43,5 +43,7 @@ describe('Legal pages', () => {
     ]);
     expect(text()).toContain('nach 2 Stunden');
     expect(text()).toContain('Hostinger International Ltd.');
+    expect(text()).toContain('Ostlandstraße 11, 49504 Lotte');
+    expect(text()).toContain('Nordrhein-Westfalen');
   });
 });
