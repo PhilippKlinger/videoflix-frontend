@@ -23,12 +23,8 @@ const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'activate/:uid/:token', component: ActivateComponent },
   { path: 'reset-password/:uid/:token', component: ResetPasswordComponent },
-  {
-    path: 'browse', component: BrowseComponent, canActivate: [AuthGuard],
-    children: [
-      { path: 'video-upload', component: VideoUploadComponent }
-    ]
-  },
+  { path: 'browse', component: BrowseComponent, canActivate: [AuthGuard] },
+  { path: 'upload', component: VideoUploadComponent, canActivate: [AuthGuard] },
 
 ];
 

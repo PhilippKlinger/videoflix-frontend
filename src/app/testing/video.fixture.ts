@@ -11,4 +11,7 @@ export const TEST_VIDEO: Video = {
   conversion_progress: 100,
   current_resolution: '1080p',
   resolutions: [],
+  status: 'ready',
+  visibility: 'public',
+  is_own: false,
 };

@@ -14,8 +14,6 @@ import { ImprintComponent } from './imprint/imprint.component';
 import { AuthInterceptor } from './services/auth-interceptor.service';
 import { HttpErrorInterceptor } from './services/http-error-interceptor.service';
 
-import { VideoUploadComponent } from './main-view/video-upload/video-upload.component';
-
 
 
 
@@ -25,7 +23,6 @@ import { VideoUploadComponent } from './main-view/video-upload/video-upload.comp
     declarations: [
         AppComponent,
         ImprintComponent,
-        VideoUploadComponent,
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         FormsModule,

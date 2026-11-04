@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse } from '@angular/common/http';
+import { HttpContextToken, HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ErrorHandlingService } from './error-handling.service';
+
+/** Set on requests whose component shows its own friendly error message. */
+export const SHOWS_OWN_ERRORS = new HttpContextToken<boolean>(() => false);
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
@@ -12,8 +15,14 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     return next.handle(request)
       .pipe(
         catchError((error: HttpErrorResponse) => {
-          // An ended session is handled by the AuthInterceptor (redirect), not shown as an error.
+          // An ended session is handled by the AuthInterceptor (redirect), not shown as an error;
+          // components that show their own message must not get a second one later.
           if (error.status === 401) {
+            return throwError(() => error);
+          }
+          if (request.context.get(SHOWS_OWN_ERRORS)) {
+            // The user sees the component's friendly text; the details stay in the console.
+            console.error('HTTP error', request.method, request.url, error.status, error.error);
             return throwError(() => error);
           }
           let errorMessage = 'An unknown error occurred!';

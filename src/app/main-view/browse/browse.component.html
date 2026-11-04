@@ -1,6 +1,10 @@
 <app-main-layout>
   <main class="browse-container">
 
+    @if (role === 'demo') {
+      <p class="demo-banner" role="status">Demo account: this account and your uploads are deleted automatically after 2 hours.</p>
+    }
+
     <!-- Hero-Section -->
     @if (!loading && featured) {
       <section class="hero">
@@ -23,6 +27,9 @@
     <!-- Scrollable lists -->
     @if (!loading) {
       <section class="list_section">
+        @if (showMyVideos) {
+          <app-my-videos [videos]="ownVideos" (play)="playVideo($event)" (changed)="reload()"></app-my-videos>
+        }
         <!-- New on Videoflix -->
         <section class="video_list">
           <h2>New on Videoflix</h2>
@@ -34,6 +41,9 @@
                     [src]="vid.thumbnail_url"
                     [alt]="vid.title"
                     (click)="playVideo(vid)" />
+                  @if (vid.visibility === 'private') {
+                    <span class="badge">Private</span>
+                  }
                 </li>
               }
             </ul>
@@ -51,6 +61,9 @@
                       [src]="vid.thumbnail_url"
                       [alt]="vid.title"
                       (click)="playVideo(vid)" />
+                    @if (vid.visibility === 'private') {
+                      <span class="badge">Private</span>
+                    }
                   </li>
                 }
               </ul>

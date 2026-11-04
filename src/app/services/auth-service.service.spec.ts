@@ -3,7 +3,10 @@ import { provideHttpClient, withXhr } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { AuthService } from './auth-service.service';
+import { VideoService } from './video.service';
 import { CurrentUser } from '../models/user.model';
+import { Video } from '../models/video.model';
+import { TEST_VIDEO } from '../testing/video.fixture';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -30,6 +33,48 @@ describe('AuthService', () => {
     expect(current).toEqual(user);
     expect(localStorage.getItem('token')).toBeNull();
     expect(localStorage.length).toBe(0);
+  });
+
+  it('startDemo replaces the session with the demo account', () => {
+    let current = null as CurrentUser | null;
+    service.currentUser$.subscribe(u => current = u);
+
+    service.startDemo().subscribe();
+    httpMock.expectOne('/api/demo/').flush({ detail: 'demo started' }, { status: 201, statusText: 'Created' });
+    httpMock.expectOne('/api/me/').flush({ id: 2, email: 'demo-1@demo.invalid', role: 'demo' });
+
+    expect(current?.role).toBe('demo');
+  });
+
+  describe('account switch', () => {
+    let videos: Video[] | null | undefined;
+
+    beforeEach(() => {
+      const videoService = TestBed.inject(VideoService);
+      videoService.videos$.subscribe(v => videos = v);
+      videoService.loadVideos();
+      httpMock.expectOne('/api/video/').flush([{ ...TEST_VIDEO, id: 1, is_own: true, visibility: 'private' }]);
+    });
+
+    it('login forgets the video list of the previous account', () => {
+      service.login({ email: 'a@b.de', password: 'pw' }).subscribe();
+      expect(videos).toBeNull();
+      httpMock.expectOne('/api/login/').flush({});
+      httpMock.expectOne('/api/me/').flush(user);
+    });
+
+    it('startDemo forgets the video list of the previous account', () => {
+      service.startDemo().subscribe();
+      expect(videos).toBeNull();
+      httpMock.expectOne('/api/demo/').flush({}, { status: 201, statusText: 'Created' });
+      httpMock.expectOne('/api/me/').flush({ id: 2, email: 'demo-1@demo.invalid', role: 'demo' });
+    });
+
+    it('logout forgets the video list', () => {
+      service.logout().subscribe();
+      httpMock.expectOne('/api/logout/').flush({});
+      expect(videos).toBeNull();
+    });
   });
 
   it('loadCurrentUser calls /api/me/ only once', () => {

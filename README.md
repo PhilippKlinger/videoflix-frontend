@@ -27,7 +27,12 @@ The end-to-end tests use [Playwright](https://playwright.dev) and run against th
 3. Once: `npx playwright install chromium`.
 4. Run `npm run e2e`. The report is written to `playwright-report/`.
 
-The backend allows 5 registration mails per hour and IP, so the auth smoke can run up to 5 times per hour.
+Suites:
+
+- `e2e/auth-smoke.spec.ts`: register, activate via Mailpit, log in, refresh, log out.
+- `e2e/demo-upload.spec.ts`: try demo, upload `e2e/fixtures/test-clip.mp4` (3 s, generated with ffmpeg `testsrc`), wait for the conversion, play, use resolution menu and close button in fullscreen, delete. It runs in the installed Google Chrome, because Playwright's Chromium cannot decode H.264/AAC.
+
+The backend throttles registration mails, uploads and demo starts per hour. For repeated runs, copy the relaxed `THROTTLE_RATE_*` values from the backend's `.env.dev.template` into its `.env`.
 
 ## Further help
 

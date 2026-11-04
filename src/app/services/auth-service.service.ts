@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, finalize, of, switchMap, tap } from 'rxjs';
 import { ApiService } from './api.service';
+import { VideoService } from './video.service';
 import { CurrentUser, LoginRequest } from '../models/user.model';
 
 /**
@@ -12,7 +13,7 @@ export class AuthService {
   private currentUser = new BehaviorSubject<CurrentUser | null>(null);
   currentUser$ = this.currentUser.asObservable();
 
-  constructor(private api: ApiService) { }
+  constructor(private api: ApiService, private videoService: VideoService) { }
 
   loadCurrentUser(): Observable<CurrentUser> {
     const user = this.currentUser.value;
@@ -27,6 +28,11 @@ export class AuthService {
     return this.api.loginUser(data).pipe(switchMap(() => this.loadCurrentUser()));
   }
 
+  startDemo(): Observable<CurrentUser> {
+    this.clearSession();
+    return this.api.startDemo().pipe(switchMap(() => this.loadCurrentUser()));
+  }
+
   /** Ends the session locally even if the server call fails (e.g. expired cookie). */
   logout(): Observable<void> {
     return this.api.logoutUser().pipe(
@@ -37,5 +43,6 @@ export class AuthService {
 
   clearSession(): void {
     this.currentUser.next(null);
+    this.videoService.clear();
   }
 }

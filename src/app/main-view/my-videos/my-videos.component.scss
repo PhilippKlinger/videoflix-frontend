@@ -1,0 +1,148 @@
+.my-videos {
+  margin-bottom: 2.5rem;
+  color: #fff;
+}
+
+.my-videos-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+
+  h2 {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+  }
+}
+
+.quota {
+  color: #ccc;
+}
+
+.my-videos-error {
+  color: #ff8a80;
+}
+
+.tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tile {
+  width: 267px;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+  background: #1f1f1f;
+}
+
+.upload-tile,
+.upload-tile-disabled {
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  text-align: center;
+  color: #fff;
+  text-decoration: none;
+  border: 2px dashed #666;
+}
+
+.upload-tile:hover,
+.upload-tile:focus-visible {
+  border-color: #fff;
+}
+
+.upload-tile-disabled {
+  color: #aaa;
+}
+
+.play-tile {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+
+  .more-resolutions {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.75);
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+  }
+}
+
+.tile-status {
+  margin: 0;
+  padding: 16px;
+  aspect-ratio: 16/9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  &.failed {
+    color: #ff8a80;
+  }
+}
+
+.tile-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 0;
+}
+
+.tile-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  background: #444;
+}
+
+.delete-btn,
+.confirm {
+  margin: 4px 8px 8px;
+}
+
+.delete-btn {
+  align-self: flex-start;
+  min-height: 44px;
+  color: #fff;
+}
+
+.confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+
+  button {
+    min-height: 44px;
+  }
+}

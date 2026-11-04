@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
-import { Observable, catchError, throwError, map, BehaviorSubject } from 'rxjs';
-import { Video } from '../models/video.model';
+import { HttpClient, HttpContext, HttpErrorResponse, HttpEvent } from '@angular/common/http';
+import { Observable, catchError, throwError } from 'rxjs';
+import { ConversionProgress, Video } from '../models/video.model';
 import { CurrentUser, LoginRequest, PasswordConfirmRequest, RegisterRequest } from '../models/user.model';
 import { environment } from '../environments/environment';
+import { SHOWS_OWN_ERRORS } from './http-error-interceptor.service';
+
+const OWN_ERRORS = () => new HttpContext().set(SHOWS_OWN_ERRORS, true);
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
   public baseUrl = environment.apiUrl;
-  public uploadProgress: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  public conversionProgress: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   constructor(private http: HttpClient) { }
 
@@ -37,6 +38,11 @@ export class ApiService {
     );
   }
 
+  /** Starts a demo account; the backend sets the session cookies. */
+  startDemo(): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/demo/`, {}, { context: OWN_ERRORS() });
+  }
+
   logoutUser(): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/logout/`, {});
   }
@@ -57,37 +63,25 @@ export class ApiService {
     return this.http.get<Video[]>(`${this.baseUrl}/video/`);
   }
 
-  addVideo(videoData: FormData): Observable<Video | undefined> {
+  /** Upload with progress events; the caller reads the progress and the created video. */
+  addVideo(videoData: FormData): Observable<HttpEvent<Video>> {
     return this.http.post<Video>(`${this.baseUrl}/upload/`, videoData, {
       reportProgress: true,
-      observe: 'events'
-    }).pipe(
-      map((event: HttpEvent<any>) => {
-        switch (event.type) {
-          case HttpEventType.UploadProgress:
-            if (event.total) {
-              const progress = Math.round((100 * event.loaded) / event.total);
-              this.uploadProgress.next(progress);
-            }
-            break;
-          case HttpEventType.Response:
-            return event.body as Video;
-        }
-        return undefined;
-      }),
-      catchError((error: HttpErrorResponse) => {
-        console.error('Video Upload failed', error);
-        return throwError(() => new Error('Video Upload failed'));
-      })
-    );
+      observe: 'events',
+      context: OWN_ERRORS()
+    });
   }
 
   updateVideo(videoId: number, videoData: Partial<Video>): Observable<Video> {
     return this.http.patch<Video>(`${this.baseUrl}/video/${videoId}/`, videoData);
   }
 
-  getConversionProgress(videoId: number): Observable<{ progress: number, current_resolution: string }> {
-    return this.http.get<{ progress: number, current_resolution: string }>(`${this.baseUrl}/conversion-progress/${videoId}/`);
+  deleteVideo(videoId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/video/${videoId}/`, { context: OWN_ERRORS() });
+  }
+
+  getConversionProgress(videoId: number): Observable<ConversionProgress> {
+    return this.http.get<ConversionProgress>(`${this.baseUrl}/conversion-progress/${videoId}/`, { context: OWN_ERRORS() });
   }
 
 

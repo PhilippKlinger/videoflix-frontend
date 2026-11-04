@@ -9,7 +9,8 @@ import { ApiService } from './api.service';
 })
 export class VideoService {
 
-  private videos = new BehaviorSubject<Video[]>([]);
+  // null until the first response, so an empty list can be told apart from "still loading".
+  private videos = new BehaviorSubject<Video[] | null>(null);
   videos$ = this.videos.asObservable();
 
   private categorizedVideos = new BehaviorSubject<CategorizedVideos>({});
@@ -27,8 +28,16 @@ export class VideoService {
       },
       error: (error) => {
         console.error('Failed to load videos', error);
+        // A failed reload keeps the list already shown; only the first load ends with an empty one.
+        this.videos.next(this.videos.value ?? []);
       }
     });
+  }
+
+  /** Forgets the list on an account switch, so no other account's uploads are shown. */
+  clear(): void {
+    this.videos.next(null);
+    this.categorizedVideos.next({});
   }
 
   private categorizeVideos(videos: Video[]): void {
