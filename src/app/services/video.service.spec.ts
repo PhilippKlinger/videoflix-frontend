@@ -40,6 +40,27 @@ describe('VideoService', () => {
     expect(videos).toEqual([]);
   });
 
+  it('keeps the loaded list when a reload fails', () => {
+    let videos: Video[] | null | undefined;
+    service.videos$.subscribe(v => videos = v);
+    spyOn(console, 'error');
+    const httpMock = TestBed.inject(HttpTestingController);
+    service.loadVideos();
+    httpMock.expectOne('/api/video/').flush([{ ...TEST_VIDEO, id: 1 }]);
+    service.loadVideos();
+    httpMock.expectOne('/api/video/').flush({}, { status: 502, statusText: 'Bad Gateway' });
+    expect(videos?.map(v => v.id)).toEqual([1]);
+  });
+
+  it('clear forgets the list of the previous account', () => {
+    let videos: Video[] | null | undefined;
+    service.videos$.subscribe(v => videos = v);
+    service.loadVideos();
+    TestBed.inject(HttpTestingController).expectOne('/api/video/').flush([{ ...TEST_VIDEO, id: 1 }]);
+    service.clear();
+    expect(videos).toBeNull();
+  });
+
   it('ends loading with an empty list when the request fails', () => {
     let videos: Video[] | null | undefined;
     service.videos$.subscribe(v => videos = v);
