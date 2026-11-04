@@ -72,6 +72,11 @@ test.describe.serial('demo upload', () => {
   test('keeps resolution menu and close button usable in fullscreen', async () => {
     await page.getByRole('button', { name: 'Fullscreen' }).click();
     await expect.poll(() => page.evaluate(() => document.fullscreenElement === document.documentElement)).toBe(true);
+    // The video fills the screen; black bars only come from a different aspect ratio.
+    await expect.poll(() => page.evaluate(() => {
+      const box = document.querySelector('video')!.getBoundingClientRect();
+      return box.width === window.innerWidth && box.height === window.innerHeight;
+    })).toBe(true);
 
     await page.getByRole('button', { name: /^Resolution / }).click();
     await page.getByRole('menuitem', { name: '480p' }).click();
