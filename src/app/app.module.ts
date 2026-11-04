@@ -1,10 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 
-import { MaterialModule } from './material/material.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -23,12 +19,9 @@ import { HttpErrorInterceptor } from './services/http-error-interceptor.service'
     declarations: [
         AppComponent,
     ],
+    // The shell only renders the router outlet; pages are standalone and import Material and forms themselves.
     bootstrap: [AppComponent], imports: [BrowserModule,
-        FormsModule,
-        AppRoutingModule,
-        ReactiveFormsModule,
-        MaterialModule,
-    CommonModule],
+        AppRoutingModule],
 
     providers: [
         // Order matters: the error interceptor sits outside, so it only sees

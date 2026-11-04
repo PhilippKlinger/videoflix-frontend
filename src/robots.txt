@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Allow: /login
+Allow: /register
+Allow: /impressum
+Allow: /datenschutz
+Disallow: /browse
+Disallow: /upload
+Disallow: /api/
+Disallow: /admin/
