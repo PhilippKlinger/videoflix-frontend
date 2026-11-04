@@ -10,6 +10,9 @@ import { MainLayoutComponent } from '../main-layout/main-layout.component';
 
 /** Same limit as the backend (VFX-27); checked here to avoid a pointless upload. */
 const MAX_FILE_SIZE = 50 * 1024 * 1024;
+/** Same lengths as the backend model (video_app/models.py). */
+export const TITLE_MAX_LENGTH = 150;
+export const DESCRIPTION_MAX_LENGTH = 500;
 
 @Component({
   standalone: true,
@@ -25,9 +28,11 @@ export class VideoUploadComponent {
   private destroyRef = inject(DestroyRef);
 
   readonly categoryChoices = CATEGORY_CHOICES;
+  readonly titleMaxLength = TITLE_MAX_LENGTH;
+  readonly descriptionMaxLength = DESCRIPTION_MAX_LENGTH;
   readonly uploadForm = inject(FormBuilder).nonNullable.group({
-    title: ['', [Validators.required, Validators.minLength(4)]],
-    description: ['', [Validators.required, Validators.minLength(4)]],
+    title: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(TITLE_MAX_LENGTH)]],
+    description: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(DESCRIPTION_MAX_LENGTH)]],
     category: ['', Validators.required],
   });
 

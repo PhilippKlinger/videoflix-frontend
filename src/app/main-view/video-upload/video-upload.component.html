@@ -5,12 +5,20 @@
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Title</mat-label>
         <input matInput formControlName="title">
-        <mat-error>Please enter a title with at least 4 characters.</mat-error>
+        @if (uploadForm.controls.title.hasError('maxlength')) {
+          <mat-error>The title must not be longer than {{ titleMaxLength }} characters.</mat-error>
+        } @else {
+          <mat-error>Please enter a title with at least 4 characters.</mat-error>
+        }
       </mat-form-field>
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Description</mat-label>
         <textarea matInput formControlName="description" rows="3"></textarea>
-        <mat-error>Please enter a description with at least 4 characters.</mat-error>
+        @if (uploadForm.controls.description.hasError('maxlength')) {
+          <mat-error>The description must not be longer than {{ descriptionMaxLength }} characters.</mat-error>
+        } @else {
+          <mat-error>Please enter a description with at least 4 characters.</mat-error>
+        }
       </mat-form-field>
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Genre</mat-label>

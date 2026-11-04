@@ -68,6 +68,20 @@ describe('VideoUploadComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/browse']);
   });
 
+  it('rejects a title or description longer than the backend allows', () => {
+    fillForm();
+    component.uploadForm.patchValue({ title: 'x'.repeat(151) });
+    component.uploadForm.markAllAsTouched();
+    component.onSubmit();
+    httpMock.expectNone('/api/upload/');
+    expect(text()).toContain('The title must not be longer than 150 characters.');
+
+    component.uploadForm.patchValue({ title: 'My clip', description: 'x'.repeat(501) });
+    component.onSubmit();
+    httpMock.expectNone('/api/upload/');
+    expect(text()).toContain('The description must not be longer than 500 characters.');
+  });
+
   it('does not upload without a file', () => {
     component.uploadForm.patchValue({ title: 'My clip', description: 'A test clip', category: 'Action' });
     component.onSubmit();
