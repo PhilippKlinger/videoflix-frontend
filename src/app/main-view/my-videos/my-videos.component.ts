@@ -80,15 +80,26 @@ export class MyVideosComponent {
     this.changed.emit();
   }
 
+  /** Playable after the first resolution, while the higher ones are still converted. */
+  convertingMore(video: Video): boolean {
+    return video.status === 'ready' && this.progressOf(video) < 100;
+  }
+
   private startPolling(videos: Video[]): void {
     this.polling?.unsubscribe();
-    const converting = videos.filter(video => video.status === 'processing');
+    const converting = videos.filter(video =>
+      video.status === 'processing' || (video.status === 'ready' && video.conversion_progress < 100));
     if (!converting.length) return;
     // exhaustMap: a slow answer is awaited instead of being cancelled by the next tick.
     this.polling = timer(POLL_INTERVAL_MS, POLL_INTERVAL_MS).pipe(
       exhaustMap(() => forkJoin(converting.map(video =>
         this.api.getConversionProgress(video.id).pipe(
-          map(result => ({ id: video.id, progress: result.progress, done: result.status !== 'processing' })),
+          // Reload when the video becomes playable or fails, and once all resolutions exist.
+          map(result => ({
+            id: video.id,
+            progress: result.progress,
+            done: result.status !== video.status || result.progress >= 100,
+          })),
           // A video deleted elsewhere returns 404; the reloaded list sorts it out.
           catchError(() => of({ id: video.id, progress: this.progressOf(video), done: true }))
         )

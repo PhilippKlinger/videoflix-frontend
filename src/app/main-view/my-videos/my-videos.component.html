@@ -28,6 +28,9 @@
         @if (video.status === 'ready') {
           <button type="button" class="play-tile" (click)="play.emit(video)" [attr.aria-label]="'Play ' + video.title">
             <img [src]="video.thumbnail_url" alt="">
+            @if (convertingMore(video)) {
+              <span class="more-resolutions" aria-live="polite">More resolutions… {{ progressOf(video) }} %</span>
+            }
           </button>
         } @else if (video.status === 'failed') {
           <p class="tile-status failed">Conversion failed. Delete the video and try again.</p>

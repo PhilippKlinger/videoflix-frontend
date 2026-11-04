@@ -94,9 +94,32 @@ describe('MyVideosComponent', () => {
       httpMock.expectNone('/api/conversion-progress/2/');
       expect(changed).toBe(1);
 
-      // The reloaded list replaces the input; without converting videos the polling stops.
-      fixture.componentRef.setInput('videos', [{ ...converting, status: 'ready' }]);
+      // The reloaded list replaces the input; once all resolutions exist the polling stops.
+      fixture.componentRef.setInput('videos', [{ ...converting, status: 'ready', conversion_progress: 100 }]);
       fixture.detectChanges();
+      tick(POLL_INTERVAL_MS * 2);
+      httpMock.expectNone('/api/conversion-progress/2/');
+    }));
+
+    it('shows that more resolutions are converted after the first one is playable', fakeAsync(() => {
+      const playable: Video = { ...converting, status: 'ready', conversion_progress: 33 };
+      create([playable]);
+      expect(query('button.play-tile')).not.toBeNull();
+      expect(text()).toContain('More resolutions… 33 %');
+      let changed = 0;
+      component.changed.subscribe(() => changed++);
+
+      tick(POLL_INTERVAL_MS);
+      httpMock.expectOne('/api/conversion-progress/2/').flush({ progress: 66, current_resolution: '720p', status: 'ready' });
+      expect(text()).toContain('More resolutions… 66 %');
+      expect(changed).toBe(0);
+
+      tick(POLL_INTERVAL_MS);
+      httpMock.expectOne('/api/conversion-progress/2/').flush({ progress: 100, current_resolution: '1080p', status: 'ready' });
+      expect(changed).toBe(1);
+
+      fixture.componentRef.setInput('videos', [{ ...playable, conversion_progress: 100 }]);
+      expect(text()).not.toContain('More resolutions');
       tick(POLL_INTERVAL_MS * 2);
       httpMock.expectNone('/api/conversion-progress/2/');
     }));

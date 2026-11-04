@@ -64,10 +64,22 @@
 }
 
 .play-tile {
+  position: relative;
   padding: 0;
   border: 0;
   background: none;
   cursor: pointer;
+
+  .more-resolutions {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.75);
+  }
 
   img {
     display: block;
