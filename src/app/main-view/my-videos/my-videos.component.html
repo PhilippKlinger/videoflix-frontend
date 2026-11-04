@@ -27,7 +27,7 @@
       <li class="tile video-tile">
         @if (video.status === 'ready') {
           <button type="button" class="play-tile" (click)="play.emit(video)" [attr.aria-label]="'Play ' + video.title">
-            <img [src]="video.thumbnail_url" alt="">
+            <img [src]="video.thumbnail_url" alt="" loading="lazy" decoding="async" width="1280" height="720">
             @if (convertingMore(video)) {
               <span class="more-resolutions" aria-live="polite">More resolutions… {{ progressOf(video) }} %</span>
             }
