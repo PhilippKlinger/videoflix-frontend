@@ -13,10 +13,12 @@ import { VideoUploadComponent } from './main-view/video-upload/video-upload.comp
 import { AuthGuard } from './services/auth-guard.service';
 
 import { BrowseComponent } from './main-view/browse/browse.component';
+import { ImprintComponent } from './legal/imprint.component';
+import { PrivacyComponent } from './legal/privacy.component';
 
 
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
@@ -25,6 +27,9 @@ const routes: Routes = [
   { path: 'reset-password/:uid/:token', component: ResetPasswordComponent },
   { path: 'browse', component: BrowseComponent, canActivate: [AuthGuard] },
   { path: 'upload', component: VideoUploadComponent, canActivate: [AuthGuard] },
+  // Public and linked from every footer; German like the legal terms they use.
+  { path: 'impressum', component: ImprintComponent, title: 'Impressum · Videoflix' },
+  { path: 'datenschutz', component: PrivacyComponent, title: 'Datenschutz · Videoflix' },
 
 ];
 

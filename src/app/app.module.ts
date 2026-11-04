@@ -9,7 +9,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideAppHttpClient } from './http.providers';
-import { ImprintComponent } from './imprint/imprint.component';
+
 
 import { AuthInterceptor } from './services/auth-interceptor.service';
 import { HttpErrorInterceptor } from './services/http-error-interceptor.service';
@@ -22,7 +22,6 @@ import { HttpErrorInterceptor } from './services/http-error-interceptor.service'
 @NgModule({
     declarations: [
         AppComponent,
-        ImprintComponent,
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         FormsModule,

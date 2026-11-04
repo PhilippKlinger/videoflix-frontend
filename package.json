@@ -19,7 +19,9 @@
     "@angular/material": "^22.2.5",
     "@angular/platform-browser": "^22.2.4",
     "@angular/router": "^22.2.4",
+    "@fontsource/roboto": "^5.3.0",
     "hls.js": "^1.7.3",
+    "material-icons": "^1.13.14",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.1"
