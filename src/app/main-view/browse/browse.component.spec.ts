@@ -1,7 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { By } from '@angular/platform-browser';
+import { config } from 'rxjs';
 
 import { BrowseComponent } from './browse.component';
 import { MyVideosComponent } from '../my-videos/my-videos.component';
@@ -87,6 +88,34 @@ describe('BrowseComponent', () => {
     expect(query('.no_videos')).not.toBeNull();
     expect(query('app-my-videos')).not.toBeNull();
   });
+
+  it('still shows the catalog when the account cannot be loaded', fakeAsync(() => {
+    const unhandled = jasmine.createSpy('onUnhandledError');
+    const previous = config.onUnhandledError;
+    config.onUnhandledError = unhandled;
+    spyOn(console, 'error');
+    try {
+      TestBed.configureTestingModule({
+        imports: [BrowseComponent],
+        providers: [provideAppHttpClient(), provideHttpClientTesting(), provideRouter([])]
+      });
+      httpMock = TestBed.inject(HttpTestingController);
+      fixture = TestBed.createComponent(BrowseComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+      httpMock.expectOne('/api/me/').flush({}, { status: 500, statusText: 'Server Error' });
+      httpMock.expectOne('/api/video/').flush([{ ...TEST_VIDEO, id: 1 }]);
+      fixture.detectChanges();
+      // RxJS reports unhandled errors asynchronously.
+      flush();
+
+      expect(unhandled).not.toHaveBeenCalled();
+      expect(component.newestVideos.map(v => v.id)).toEqual([1]);
+      expect(query('app-my-videos')).toBeNull();
+    } finally {
+      config.onUnhandledError = previous;
+    }
+  }));
 
   it('reloads the list when "My videos" reports a change', () => {
     create('member', [own]);

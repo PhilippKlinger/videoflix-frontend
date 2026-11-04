@@ -47,7 +47,11 @@ export class BrowseComponent implements OnInit {
   ngOnInit(): void {
     this.authService.loadCurrentUser()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(user => this.role = user.role);
+      .subscribe({
+        next: user => this.role = user.role,
+        // Without the role the catalog still works; banner and "My videos" stay hidden.
+        error: error => console.error('Failed to load the current user', error),
+      });
 
     this.videoService.loadVideos();
     this.videoService.videos$
