@@ -38,6 +38,20 @@ describe('BrowseComponent', () => {
 
   afterEach(() => httpMock.verify());
 
+  it('loads the hero image first and catalog tiles only when they scroll into view', () => {
+    create('member', [{ ...TEST_VIDEO, id: 1 }, { ...TEST_VIDEO, id: 2 }]);
+    const hero = query('img.hero-bg');
+    expect(hero?.getAttribute('fetchpriority')).toBe('high');
+    expect(hero?.getAttribute('loading')).toBeNull();
+    const tiles: HTMLImageElement[] = Array.from(fixture.nativeElement.querySelectorAll('.video_list img'));
+    expect(tiles.length).toBeGreaterThan(0);
+    for (const tile of tiles) {
+      expect(tile.getAttribute('loading')).toBe('lazy');
+      expect(tile.getAttribute('width')).toBeTruthy();
+      expect(tile.getAttribute('height')).toBeTruthy();
+    }
+  });
+
   it('groups videos by category', () => {
     create('member', [
       { ...TEST_VIDEO, id: 1, category: 'Comedy' },
