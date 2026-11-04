@@ -74,7 +74,7 @@ describe('BrowseComponent', () => {
 
   it('tells demo accounts when they are deleted', () => {
     create('demo', []);
-    expect(query('.demo-banner')?.textContent).toContain('Demo account: it and your uploads are deleted automatically after 2 hours.');
+    expect(query('.demo-banner')?.textContent).toContain('Demo account: this account and your uploads are deleted automatically after 2 hours.');
   });
 
   it('shows no demo banner for members', () => {

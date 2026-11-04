@@ -37,7 +37,7 @@ test.describe.serial('demo upload', () => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Try demo' }).click();
     await expect(page).toHaveURL(/\/browse$/);
-    await expect(page.getByText('Demo account: it and your uploads are deleted automatically after 2 hours.')).toBeVisible();
+    await expect(page.getByText('Demo account: this account and your uploads are deleted automatically after 2 hours.')).toBeVisible();
     await expect(page.getByText('0 of 2 used')).toBeVisible();
   });
 
