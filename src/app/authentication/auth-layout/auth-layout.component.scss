@@ -37,11 +37,20 @@
   justify-content: space-between;
   align-items: center;
   padding: 40px 48px 0 48px;
+  gap: 16px;
+
+  @media (max-width: 600px) {
+    padding: 24px 16px 0;
+  }
 
   .logo {
     height: 40px;
     width: auto;
     cursor: pointer;
+
+    @media (max-width: 400px) {
+      height: 28px;
+    }
     &:hover,
     &:focus {
       filter: brightness(1.4);
@@ -62,6 +71,11 @@
     box-shadow: 0 2px 8px rgba(45, 62, 223, 0.1);
     transition: filter 0.2s, background 0.2s;
     cursor: pointer;
+    white-space: nowrap;
+
+    @media (max-width: 600px) {
+      padding: 10px 20px;
+    }
 
     &:hover,
     &:focus {
