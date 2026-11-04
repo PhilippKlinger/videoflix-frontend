@@ -1,35 +1,22 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './authentication/home/home.component';
-import { RegisterComponent } from './authentication/register/register.component';
-import { LoginComponent } from './authentication/login/login.component';
-import { ForgotPasswordComponent } from './authentication/forgot-password/forgot-password.component';
-import { ResetPasswordComponent } from './authentication/reset-password/reset-password.component';
-import { ActivateComponent } from './authentication/activate/activate.component';
-
-
-import { VideoUploadComponent } from './main-view/video-upload/video-upload.component';
 
 import { AuthGuard } from './services/auth-guard.service';
 
-import { BrowseComponent } from './main-view/browse/browse.component';
-import { ImprintComponent } from './legal/imprint.component';
-import { PrivacyComponent } from './legal/privacy.component';
 
-
-
+// Every page is loaded on demand, so the initial bundle only holds the app shell.
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: 'activate/:uid/:token', component: ActivateComponent },
-  { path: 'reset-password/:uid/:token', component: ResetPasswordComponent },
-  { path: 'browse', component: BrowseComponent, canActivate: [AuthGuard] },
-  { path: 'upload', component: VideoUploadComponent, canActivate: [AuthGuard] },
+  { path: '', loadComponent: () => import('./authentication/home/home.component').then(m => m.HomeComponent) },
+  { path: 'login', loadComponent: () => import('./authentication/login/login.component').then(m => m.LoginComponent) },
+  { path: 'register', loadComponent: () => import('./authentication/register/register.component').then(m => m.RegisterComponent) },
+  { path: 'forgot-password', loadComponent: () => import('./authentication/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent) },
+  { path: 'activate/:uid/:token', loadComponent: () => import('./authentication/activate/activate.component').then(m => m.ActivateComponent) },
+  { path: 'reset-password/:uid/:token', loadComponent: () => import('./authentication/reset-password/reset-password.component').then(m => m.ResetPasswordComponent) },
+  { path: 'browse', loadComponent: () => import('./main-view/browse/browse.component').then(m => m.BrowseComponent), canActivate: [AuthGuard] },
+  { path: 'upload', loadComponent: () => import('./main-view/video-upload/video-upload.component').then(m => m.VideoUploadComponent), canActivate: [AuthGuard] },
   // Public and linked from every footer; German like the legal terms they use.
-  { path: 'impressum', component: ImprintComponent, title: 'Impressum · Videoflix' },
-  { path: 'datenschutz', component: PrivacyComponent, title: 'Datenschutz · Videoflix' },
+  { path: 'impressum', loadComponent: () => import('./legal/imprint.component').then(m => m.ImprintComponent), title: 'Impressum · Videoflix' },
+  { path: 'datenschutz', loadComponent: () => import('./legal/privacy.component').then(m => m.PrivacyComponent), title: 'Datenschutz · Videoflix' },
 
 ];
 
