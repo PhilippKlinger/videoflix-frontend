@@ -60,6 +60,14 @@ describe('MyVideosComponent', () => {
   });
 
   describe('status', () => {
+    it('loads thumbnails lazily with a fixed size', () => {
+      create([ready]);
+      const img = query<HTMLImageElement>('button.play-tile img');
+      expect(img?.getAttribute('loading')).toBe('lazy');
+      expect(img?.getAttribute('width')).toBeTruthy();
+      expect(img?.getAttribute('height')).toBeTruthy();
+    });
+
     it('plays a ready video', () => {
       create([ready]);
       const played: Video[] = [];

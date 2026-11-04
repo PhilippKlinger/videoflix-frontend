@@ -8,10 +8,8 @@
     <!-- Hero-Section -->
     @if (!loading && featured) {
       <section class="hero">
-        <div
-          class="hero-bg"
-          [ngStyle]="{ 'background-image': 'url(' + (featured.thumbnail_url ?? '') + ')' }">
-        </div>
+        <!-- Largest image on the page: an <img> is found early and loaded first -->
+        <img class="hero-bg" [src]="featured.thumbnail_url" alt="" fetchpriority="high" width="1280" height="720" />
         <div class="hero-overlay"></div>
         <div class="hero-content">
           <h1>{{ featured.title }}</h1>
@@ -40,6 +38,10 @@
                   <img
                     [src]="vid.thumbnail_url"
                     [alt]="vid.title"
+                    loading="lazy"
+                    decoding="async"
+                    width="267"
+                    height="150"
                     (click)="playVideo(vid)" />
                   @if (vid.visibility === 'private') {
                     <span class="badge">Private</span>
@@ -60,6 +62,10 @@
                     <img
                       [src]="vid.thumbnail_url"
                       [alt]="vid.title"
+                      loading="lazy"
+                      decoding="async"
+                      width="267"
+                      height="150"
                       (click)="playVideo(vid)" />
                     @if (vid.visibility === 'private') {
                       <span class="badge">Private</span>

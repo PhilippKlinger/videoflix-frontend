@@ -11,7 +11,7 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './auth-layout.component.scss'
 })
 export class AuthLayoutComponent {
-  @Input() backgroundImage: string = '/assets/backgrounds/start.jpg';
+  @Input() backgroundImage: string = '/assets/backgrounds/start.webp';
 
   router = inject(Router);
 
