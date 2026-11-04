@@ -81,7 +81,7 @@ export class ApiService {
   }
 
   getConversionProgress(videoId: number): Observable<ConversionProgress> {
-    return this.http.get<ConversionProgress>(`${this.baseUrl}/conversion-progress/${videoId}/`);
+    return this.http.get<ConversionProgress>(`${this.baseUrl}/conversion-progress/${videoId}/`, { context: OWN_ERRORS() });
   }
 
 

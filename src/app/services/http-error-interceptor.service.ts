@@ -17,7 +17,12 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         catchError((error: HttpErrorResponse) => {
           // An ended session is handled by the AuthInterceptor (redirect), not shown as an error;
           // components that show their own message must not get a second one later.
-          if (error.status === 401 || request.context.get(SHOWS_OWN_ERRORS)) {
+          if (error.status === 401) {
+            return throwError(() => error);
+          }
+          if (request.context.get(SHOWS_OWN_ERRORS)) {
+            // The user sees the component's friendly text; the details stay in the console.
+            console.error('HTTP error', request.method, request.url, error.status, error.error);
             return throwError(() => error);
           }
           let errorMessage = 'An unknown error occurred!';

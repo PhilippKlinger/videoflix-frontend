@@ -123,7 +123,10 @@ describe('ApiService', () => {
   it('getConversionProgress returns the status', () => {
     let status: string | undefined;
     service.getConversionProgress(1).subscribe(p => status = p.status);
-    httpMock.expectOne('/api/conversion-progress/1/').flush({ progress: 40, current_resolution: '480p', status: 'processing' });
+    const req = httpMock.expectOne('/api/conversion-progress/1/');
+    // A 404 for a deleted video is handled by "My videos" and must not show up later as a snackbar.
+    expect(req.request.context.get(SHOWS_OWN_ERRORS)).toBeTrue();
+    req.flush({ progress: 40, current_resolution: '480p', status: 'processing' });
     expect(status).toBe('processing');
   });
 

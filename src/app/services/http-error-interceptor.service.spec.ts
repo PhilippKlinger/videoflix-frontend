@@ -27,10 +27,19 @@ describe('HttpErrorInterceptorService', () => {
   afterEach(() => httpMock.verify());
 
   it('does not log errors the calling component shows itself', () => {
+    spyOn(console, 'error');
     const context = new HttpContext().set(SHOWS_OWN_ERRORS, true);
     http.post('/api/demo/', {}, { context }).subscribe({ error: () => undefined });
     httpMock.expectOne('/api/demo/').flush({ detail: 'Request was throttled. Expected available in 3599 seconds.' }, { status: 429, statusText: 'Too Many Requests' });
     expect(logSpy).not.toHaveBeenCalled();
+  });
+
+  it('still records errors the calling component shows itself for debugging', () => {
+    const consoleSpy = spyOn(console, 'error');
+    const context = new HttpContext().set(SHOWS_OWN_ERRORS, true);
+    http.delete('/api/video/1/', { context }).subscribe({ error: () => undefined });
+    httpMock.expectOne('/api/video/1/').flush({ detail: 'Not found.' }, { status: 404, statusText: 'Not Found' });
+    expect(consoleSpy).toHaveBeenCalledWith('HTTP error', 'DELETE', '/api/video/1/', 404, { detail: 'Not found.' });
   });
 
   it('does not log 401', () => {
