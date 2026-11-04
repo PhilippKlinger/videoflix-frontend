@@ -1,6 +1,6 @@
-import { Component, DestroyRef, computed, effect, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, DestroyRef, ElementRef, Injector, afterNextRender, computed, effect, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Subscription, forkJoin, map, switchMap, timer } from 'rxjs';
+import { Subscription, catchError, exhaustMap, forkJoin, map, of, timer } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { Video } from 'src/app/models/video.model';
 import { MaterialModule } from 'src/app/material/material.module';
@@ -20,6 +20,8 @@ export const POLL_INTERVAL_MS = 3000;
 })
 export class MyVideosComponent {
   private api = inject(ApiService);
+  private host = inject(ElementRef<HTMLElement>);
+  private injector = inject(Injector);
 
   readonly videos = input.required<Video[]>();
   readonly play = output<Video>();
@@ -48,10 +50,17 @@ export class MyVideosComponent {
   askDelete(video: Video): void {
     this.errorMessage.set('');
     this.confirmingId.set(video.id);
+    this.focusAfterRender(`[data-keep-id="${video.id}"]`);
   }
 
-  keep(): void {
+  keep(video: Video): void {
     this.confirmingId.set(null);
+    this.focusAfterRender(`[data-delete-id="${video.id}"]`);
+  }
+
+  /** The clicked button disappears, so the focus moves on instead of falling back to the page. */
+  private focusAfterRender(selector: string): void {
+    afterNextRender(() => this.host.nativeElement.querySelector(selector)?.focus(), { injector: this.injector });
   }
 
   delete(video: Video): void {
@@ -75,20 +84,25 @@ export class MyVideosComponent {
     this.polling?.unsubscribe();
     const converting = videos.filter(video => video.status === 'processing');
     if (!converting.length) return;
+    // exhaustMap: a slow answer is awaited instead of being cancelled by the next tick.
     this.polling = timer(POLL_INTERVAL_MS, POLL_INTERVAL_MS).pipe(
-      switchMap(() => forkJoin(converting.map(video =>
-        this.api.getConversionProgress(video.id).pipe(map(result => ({ id: video.id, ...result })))
+      exhaustMap(() => forkJoin(converting.map(video =>
+        this.api.getConversionProgress(video.id).pipe(
+          map(result => ({ id: video.id, progress: result.progress, done: result.status !== 'processing' })),
+          // A video deleted elsewhere returns 404; the reloaded list sorts it out.
+          catchError(() => of({ id: video.id, progress: this.progressOf(video), done: true }))
+        )
       )))
-    ).subscribe({
-      next: results => {
-        this.progress.update(current => ({
-          ...current,
-          ...Object.fromEntries(results.map(result => [result.id, result.progress])),
-        }));
-        if (results.some(result => result.status !== 'processing')) this.changed.emit();
-      },
-      // A video deleted elsewhere returns 404; the reloaded list sorts it out.
-      error: () => this.changed.emit(),
+    ).subscribe(results => {
+      this.progress.update(current => ({
+        ...current,
+        ...Object.fromEntries(results.map(result => [result.id, result.progress])),
+      }));
+      if (results.some(result => result.done)) {
+        // The reloaded list restarts the polling for the videos still converting.
+        this.polling?.unsubscribe();
+        this.changed.emit();
+      }
     });
   }
 }

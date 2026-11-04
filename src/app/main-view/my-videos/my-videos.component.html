@@ -45,10 +45,10 @@
             <span>Delete this video?</span>
             <button mat-flat-button color="warn" type="button" class="confirm-delete"
               (click)="delete(video)" [disabled]="deletingId() === video.id">Delete</button>
-            <button mat-button type="button" (click)="keep()">Keep</button>
+            <button mat-button type="button" [attr.data-keep-id]="video.id" (click)="keep(video)">Keep</button>
           </div>
         } @else {
-          <button mat-button type="button" class="delete-btn" (click)="askDelete(video)">
+          <button mat-button type="button" class="delete-btn" [attr.data-delete-id]="video.id" (click)="askDelete(video)">
             <mat-icon aria-hidden="true">delete</mat-icon>
             Delete
           </button>

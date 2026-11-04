@@ -89,11 +89,48 @@ describe('MyVideosComponent', () => {
       httpMock.expectOne('/api/conversion-progress/2/').flush({ progress: 33, current_resolution: '720p', status: 'ready' });
       expect(changed).toBe(1);
 
+      // Until the reloaded list arrives, no further polls and no further reloads.
+      tick(POLL_INTERVAL_MS);
+      httpMock.expectNone('/api/conversion-progress/2/');
+      expect(changed).toBe(1);
+
       // The reloaded list replaces the input; without converting videos the polling stops.
       fixture.componentRef.setInput('videos', [{ ...converting, status: 'ready' }]);
       fixture.detectChanges();
       tick(POLL_INTERVAL_MS * 2);
       httpMock.expectNone('/api/conversion-progress/2/');
+    }));
+
+    it('waits for a slow progress answer instead of dropping it', fakeAsync(() => {
+      create([converting]);
+      tick(POLL_INTERVAL_MS);
+      const slow = httpMock.expectOne('/api/conversion-progress/2/');
+
+      tick(POLL_INTERVAL_MS);
+      httpMock.expectNone('/api/conversion-progress/2/');
+      expect(slow.cancelled).toBeFalse();
+
+      slow.flush({ progress: 40, current_resolution: '480p', status: 'processing' });
+      expect(text()).toContain('Converting… 40 %');
+      // Still converting, so the polling goes on until the page closes.
+      fixture.destroy();
+      discardPeriodicTasks();
+    }));
+
+    it('keeps the progress of the others when one video is gone', fakeAsync(() => {
+      const other: Video = { ...converting, id: 4, title: 'Other clip' };
+      create([converting, other]);
+      let changed = 0;
+      component.changed.subscribe(() => changed++);
+
+      tick(POLL_INTERVAL_MS);
+      httpMock.expectOne('/api/conversion-progress/2/').flush({ progress: 40, current_resolution: '480p', status: 'processing' });
+      httpMock.expectOne('/api/conversion-progress/4/').flush({ detail: 'Not found.' }, { status: 404, statusText: 'Not Found' });
+
+      expect(text()).toContain('Converting… 40 %');
+      expect(changed).toBe(1);
+      tick(POLL_INTERVAL_MS);
+      httpMock.expectNone(() => true);
     }));
 
     it('does not poll without converting videos', fakeAsync(() => {
@@ -119,6 +156,17 @@ describe('MyVideosComponent', () => {
       buttonWithText('Keep')?.click();
       expect(text()).not.toContain('Delete this video?');
       httpMock.expectNone('/api/video/1/');
+    });
+
+    it('moves the keyboard focus to "Keep" and back to "Delete"', () => {
+      create([ready]);
+      buttonWithText('Delete')?.click();
+      fixture.detectChanges();
+      expect(document.activeElement).toBe(buttonWithText('Keep')!);
+
+      buttonWithText('Keep')?.click();
+      fixture.detectChanges();
+      expect(document.activeElement).toBe(query('button.delete-btn'));
     });
 
     it('deletes after the confirmation and reloads', () => {
