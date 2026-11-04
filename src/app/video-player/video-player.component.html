@@ -1,23 +1,31 @@
-<div class="player-overlay">
+<div class="player-overlay" [class.fullscreen]="isFullscreen">
   <button class="close-btn" (click)="closeDialog()" aria-label="Close player">
     <mat-icon>close</mat-icon>
   </button>
   @if (playbackError) {
     <p class="processing-message">This video cannot be played right now. Please try again later.</p>
   } @else if (selectedResolution) {
-    <button class="quality-btn" mat-button [matMenuTriggerFor]="qualityBtn" [attr.aria-label]="'Resolution ' + selectedResolution">{{ selectedResolution }}</button>
-    <mat-menu #qualityBtn="matMenu">
-      @for (res of resolutions; track res) {
-        <button mat-menu-item (click)="onResolutionChange(res)">{{ res }}</button>
-      }
-    </mat-menu>
-    @if (canFullscreen) {
-      <button class="fullscreen-btn" (click)="toggleFullscreen()" [attr.aria-label]="isFullscreen ? 'Exit fullscreen' : 'Fullscreen'">
-        <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
-      </button>
-    }
-    <video #videoPlayer controls autoplay controlslist="nofullscreen" [attr.poster]="video.thumbnail_url"
-      (loadedmetadata)="onLoadedMetadata()"></video>
+    <div class="player-stage">
+      <video #videoPlayer controls autoplay controlslist="nofullscreen" [attr.poster]="video.thumbnail_url"
+        (loadedmetadata)="onLoadedMetadata()"></video>
+      <!-- The native controls cannot be extended, so the own controls sit in a bar below the video. -->
+      <div class="player-bar">
+        <button class="quality-btn" mat-flat-button [matMenuTriggerFor]="qualityBtn" [attr.aria-label]="'Resolution ' + selectedResolution">
+          <mat-icon aria-hidden="true">hd</mat-icon>
+          {{ selectedResolution }}
+        </button>
+        <mat-menu #qualityBtn="matMenu">
+          @for (res of resolutions; track res) {
+            <button mat-menu-item (click)="onResolutionChange(res)">{{ res }}</button>
+          }
+        </mat-menu>
+        @if (canFullscreen) {
+          <button class="fullscreen-btn" (click)="toggleFullscreen()" [attr.aria-label]="isFullscreen ? 'Exit fullscreen' : 'Fullscreen'">
+            <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+          </button>
+        }
+      </div>
+    </div>
   } @else {
     <p class="processing-message">This video is still being processed. Please try again in a few minutes.</p>
   }

@@ -166,6 +166,23 @@ describe('VideoPlayerComponent', () => {
       expect(button?.getAttribute('aria-label')).toBe('Exit fullscreen');
     });
 
+    it('shows resolution and fullscreen in one bar right below the video', () => {
+      httpMock.expectOne('/api/me/').flush({});
+      const bar: HTMLElement | null = fixture.nativeElement.querySelector('.player-bar');
+      expect(videoElement().nextElementSibling).toBe(bar);
+      expect(bar?.querySelector('.quality-btn')?.textContent).toContain('720p');
+      expect(bar?.querySelector('.fullscreen-btn')).not.toBeNull();
+    });
+
+    it('marks the player while in fullscreen, so the video can fill the screen', () => {
+      httpMock.expectOne('/api/me/').flush({});
+      const overlay: HTMLElement = fixture.nativeElement.querySelector('.player-overlay');
+      expect(overlay.classList).not.toContain('fullscreen');
+      component.isFullscreen = true;
+      fixture.detectChanges();
+      expect(overlay.classList).toContain('fullscreen');
+    });
+
     it('puts the whole page into fullscreen, so dialog and menu stay visible', () => {
       httpMock.expectOne('/api/me/').flush({});
       expect(component.fullscreenTarget()).toBe(document.documentElement);
