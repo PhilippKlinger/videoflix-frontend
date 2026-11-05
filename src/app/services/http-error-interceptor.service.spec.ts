@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { HTTP_INTERCEPTORS, HttpClient, HttpContext } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpContext, HttpErrorResponse } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
-import { HttpErrorInterceptor, SHOWS_OWN_ERRORS } from './http-error-interceptor.service';
+import { FRIENDLY_ERROR, HttpErrorInterceptor, SHOWS_OWN_ERRORS } from './http-error-interceptor.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { provideAppHttpClient } from '../http.providers';
 
@@ -46,6 +46,30 @@ describe('HttpErrorInterceptorService', () => {
     http.get('/api/me/').subscribe({ error: () => undefined });
     httpMock.expectOne('/api/me/').flush({ detail: 'Authentication credentials were not provided.' }, { status: 401, statusText: 'Unauthorized' });
     expect(logSpy).not.toHaveBeenCalled();
+  });
+
+  it('survives an error without a body and hands on the original error', () => {
+    spyOn(console, 'error');
+    let received: unknown;
+    http.get('/api/video/').subscribe({ error: e => received = e });
+    httpMock.expectOne('/api/video/').flush(null, { status: 500, statusText: 'Server Error' });
+    expect(received).toBeInstanceOf(HttpErrorResponse);
+    expect(logSpy).toHaveBeenCalledWith(FRIENDLY_ERROR);
+  });
+
+  it('shows a friendly message instead of a server error detail and keeps the details in the console', () => {
+    const consoleSpy = spyOn(console, 'error');
+    http.get('/api/me/').subscribe({ error: () => undefined });
+    httpMock.expectOne('/api/me/').flush({ detail: 'database unavailable' }, { status: 500, statusText: 'Server Error' });
+    expect(logSpy).toHaveBeenCalledWith(FRIENDLY_ERROR);
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+
+  it('shows a friendly message on a network error', () => {
+    spyOn(console, 'error');
+    http.get('/api/me/').subscribe({ error: () => undefined });
+    httpMock.expectOne('/api/me/').error(new ProgressEvent('error'));
+    expect(logSpy).toHaveBeenCalledWith(FRIENDLY_ERROR);
   });
 
   it('logs a friendly message instead of the CSRF detail', () => {

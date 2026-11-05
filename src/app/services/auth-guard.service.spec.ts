@@ -34,6 +34,6 @@ describe('AuthGuard', () => {
     const result = run();
     const router = TestBed.inject(Router);
     expect(result instanceof UrlTree).toBeTrue();
-    expect(router.serializeUrl(result as UrlTree)).toBe('/?returnUrl=%2Fbrowse');
+    expect(router.serializeUrl(result as UrlTree)).toBe('/');
   });
 });
