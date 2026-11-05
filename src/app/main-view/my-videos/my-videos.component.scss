@@ -84,6 +84,8 @@
   img {
     display: block;
     width: 100%;
+    // The height attribute would otherwise win over aspect-ratio (720px tall tile).
+    height: auto;
     aspect-ratio: 16/9;
     object-fit: cover;
   }

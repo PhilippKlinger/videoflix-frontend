@@ -210,6 +210,16 @@ describe('VideoPlayerComponent', () => {
     });
   });
 
+  describe('after a failed conversion', () => {
+    beforeEach(() => create({ ...TEST_VIDEO, status: 'failed', resolutions: [] }));
+
+    it('says so instead of asking to wait', () => {
+      httpMock.expectNone('/api/me/');
+      expect(fixture.nativeElement.textContent).toContain('This video could not be converted');
+      expect(fixture.nativeElement.textContent).not.toContain('still being processed');
+    });
+  });
+
   describe('without converted resolutions', () => {
     beforeEach(() => create({ ...TEST_VIDEO, resolutions: [] }));
 

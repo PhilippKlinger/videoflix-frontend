@@ -60,6 +60,13 @@ describe('MyVideosComponent', () => {
   });
 
   describe('status', () => {
+    it('keeps the thumbnail at the 16:9 tile size despite its size attributes', () => {
+      create([ready]);
+      const box = query<HTMLImageElement>('button.play-tile img')!.getBoundingClientRect();
+      expect(box.width).toBe(267);
+      expect(box.height).toBeCloseTo(267 * 9 / 16, 0);
+    });
+
     it('loads thumbnails lazily with a fixed size', () => {
       create([ready]);
       const img = query<HTMLImageElement>('button.play-tile img');
