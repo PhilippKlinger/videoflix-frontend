@@ -47,7 +47,7 @@
           <div class="confirm" role="group" [attr.aria-label]="'Delete ' + video.title">
             <span>Delete this video?</span>
             <button mat-flat-button color="warn" type="button" class="confirm-delete"
-              (click)="delete(video)" [disabled]="deletingId() === video.id">Delete</button>
+              (click)="delete(video)" [disabled]="deletingIds().has(video.id)">Delete</button>
             <button mat-button type="button" [attr.data-keep-id]="video.id" (click)="keep(video)">Keep</button>
           </div>
         } @else {

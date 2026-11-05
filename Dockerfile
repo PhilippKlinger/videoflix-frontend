@@ -16,6 +16,10 @@ USER root
 RUN apk upgrade --no-cache
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist/videoflix/browser/ /usr/share/nginx/html/
+# Public build info: commit and build time only, set by the CI.
+ARG GIT_SHA=unknown
+ARG BUILD_TIME=unknown
+RUN printf '{"commit":"%s","build_time":"%s"}' "$GIT_SHA" "$BUILD_TIME" > /usr/share/nginx/html/version.json
 # nginx-unprivileged runs as uid 101 and listens on 8080; stated explicitly so a base-image change cannot fall back to root.
 USER 101
 EXPOSE 8080

@@ -47,6 +47,8 @@ describe('Legal pages', () => {
     expect(text()).toContain('Nordrhein-Westfalen');
     // Art. 13(2)(a) and (e) GDPR: storage period and whether the data is required
     expect(text()).toContain('nach spätestens 14 Tagen gelöscht');
+    expect(text()).toContain('Einzelne Seitenaufrufe werden nicht');
+    expect(text()).toContain('etwa zwei Wochen');
     expect(text()).toContain('Ohne E-Mail-Adresse ist kein Konto möglich');
   });
 });

@@ -52,6 +52,16 @@ describe('BrowseComponent', () => {
     }
   });
 
+  it('features the newest catalog video and lists the newest first', () => {
+    create('member', [
+      { ...TEST_VIDEO, id: 1, created_at: '2026-01-01T00:00:00Z' },
+      { ...TEST_VIDEO, id: 2, created_at: '2026-03-01T00:00:00Z' },
+      { ...TEST_VIDEO, id: 3, created_at: '2026-02-01T00:00:00Z' },
+    ]);
+    expect(component.newestVideos.map(v => v.id)).toEqual([2, 3, 1]);
+    expect(component.featured?.id).toBe(2);
+  });
+
   it('groups videos by category', () => {
     create('member', [
       { ...TEST_VIDEO, id: 1, category: 'Comedy' },
