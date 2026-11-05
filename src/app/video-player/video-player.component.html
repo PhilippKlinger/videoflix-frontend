@@ -26,6 +26,8 @@
         }
       </div>
     </div>
+  } @else if (video.status === 'failed') {
+    <p class="processing-message">This video could not be converted.</p>
   } @else {
     <p class="processing-message">This video is still being processed. Please try again in a few minutes.</p>
   }
