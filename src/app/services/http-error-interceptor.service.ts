@@ -7,6 +7,8 @@ import { ErrorHandlingService } from './error-handling.service';
 /** Set on requests whose component shows its own friendly error message. */
 export const SHOWS_OWN_ERRORS = new HttpContextToken<boolean>(() => false);
 
+export const FRIENDLY_ERROR = 'Something went wrong. Please try again later.';
+
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
   constructor(private errorService: ErrorHandlingService) { }
@@ -25,23 +27,20 @@ export class HttpErrorInterceptor implements HttpInterceptor {
             console.error('HTTP error', request.method, request.url, error.status, error.error);
             return throwError(() => error);
           }
-          let errorMessage = 'An unknown error occurred!';
-          if (error.error instanceof ErrorEvent) {
-            // Client-side or network error
-            errorMessage = `An error occurred: ${error.error.message}`;
-          } else if (error.error.non_field_errors) {
-            errorMessage = error.error.non_field_errors[0];
-          } else if (error.error.email) {
-            errorMessage = error.error.email[0];
-          }
-          else if (error.status === 403 && error.error.detail?.startsWith('CSRF Failed')) {
+          let errorMessage = FRIENDLY_ERROR;
+          const body = error.error;
+          if (body?.non_field_errors) {
+            errorMessage = body.non_field_errors[0];
+          } else if (body?.email) {
+            errorMessage = body.email[0];
+          } else if (error.status === 403 && body?.detail?.startsWith('CSRF Failed')) {
             // Missing or stale CSRF cookie: a reload fetches a new one.
             errorMessage = 'Your session could not be verified. Please reload the page and try again.';
-          }
-          else {
-            // The backend returned an unsuccessful response code.
-            // The error message is in error.error.detail, if present.
-            errorMessage = error.error.detail || error.message || error.statusText;
+          } else if (error.status >= 400 && error.status < 500 && body?.detail) {
+            errorMessage = body.detail;
+          } else {
+            // Network and server errors: friendly text for the user, details in the console.
+            console.error('HTTP error', request.method, request.url, error.status, body);
           }
           this.errorService.log(errorMessage);
           return throwError(() => error);

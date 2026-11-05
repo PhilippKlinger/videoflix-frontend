@@ -32,7 +32,7 @@ export class MyVideosComponent {
   readonly slotFree = computed(() => this.videos().length < MAX_UPLOADS);
   readonly progress = signal<Record<number, number>>({});
   readonly confirmingId = signal<number | null>(null);
-  readonly deletingId = signal<number | null>(null);
+  readonly deletingIds = signal<ReadonlySet<number>>(new Set());
   readonly errorMessage = signal('');
 
   private polling?: Subscription;
@@ -64,19 +64,24 @@ export class MyVideosComponent {
   }
 
   delete(video: Video): void {
-    this.deletingId.set(video.id);
+    this.deletingIds.update(ids => new Set(ids).add(video.id));
     this.api.deleteVideo(video.id).subscribe({
-      next: () => this.afterDelete(),
+      next: () => this.afterDelete(video),
       error: () => {
-        this.afterDelete();
+        this.afterDelete(video);
         this.errorMessage.set('The video could not be deleted. The list has been refreshed.');
       },
     });
   }
 
-  private afterDelete(): void {
-    this.confirmingId.set(null);
-    this.deletingId.set(null);
+  private afterDelete(video: Video): void {
+    // Another delete may be running or waiting for its confirmation.
+    if (this.confirmingId() === video.id) this.confirmingId.set(null);
+    this.deletingIds.update(ids => {
+      const remaining = new Set(ids);
+      remaining.delete(video.id);
+      return remaining;
+    });
     this.changed.emit();
   }
 
