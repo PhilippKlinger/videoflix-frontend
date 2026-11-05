@@ -28,6 +28,10 @@ describe('MainLayoutComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('offers logout as a button that works with the keyboard', () => {
+    expect(fixture.nativeElement.querySelector('button.logout-link')).not.toBeNull();
+  });
+
   it('logout navigates to / after the server call', () => {
     const logoutSpy = spyOn(TestBed.inject(AuthService), 'logout').and.returnValue(of(undefined));
     const navigateSpy = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);

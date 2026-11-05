@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> {
       return this.authService.loadCurrentUser().pipe(
         map(() => true),
-        catchError(() => of(this.router.createUrlTree(['/'], { queryParams: { returnUrl: state.url } })))
+        catchError(() => of(this.router.createUrlTree(['/'])))
       );
   }
 }
