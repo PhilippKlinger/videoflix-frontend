@@ -78,12 +78,10 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       # Dev template with its relaxed throttle rates (mails, uploads, demos), plus throwaway secrets.
-      # The bind mount hides the image's chmod, so the entrypoint needs its execute bit here.
       - name: Start backend stack
         working-directory: backend-stack
         run: |
           set -Eeuo pipefail
-          chmod +x backend.entrypoint.sh
           cp .env.dev.template .env
           {
             echo "SECRET_KEY=ci-only-not-secret-${GITHUB_RUN_ID}-padding-to-32-bytes"
