@@ -42,11 +42,89 @@ jobs:
       - name: Build for production
         run: npm run build -- --configuration production
 
+  e2e:
+    name: E2E (Compose stack)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: test
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The tests talk to the real API, so they run against the backend's current main.
+      - name: Check out backend
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: PhilippKlinger/videoflix-backend
+          path: backend-stack
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Type check the tests
+        run: npx tsc --noEmit -p e2e
+
+      # demo-upload runs in the Google Chrome of the runner, auth-smoke in Playwright's Chromium.
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Dev template with its relaxed throttle rates (mails, uploads, demos), plus throwaway secrets.
+      # The bind mount hides the image's chmod, so the entrypoint needs its execute bit here.
+      - name: Start backend stack
+        working-directory: backend-stack
+        run: |
+          set -Eeuo pipefail
+          chmod +x backend.entrypoint.sh
+          cp .env.dev.template .env
+          {
+            echo "SECRET_KEY=ci-only-not-secret-${GITHUB_RUN_ID}-padding-to-32-bytes"
+            echo "DB_NAME=videoflix_e2e"
+            echo "DB_USER=videoflix"
+            echo "DB_PASSWORD=ci-only-password"
+            echo "RUN_MAKEMIGRATIONS=0"
+          } >> .env
+          docker compose --profile dev up -d --build
+          timeout 180 bash -c 'until curl -fsS http://localhost:8000/api/health/; do sleep 3; done'
+
+      - name: Start frontend
+        run: |
+          set -Eeuo pipefail
+          nohup npm start > ng-serve.log 2>&1 &
+          timeout 180 bash -c 'until curl -fsS -o /dev/null http://localhost:4200/; do sleep 3; done'
+
+      - name: Run end-to-end tests
+        run: npm run e2e
+
+      - name: Show logs on failure
+        if: failure()
+        working-directory: backend-stack
+        run: |
+          docker compose --profile dev ps -a
+          docker compose --profile dev logs --no-color --tail 200 web worker
+          tail -n 50 ../ng-serve.log
+
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
   image:
     name: Build, scan and publish image
     runs-on: ubuntu-latest
     timeout-minutes: 25
-    needs: test
+    needs: [test, e2e]
     permissions:
       contents: read
       packages: write
