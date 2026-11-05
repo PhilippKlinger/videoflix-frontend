@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Video, CategorizedVideos } from '../models/video.model';
+import { Video } from '../models/video.model';
 import { BehaviorSubject } from 'rxjs';
 import { ApiService } from './api.service';
 
@@ -13,9 +13,6 @@ export class VideoService {
   private videos = new BehaviorSubject<Video[] | null>(null);
   videos$ = this.videos.asObservable();
 
-  private categorizedVideos = new BehaviorSubject<CategorizedVideos>({});
-  categorizedVideos$ = this.categorizedVideos.asObservable();
-
 
   constructor(private apiService: ApiService) { }
 
@@ -24,7 +21,6 @@ export class VideoService {
       next: (videos) => {
         this.sortVideosByDate(videos);
         this.videos.next(videos);
-        this.categorizeVideos(videos);
       },
       error: (error) => {
         console.error('Failed to load videos', error);
@@ -37,18 +33,6 @@ export class VideoService {
   /** Forgets the list on an account switch, so no other account's uploads are shown. */
   clear(): void {
     this.videos.next(null);
-    this.categorizedVideos.next({});
-  }
-
-  private categorizeVideos(videos: Video[]): void {
-    const categorized: CategorizedVideos = {};
-    videos.forEach(video => {
-      if (!categorized[video.category]) {
-        categorized[video.category] = [];
-      }
-      categorized[video.category].push(video);
-    });
-    this.categorizedVideos.next(categorized);
   }
 
   private sortVideosByDate(videos: Video[]): void {

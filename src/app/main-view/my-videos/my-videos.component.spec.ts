@@ -187,6 +187,21 @@ describe('MyVideosComponent', () => {
   });
 
   describe('delete', () => {
+    it('keeps a second running delete blocked when the first one finishes', () => {
+      const other: Video = { ...ready, id: 4, title: 'Other clip' };
+      create([ready, other]);
+      component.askDelete(ready);
+      component.delete(ready);
+      component.askDelete(other);
+      component.delete(other);
+      httpMock.expectOne('/api/video/1/').flush(null);
+      fixture.detectChanges();
+      expect(query<HTMLButtonElement>('.confirm-delete')?.disabled).toBeTrue();
+      httpMock.expectOne('/api/video/4/').flush(null);
+      fixture.detectChanges();
+      expect(query('.confirm-delete')).toBeNull();
+    });
+
     it('asks before deleting and can be kept', () => {
       create([ready]);
       buttonWithText('Delete')?.click();
