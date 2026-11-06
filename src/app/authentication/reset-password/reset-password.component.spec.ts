@@ -34,6 +34,11 @@ describe('ResetPasswordComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('password field grows with its hint', () => {
+    const field: HTMLElement = fixture.nativeElement.querySelector('input[formControlName="new_password"]').closest('mat-form-field');
+    expect(field.querySelector('.mat-mdc-form-field-subscript-wrapper')!.classList).toContain('mat-mdc-form-field-subscript-dynamic-size');
+  });
+
   it('posts uid, token and both passwords', () => {
     const confirmSpy = spyOn(TestBed.inject(ApiService), 'resetPasswordConfirm').and.returnValue(of({}));
     component.resetForm.setValue({ new_password: 'secret12', confirm_password: 'secret12' });

@@ -28,6 +28,11 @@ describe('RegisterComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('password field grows with its hint', () => {
+    const field: HTMLElement = fixture.nativeElement.querySelector('input[formControlName="password"]').closest('mat-form-field');
+    expect(field.querySelector('.mat-mdc-form-field-subscript-wrapper')!.classList).toContain('mat-mdc-form-field-subscript-dynamic-size');
+  });
+
   it('sends email, password and confirmed_password', () => {
     const registerSpy = spyOn(TestBed.inject(ApiService), 'registerUser').and.returnValue(of({}));
     component.registerForm.patchValue({ username: 'a@b.de', password: 'secret12', password_confirm: 'secret12' });
