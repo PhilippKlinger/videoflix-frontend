@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient, withXhr } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { AuthService } from 'src/app/services/auth-service.service';
 import { CurrentUser } from 'src/app/models/user.model';
@@ -41,5 +41,17 @@ describe('LoginComponent', () => {
 
     expect(loginSpy).toHaveBeenCalledWith({ email: 'a@b.de', password: 'pw' });
     expect(navigateSpy).toHaveBeenCalledWith(['/browse']);
+  });
+
+  it("failed login shows 'Email or password is incorrect.' with role alert next to the form", () => {
+    spyOn(TestBed.inject(AuthService), 'login').and.returnValue(throwError(() => 'Please check your entries and try again.'));
+
+    component.loginForm.setValue({ email: 'a@b.de', password: 'wrong' });
+    component.onSubmit();
+    fixture.detectChanges();
+
+    const alert = fixture.nativeElement.querySelector('[role="alert"]');
+    expect(alert?.textContent).toContain('Email or password is incorrect.');
+    expect(document.querySelector('mat-snack-bar-container')).toBeNull();
   });
 });

@@ -1,6 +1,5 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
 import { MaterialModule } from 'src/app/material/material.module';
@@ -18,11 +17,11 @@ export class ForgotPasswordComponent {
   forgotForm!: FormGroup;
   loading = false;
   success = false;
+  formError = '';
 
   fb = inject(FormBuilder);
   api = inject(ApiService);
   router = inject(Router);
-  snackBar = inject(MatSnackBar);
 
   constructor() { }
 
@@ -34,6 +33,7 @@ export class ForgotPasswordComponent {
 
   onSubmit() {
     if (this.forgotForm.invalid) return;
+    this.formError = '';
     this.loading = true;
     this.api.forgotPassword(this.forgotForm.value).subscribe({
       next: () => {
@@ -45,11 +45,7 @@ export class ForgotPasswordComponent {
       },
       error: () => {
         this.loading = false;
-        this.snackBar.open(
-          'Could not send reset instructions. Please try again.',
-          'Close',
-          { duration: 4000, panelClass: ['error-snackbar'] }
-        );
+        this.formError = 'Could not send reset instructions. Please try again.';
       }
     });
   }

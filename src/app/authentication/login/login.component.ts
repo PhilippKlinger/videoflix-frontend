@@ -1,10 +1,8 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 import { AuthService } from 'src/app/services/auth-service.service';
 import { Router, RouterModule } from '@angular/router';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'src/app/material/material.module';
 import { DemoButtonComponent } from '../demo-button/demo-button.component';
 
@@ -26,12 +24,11 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   requestloading = false;
   showPassword = false;
+  loginFailed = false;
 
   fb = inject(FormBuilder);
   authService = inject(AuthService);
   router = inject(Router);
-  errorService = inject(ErrorHandlingService);
-  snackBar = inject(MatSnackBar);
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -43,10 +40,6 @@ export class LoginComponent implements OnInit {
     if (emailForLogin) {
       this.loginForm.get('email')?.setValue(emailForLogin);
     }
-
-    this.errorService.getErrorMessage().subscribe(message => {
-      if (message) this.showError(message);
-    });
   }
 
   togglePasswordVisibility() {
@@ -54,10 +47,8 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.loginForm.invalid) {
-      this.showError('Please enter valid credentials.');
-      return;
-    }
+    if (this.loginForm.invalid) return;
+    this.loginFailed = false;
     this.requestloading = true;
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
@@ -67,12 +58,8 @@ export class LoginComponent implements OnInit {
       },
       error: () => {
         this.requestloading = false;
-        this.showError('Please check your entries and try again.');
+        this.loginFailed = true;
       }
     });
-  }
-
-  showError(message: string) {
-    this.snackBar.open(message, 'Close', { duration: 4000, panelClass: ['error-snackbar'] });
   }
 }

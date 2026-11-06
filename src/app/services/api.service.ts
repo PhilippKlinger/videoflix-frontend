@@ -18,7 +18,7 @@ export class ApiService {
 
 
   registerUser(data: RegisterRequest): Observable<any> {
-    return this.http.post(`${this.baseUrl}/register/`, data);
+    return this.http.post(`${this.baseUrl}/register/`, data, { context: OWN_ERRORS() });
   }
 
   activateAccount(uid: string, token: string): Observable<any> {
@@ -30,7 +30,7 @@ export class ApiService {
   }
 
   loginUser(data: LoginRequest): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/login/`, data).pipe(
+    return this.http.post<void>(`${this.baseUrl}/login/`, data, { context: OWN_ERRORS() }).pipe(
       catchError((error: HttpErrorResponse) => {
         const errorMsg = error.error.non_field_errors ? error.error.non_field_errors[0] : 'An unexpected error occurred';
         return throwError(() => errorMsg);
@@ -52,11 +52,11 @@ export class ApiService {
   }
 
   forgotPassword(data: { email: string }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/password_reset/`, data);
+    return this.http.post(`${this.baseUrl}/password_reset/`, data, { context: OWN_ERRORS() });
   }
 
   resetPasswordConfirm(uid: string, token: string, data: PasswordConfirmRequest): Observable<any> {
-    return this.http.post(`${this.baseUrl}/password_confirm/${uid}/${token}/`, data);
+    return this.http.post(`${this.baseUrl}/password_confirm/${uid}/${token}/`, data, { context: OWN_ERRORS() });
   }
 
   getVideos(): Observable<Video[]> {
