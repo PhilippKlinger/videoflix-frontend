@@ -37,11 +37,13 @@
                 Password is required
               </mat-error>
             }
-            @if (registerForm.get('password')?.hasError('minlength') && registerForm.get('password')?.touched) {
+            @if ((registerForm.get('password')?.hasError('minlength') || registerForm.get('password')?.hasError('serverRejected'))
+              && registerForm.get('password')?.touched) {
               <mat-error>
-                Your password must contain between 4 and 60 characters.
+                {{ passwordHint }}
               </mat-error>
             }
+            <mat-hint>{{ passwordHint }}</mat-hint>
           </mat-form-field>
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Confirm Password</mat-label>
@@ -57,6 +59,9 @@
               </mat-error>
             }
           </mat-form-field>
+          @if (formError) {
+            <p class="form-error" role="alert">{{ formError }}</p>
+          }
           <button mat-flat-button color="primary" type="submit" [disabled]="registerForm.invalid">
             Get Started
           </button>

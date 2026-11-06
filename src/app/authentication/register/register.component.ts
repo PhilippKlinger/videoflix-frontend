@@ -1,10 +1,11 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
-import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 import { MaterialModule } from 'src/app/material/material.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
+import { PASSWORD_HINT, PASSWORD_MIN_LENGTH, isPasswordRejection } from '../password-rules';
 
 @Component({
   selector: 'app-register',
@@ -22,7 +23,8 @@ export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
   requestloading = false;
   registerSuccess = false;
-  errorMessage = '';
+  formError = '';
+  readonly passwordHint = PASSWORD_HINT;
   timeLeft = 5;
   countdownTimer: any;
   showPassword = false;
@@ -30,7 +32,6 @@ export class RegisterComponent implements OnInit {
 
   fb = inject(FormBuilder);
   api = inject(ApiService);
-  errorService = inject(ErrorHandlingService);
   snackBar = inject(MatSnackBar);
 
   constructor() { }
@@ -41,7 +42,7 @@ export class RegisterComponent implements OnInit {
     this.registerForm = this.fb.group({
       email: [emailFromStorage],
       username: [emailFromStorage, [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH)]],
       password_confirm: ['', Validators.required]
     }, { validators: this.passwordMatchValidator });
 
@@ -55,10 +56,6 @@ export class RegisterComponent implements OnInit {
 
     this.registerForm.get('password_confirm')!.valueChanges.subscribe(() => {
       this.registerForm.updateValueAndValidity();
-    });
-
-    this.errorService.getErrorMessage().subscribe(message => {
-      if (message) this.snackBar.open(message, 'Close', { duration: 4000, panelClass: ['error-snackbar'] });
     });
   }
 
@@ -80,6 +77,7 @@ export class RegisterComponent implements OnInit {
   onSubmit(): void {
     if (this.registerForm.invalid) return;
 
+    this.formError = '';
     this.requestloading = true;
 
     const { email, password, password_confirm } = this.registerForm.value;
@@ -91,12 +89,17 @@ export class RegisterComponent implements OnInit {
         this.snackBar.open('Registration successful! Redirect...', 'OK', { duration: 3000 });
 
       },
-      error: () => {
+      error: (error) => {
         this.requestloading = false;
-        this.snackBar.open('Registration unsuccessful! Please try again.', 'OK', {
-          duration: 4000,
-          panelClass: ['error-snackbar']
-        });
+        if (isPasswordRejection(error)) {
+          const password = this.registerForm.get('password')!;
+          password.setErrors({ serverRejected: true });
+          password.markAsTouched();
+        } else {
+          this.formError = error instanceof HttpErrorResponse && error.status === 400
+            ? 'Registration was not successful. Please check your entries and try again.'
+            : 'Registration did not work. Please try again in a moment.';
+        }
       }
     });
   }

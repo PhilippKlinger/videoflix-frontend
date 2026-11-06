@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideHttpClient, withXhr } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient, withXhr } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 
@@ -32,16 +32,6 @@ describe('ApiService', () => {
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ email: 'a@b.de', password: 'pw' });
     req.flush({ detail: 'login successfully' });
-  });
-
-  it('loginUser maps non_field_errors to a message', () => {
-    let error: unknown;
-    service.loginUser({ email: 'a@b.de', password: 'wrong' }).subscribe({ error: (e) => error = e });
-    httpMock.expectOne('/api/login/').flush(
-      { non_field_errors: ['Please check your entries and try again.'] },
-      { status: 400, statusText: 'Bad Request' }
-    );
-    expect(error).toBe('Please check your entries and try again.');
   });
 
   it('logoutUser posts to /api/logout/', () => {
@@ -135,5 +125,28 @@ describe('ApiService', () => {
     const req = httpMock.expectOne('/api/video/1/');
     expect(req.request.method).toBe('PATCH');
     req.flush({});
+  });
+
+  it('the form calls leave error display to their component (SHOWS_OWN_ERRORS)', () => {
+    const calls: [string, () => void][] = [
+      ['/api/register/', () => service.registerUser({ email: 'a@b.de', password: 'x', confirmed_password: 'x' }).subscribe()],
+      ['/api/login/', () => service.loginUser({ email: 'a@b.de', password: 'x' }).subscribe()],
+      ['/api/password_reset/', () => service.forgotPassword({ email: 'a@b.de' }).subscribe()],
+      ['/api/password_confirm/MQ/abc/', () => service.resetPasswordConfirm('MQ', 'abc', { new_password: 'x', confirm_password: 'x' }).subscribe()],
+    ];
+    calls.forEach(([url, call]) => {
+      call();
+      const req = httpMock.expectOne(url);
+      expect(req.request.context.get(SHOWS_OWN_ERRORS)).withContext(url).toBeTrue();
+      req.flush({});
+    });
+  });
+
+  it('loginUser passes the HttpErrorResponse on with its real status', () => {
+    let error: unknown;
+    service.loginUser({ email: 'a@b.de', password: 'wrong' }).subscribe({ error: (e) => error = e });
+    httpMock.expectOne('/api/login/').flush({ non_field_errors: ['x'] }, { status: 429, statusText: 'Too Many Requests' });
+    expect(error instanceof HttpErrorResponse).toBeTrue();
+    expect((error as HttpErrorResponse).status).toBe(429);
   });
 });

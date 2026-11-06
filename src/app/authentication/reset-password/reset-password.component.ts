@@ -1,10 +1,12 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectionStrategy } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MaterialModule } from 'src/app/material/material.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
 import { ApiService } from 'src/app/services/api.service';
+import { PASSWORD_HINT, PASSWORD_MIN_LENGTH, isPasswordRejection } from '../password-rules';
 
 @Component({
   selector: 'app-reset-password',
@@ -28,6 +30,8 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   showConfirmPassword = false;
   uid = '';
   token = '';
+  formError = '';
+  readonly passwordHint = PASSWORD_HINT;
 
 
   fb = inject(FormBuilder);
@@ -40,7 +44,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.resetForm = this.fb.group({
-      new_password: ['', [Validators.required, Validators.minLength(6)]],
+      new_password: ['', [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH)]],
       confirm_password: ['', Validators.required]
     }, { validators: this.passwordMatchValidator });
 
@@ -74,6 +78,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     if (this.resetForm.invalid) return;
+    this.formError = '';
     this.loading = true;
     this.api.resetPasswordConfirm(this.uid, this.token, this.resetForm.value).subscribe({
       next: () => {
@@ -88,12 +93,17 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
           }
         }, 1000);
       },
-      error: () => {
+      error: (error) => {
         this.loading = false;
-        this.snackBar.open('Error while resetting the password. Please try again.', 'OK', {
-          duration: 4000,
-          panelClass: ['error-snackbar']
-        });
+        if (isPasswordRejection(error)) {
+          const password = this.resetForm.get('new_password')!;
+          password.setErrors({ serverRejected: true });
+          password.markAsTouched();
+        } else {
+          this.formError = error instanceof HttpErrorResponse && error.status === 400
+            ? 'The password could not be reset. The link may have expired; please request a new one.'
+            : 'The password could not be changed. Please try again in a moment.';
+        }
       }
     });
   }

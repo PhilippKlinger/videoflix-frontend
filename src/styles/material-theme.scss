@@ -47,10 +47,11 @@ body {
   font-weight: 600;
   text-transform: none;
   letter-spacing: 0.03em;
-  color: white;
+  color: var(--vf-ink);
   &:disabled {
-    background: #3a3a3a;
-    color: #c0c0c0;
+    background: transparent;
+    color: var(--vf-mute);
+    box-shadow: inset 0 0 0 1px var(--vf-mute);
     opacity: 1;
   }
 }
@@ -76,49 +77,113 @@ body {
 .mat-mdc-flat-button.mat-primary:disabled,
 .mat-mdc-raised-button.mat-primary:disabled,
 .mat-mdc-button.mat-primary:disabled {
-  background: #3a3a3a !important;
-  color: #c0c0c0 !important;
+  background: transparent !important;
+  color: var(--vf-mute) !important;
   opacity: 1;
-  box-shadow: none;
+  box-shadow: inset 0 0 0 1px var(--vf-mute);
+}
+
+// --vf-error is a lighter red than the old #ff032e so that text on the dark surface stays readable
+:root {
+  --vf-error: #ff6b81;
 }
 
 .mat-mdc-form-field {
   --mat-form-field-outlined-outline-width: 1px;
   --mat-form-field-outlined-container-shape: 12px;
-  --mat-form-field-outlined-outline-color: white;
-  --mat-form-field-outlined-focus-outline-color: #2d3edf; // focus
-  --mat-form-field-outlined-error-outline-color: #ff032e; // error
-  --mat-form-field-outlined-label-text-color: white;
-  --mat-form-field-outlined-focus-label-text-color: #2d3edf; // focus
-  --mat-form-field-outlined-error-label-text-color: #ff032e; // error
-  --mat-form-field-outlined-input-text-color: white;
-  --mat-form-field-filled-label-text-color: white;
-  --mat-form-field-filled-input-text-color: white;
+  --mat-form-field-outlined-outline-color: var(--vf-mute);
+  --mat-form-field-outlined-hover-outline-color: var(--vf-ink);
+  --mat-form-field-outlined-focus-outline-color: var(--vf-accent);
+  --mat-form-field-outlined-error-outline-color: var(--vf-error);
+  --mat-form-field-outlined-label-text-color: var(--vf-mute);
+  --mat-form-field-outlined-focus-label-text-color: var(--vf-ink);
+  --mat-form-field-outlined-error-label-text-color: var(--vf-error);
+  --mat-form-field-outlined-input-text-color: var(--vf-ink);
+  --mat-form-field-error-text-color: var(--vf-error);
+  --mat-form-field-subscript-text-color: var(--vf-mute);
+  --mat-form-field-filled-label-text-color: var(--vf-mute);
+  --mat-form-field-filled-input-text-color: var(--vf-ink);
 }
 
 // Icon: per Input-State
 .mat-mdc-form-field .mat-icon {
-  color: white !important;
+  color: var(--vf-mute) !important;
 }
 .mat-mdc-form-field.mat-focused .mat-icon {
-  color: #2d3edf !important;
+  color: var(--vf-ink) !important;
 }
 .mat-mdc-form-field.mat-mdc-form-field-invalid .mat-icon {
-  color: #ff032e !important;
+  color: var(--vf-error) !important;
 }
 
-// Keeps a constant space for error messages/hints below inputs
+// Hints and errors wrap onto several lines instead of being cut off, and leave room below the input
 .mat-mdc-form-field-subscript-wrapper {
   min-height: 14px;
-  display: flex;
-  align-items: flex-end;
-  // Optional: use padding-bottom for even more space to the inputs:
-  // padding-bottom: 8px;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+.mat-mdc-form-field-error,
+.mat-mdc-form-field-hint-wrapper {
+  white-space: normal;
+}
+
+// Failure message of a form as a whole (wrong login, server rejection)
+.form-error {
+  margin: 4px 0 0;
+  color: var(--vf-error);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  text-align: center;
 }
 
 // Increase the space between inputs (optional, but visually pleasant)
 .full-width {
   margin-bottom: 12px; // Between inputs (20-24px gives even more room)
+}
+
+// One geometry for the four auth cards (login, register, forgot, reset): same width, padding, heading,
+// field width and full-width submit button
+.login-wrapper,
+.register-wrapper,
+.forgot-wrapper,
+.reset-wrapper {
+  max-width: 420px;
+  margin: 80px auto;
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  color: var(--vf-ink);
+
+  h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    line-height: 1.1;
+    text-align: center;
+    margin: 0 0 20px;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 1rem;
+    color: var(--vf-mute);
+    margin: 0 0 20px;
+  }
+
+  .videoflix-link {
+    color: var(--vf-tech);
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  button[type="submit"],
+  a.submit-btn {
+    width: 100%;
+    height: 46px;
+    margin-top: 12px;
+    font-weight: 600;
+  }
 }
 
 // Optional: move the button down a little

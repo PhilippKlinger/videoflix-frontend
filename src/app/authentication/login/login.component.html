@@ -21,6 +21,9 @@
             <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
         </mat-form-field>
+        @if (loginError) {
+          <p class="form-error" role="alert">{{ loginError }}</p>
+        }
         <button mat-flat-button color="primary" type="submit" [disabled]="loginForm.invalid">
           Log in
         </button>
