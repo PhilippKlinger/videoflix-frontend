@@ -37,11 +37,9 @@ export class RegisterComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    const emailFromStorage = localStorage.getItem('emailForLogin') || '';
-
     this.registerForm = this.fb.group({
-      email: [emailFromStorage],
-      username: [emailFromStorage, [Validators.required, Validators.email]],
+      email: [''],
+      username: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH)]],
       password_confirm: ['', Validators.required]
     }, { validators: this.passwordMatchValidator });

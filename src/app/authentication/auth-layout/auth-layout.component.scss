@@ -10,7 +10,7 @@
   color: white;
   z-index: 0;
 
-  &::before {
+  &:not(.own-background)::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -102,6 +102,7 @@
 
 .auth-footer {
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   justify-content: center;
   gap: 40px;

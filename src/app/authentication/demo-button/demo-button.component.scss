@@ -1,21 +1,27 @@
 .demo {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: var(--demo-align, center);
   gap: 8px;
-  text-align: center;
+  text-align: var(--demo-text-align, center);
 }
 
 .demo-button {
   min-height: 44px;
-  color: white;
-  border-color: white;
+  --mat-button-filled-container-color: var(--vf-ink);
+  --mat-button-filled-label-text-color: var(--vf-bg);
+  --mat-button-filled-state-layer-color: var(--vf-bg);
 }
 
 .demo-hint,
 .demo-error {
   margin: 0;
   font-size: 14px;
+}
+
+.demo-hint {
+  color: var(--vf-mute);
+  font-size: 12px;
 }
 
 .demo-error {

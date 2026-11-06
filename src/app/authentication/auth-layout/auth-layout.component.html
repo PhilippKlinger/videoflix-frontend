@@ -1,4 +1,6 @@
-<div class="auth-container" [ngStyle]="{ 'background-image': 'url(' + backgroundImage + ')' }">
+<div class="auth-container" [class.own-background]="!backgroundImage"
+  [ngStyle]="{ 'background-image': backgroundImage ? 'url(' + backgroundImage + ')' : null }">
+  <ng-content select="[layoutBackground]"></ng-content>
   <header class="auth-header">
     <a routerLink="/" class="logo-link" aria-label="Videoflix, to the start page">
       <img src="/assets/logo.svg" alt="Videoflix" class="logo" width="251" height="40" />
@@ -19,5 +21,8 @@
   <footer class="auth-footer">
     <a routerLink="/datenschutz">Datenschutz</a> |
     <a routerLink="/impressum">Impressum</a>
+    @if (showBuildLink) {
+      | <a class="build-link" [href]="buildStoryUrl" target="_blank" rel="noopener">How this was built</a>
+    }
   </footer>
 </div>

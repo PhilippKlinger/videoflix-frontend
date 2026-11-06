@@ -36,11 +36,6 @@ export class LoginComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
     });
-
-    const emailForLogin = localStorage.getItem('emailForLogin');
-    if (emailForLogin) {
-      this.loginForm.get('email')?.setValue(emailForLogin);
-    }
   }
 
   togglePasswordVisibility() {
@@ -53,7 +48,6 @@ export class LoginComponent implements OnInit {
     this.requestloading = true;
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
-        localStorage.removeItem('emailForLogin');
         this.requestloading = false;
         this.router.navigate(['/browse']);
       },
