@@ -40,5 +40,3 @@ export const CATEGORY_CHOICES = [
   { value: 'Romance', label: 'Romance' },
   { value: 'Sports', label: 'Sports' }
 ];
-
-export type CategorizedVideos = { [category: string]: Video[] };

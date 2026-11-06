@@ -62,10 +62,8 @@ export class BrowseComponent implements OnInit {
         this.ownVideos = videos.filter(v => v.is_own);
         const catalog = videos.filter(v => !v.is_own);
 
-        // Newest 10 videos
-        this.newestVideos = [...catalog]
-          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-          .slice(0, 10);
+        // Newest 10 videos: the VideoService delivers the list sorted
+        this.newestVideos = catalog.slice(0, 10);
 
         // Featured = first element
         this.featured = this.newestVideos[0];
