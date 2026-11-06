@@ -13,6 +13,7 @@ import { BrowseComponent } from './main-view/browse/browse.component';
 import { VideoUploadComponent } from './main-view/video-upload/video-upload.component';
 import { ImprintComponent } from './legal/imprint.component';
 import { PrivacyComponent } from './legal/privacy.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 describe('app routes', () => {
   const expected: [string, Type<unknown>][] = [
@@ -26,6 +27,7 @@ describe('app routes', () => {
     ['upload', VideoUploadComponent],
     ['impressum', ImprintComponent],
     ['datenschutz', PrivacyComponent],
+    ['**', NotFoundComponent],
   ];
 
   function find(path: string): Route {
