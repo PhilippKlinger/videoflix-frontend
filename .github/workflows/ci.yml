@@ -154,6 +154,8 @@ jobs:
             --cache-from "type=gha,scope=videoflix-frontend" \
             --cache-to "type=gha,mode=max,scope=videoflix-frontend" \
             --label "org.opencontainers.image.revision=${GITHUB_SHA}" \
+            --build-arg "GIT_SHA=${GITHUB_SHA}" \
+            --build-arg "BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             --tag "${IMAGE}" \
             --load \
             .
@@ -182,6 +184,7 @@ jobs:
 
       # The digest makes the reference immutable: the deploy repository pins exactly this build.
       - name: Push image and record immutable reference
+        id: push
         if: github.event_name == 'push'
         env:
           IMAGE: ${{ steps.name.outputs.ref }}
@@ -193,3 +196,16 @@ jobs:
           [[ "${DIGEST}" =~ ^sha256:[0-9a-f]{64}$ ]]
           echo "### Image" >> "${GITHUB_STEP_SUMMARY}"
           echo '`'"${IMAGE}@${DIGEST}"'`' >> "${GITHUB_STEP_SUMMARY}"
+          echo "digest=${DIGEST}" >> "${GITHUB_OUTPUT}"
+
+      # Last step on purpose: the deploy only starts for an image that passed everything above.
+      - name: Trigger deploy
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.DEPLOY_DISPATCH_TOKEN }}
+          DIGEST: ${{ steps.push.outputs.digest }}
+        run: |
+          set -Eeuo pipefail
+          jq -n --arg digest "${DIGEST}" \
+            '{event_type: "image-published", client_payload: {service: "frontend", digest: $digest}}' |
+            gh api --method POST repos/PhilippKlinger/videoflix-deploy/dispatches --input -
