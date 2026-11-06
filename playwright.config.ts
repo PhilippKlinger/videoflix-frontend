@@ -15,5 +15,11 @@ export default defineConfig({
     baseURL: process.env['E2E_BASE_URL'] ?? 'http://localhost:4200',
     trace: 'retain-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    { name: 'chromium', testIgnore: 'layout.spec.ts', use: { ...devices['Desktop Chrome'] } },
+    { name: 'layout-desktop', testMatch: 'layout.spec.ts', use: { ...devices['Desktop Chrome'] } },
+    // Playwright's iPads need WebKit, CI installs Chromium only.
+    { name: 'layout-tablet', testMatch: 'layout.spec.ts', use: { ...devices['Desktop Chrome'], viewport: { width: 820, height: 1180 } } },
+    { name: 'layout-mobile', testMatch: 'layout.spec.ts', use: { ...devices['Pixel 7'] } },
+  ],
 });
