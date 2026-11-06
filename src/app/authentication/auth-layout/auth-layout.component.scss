@@ -43,19 +43,26 @@
     padding: 24px 16px 0;
   }
 
+  .logo-link {
+    display: inline-flex;
+    min-width: 0;
+
+    &:hover .logo,
+    &:focus-visible .logo {
+      filter: brightness(1.4);
+      transform: scale(1.03);
+      transition: ease-in-out all 125ms;
+    }
+  }
+
   .logo {
     height: 40px;
     width: auto;
+    max-width: 100%;
     cursor: pointer;
 
     @media (max-width: 400px) {
       height: 28px;
-    }
-    &:hover,
-    &:focus {
-      filter: brightness(1.4);
-      transform: scale(1.03);
-      transition: ease-in-out all 125ms;
     }
   }
 
