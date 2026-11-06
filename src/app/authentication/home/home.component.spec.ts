@@ -52,9 +52,13 @@ describe('HomeComponent', () => {
     const img = host.querySelector('.cover img') as HTMLImageElement;
     expect(img.getAttribute('fetchpriority')).toBe('high');
     expect(img.getAttribute('src')).toBe(component.coverImage);
-    expect(img.getAttribute('width')).toBe('1920');
-    expect(img.getAttribute('height')).toBe('1516');
+    expect(img.getAttribute('width')).toBe('1280');
+    expect(img.getAttribute('height')).toBe('720');
     expect((host.querySelector('.auth-container') as HTMLElement).style.backgroundImage).toBe('');
+  });
+
+  it('home uses the cover image', () => {
+    expect(component.coverImage).toBe('/assets/backgrounds/cover.webp');
   });
 
   it('should create', () => {
