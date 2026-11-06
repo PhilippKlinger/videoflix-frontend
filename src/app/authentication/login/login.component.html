@@ -17,7 +17,8 @@
           <mat-label>Password</mat-label>
           <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" autocomplete="current-password">
           <mat-icon matPrefix>lock</mat-icon>
-          <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()">
+          <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
             <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
         </mat-form-field>
