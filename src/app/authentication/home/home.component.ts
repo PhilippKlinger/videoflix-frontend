@@ -13,5 +13,5 @@ import { DemoButtonComponent } from '../demo-button/demo-button.component';
 })
 export class HomeComponent {
   // Swap this one line to change the start page image; keep width and height in the template in sync.
-  readonly coverImage = '/assets/backgrounds/start.webp';
+  readonly coverImage = '/assets/backgrounds/cover.webp';
 }

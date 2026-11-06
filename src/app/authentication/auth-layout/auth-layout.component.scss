@@ -105,11 +105,24 @@
   flex-wrap: wrap;
   flex-direction: row;
   justify-content: center;
-  gap: 40px;
+  gap: 8px 24px;
   padding-bottom: 28px;
   padding-top: 18px;
 
+  // Separators are drawn only where all links fit in one row, so none can end up alone on a wrapped line.
+  @media (min-width: 560px) {
+    column-gap: 84px;
+
+    a + a::before {
+      content: "|" / "";
+      position: absolute;
+      left: -42px;
+      transform: translateX(-50%);
+    }
+  }
+
   a {
+    position: relative;
     color: #fff;
     font-size: 0.98rem;
     text-decoration: none;
