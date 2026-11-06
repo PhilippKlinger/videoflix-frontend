@@ -122,6 +122,10 @@ body {
   font-size: 0.8125rem;
   line-height: 1.35;
 }
+// Dynamic subscript reserves no space: keep the same gap a fixed one leaves below the field
+.mat-mdc-form-field-subscript-wrapper.mat-mdc-form-field-subscript-dynamic-size {
+  min-height: 16px;
+}
 .mat-mdc-form-field-error,
 .mat-mdc-form-field-hint-wrapper {
   white-space: normal;
