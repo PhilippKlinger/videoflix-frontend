@@ -17,7 +17,8 @@ export const routes: Routes = [
   // Public and linked from every footer; German like the legal terms they use.
   { path: 'impressum', loadComponent: () => import('./legal/imprint.component').then(m => m.ImprintComponent), title: 'Impressum · Videoflix' },
   { path: 'datenschutz', loadComponent: () => import('./legal/privacy.component').then(m => m.PrivacyComponent), title: 'Datenschutz · Videoflix' },
-
+  // Must stay last so it only catches urls no other route matches.
+  { path: '**', loadComponent: () => import('./not-found/not-found.component').then(m => m.NotFoundComponent) },
 ];
 
 @NgModule({

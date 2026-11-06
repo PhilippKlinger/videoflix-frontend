@@ -1,0 +1,16 @@
+.not-found {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  text-align: center;
+  color: #fff;
+  background: #0b0b0f;
+
+  a {
+    color: #fff;
+  }
+}
