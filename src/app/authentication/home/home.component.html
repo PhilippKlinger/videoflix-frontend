@@ -1,31 +1,16 @@
-<app-auth-layout [backgroundImage]="'/assets/backgrounds/start.webp'">
+<app-auth-layout [backgroundImage]="''" [showBuildLink]="true">
+  <div layoutBackground class="cover">
+    <img [src]="coverImage" alt="" width="1920" height="1516" fetchpriority="high" />
+    <div class="veil"></div>
+  </div>
+
   <div class="home-content">
-    <h1>Movies, TV shows, and more</h1>
-    <p>Enter your email to create or restart your subscription.</p>
+    <h1>Stream your clips, in every quality.</h1>
+    <p>Videoflix is a video platform built end to end: from upload and conversion to playback in your browser.</p>
 
-    <form [formGroup]="emailCheckForm" (ngSubmit)="onSubmitEmailCheck()">
-      <mat-form-field appearance="outline" class="email-field" floatLabel="always">
-        <mat-label>Email Address</mat-label>
-        <input matInput type="email" formControlName="email" placeholder="Email Address" />
-        @if (emailCheckForm.controls['email'].hasError('required')) {
-          <mat-error>
-            Email is required
-          </mat-error>
-        }
-        @if (emailCheckForm.controls['email'].hasError('email')) {
-          <mat-error>
-            Please enter a valid email address
-          </mat-error>
-        }
-      </mat-form-field>
-
-      <button mat-raised-button color="primary" class="signup-button" type="submit"
-        [disabled]="!emailCheckForm.valid || requestloading">
-        Sign Up
-        <mat-icon>arrow_forward_ios</mat-icon>
-      </button>
-    </form>
-
-    <app-demo-button></app-demo-button>
+    <div class="actions">
+      <app-demo-button></app-demo-button>
+      <a routerLink="/register" class="signup-link">Sign up</a>
+    </div>
   </div>
 </app-auth-layout>
