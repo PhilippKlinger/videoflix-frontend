@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient, withXhr } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 
 import { AuthService } from 'src/app/services/auth-service.service';
@@ -44,7 +45,7 @@ describe('LoginComponent', () => {
   });
 
   it("failed login shows 'Email or password is incorrect.' with role alert next to the form", () => {
-    spyOn(TestBed.inject(AuthService), 'login').and.returnValue(throwError(() => 'Please check your entries and try again.'));
+    spyOn(TestBed.inject(AuthService), 'login').and.returnValue(throwError(() => new HttpErrorResponse({ status: 400, error: {} })));
 
     component.loginForm.setValue({ email: 'a@b.de', password: 'wrong' });
     component.onSubmit();
@@ -53,5 +54,25 @@ describe('LoginComponent', () => {
     const alert = fixture.nativeElement.querySelector('[role="alert"]');
     expect(alert?.textContent).toContain('Email or password is incorrect.');
     expect(document.querySelector('mat-snack-bar-container')).toBeNull();
+  });
+
+  const failures: [string, number, string][] = [
+    ['credentials rejected (400)', 400, 'Email or password is incorrect.'],
+    ['throttled (429)', 429, 'Login did not work. Please try again in a moment.'],
+    ['server error (500)', 500, 'Login did not work. Please try again in a moment.'],
+    ['no connection (0)', 0, 'Login did not work. Please try again in a moment.'],
+    ['rejected session after login (401)', 401, 'Login did not work. Please try again in a moment.'],
+  ];
+  failures.forEach(([name, status, text]) => {
+    it('shows the right message when ' + name, () => {
+      const error = new HttpErrorResponse({ status, error: {} });
+      spyOn(TestBed.inject(AuthService), 'login').and.returnValue(throwError(() => error));
+
+      component.loginForm.setValue({ email: 'a@b.de', password: 'pw' });
+      component.onSubmit();
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toContain(text);
+    });
   });
 });

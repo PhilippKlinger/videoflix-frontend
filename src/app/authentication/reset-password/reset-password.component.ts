@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectionStrategy } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MaterialModule } from 'src/app/material/material.module';
@@ -99,7 +100,9 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
           password.setErrors({ serverRejected: true });
           password.markAsTouched();
         } else {
-          this.formError = 'The password could not be reset. The link may have expired; please request a new one.';
+          this.formError = error instanceof HttpErrorResponse && error.status === 400
+            ? 'The password could not be reset. The link may have expired; please request a new one.'
+            : 'The password could not be changed. Please try again in a moment.';
         }
       }
     });

@@ -1,4 +1,5 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
@@ -43,9 +44,12 @@ export class ForgotPasswordComponent {
           this.router.navigate(['/login']);
         }, 3500);
       },
-      error: () => {
+      error: (error) => {
         this.loading = false;
-        this.formError = 'Could not send reset instructions. Please try again.';
+        // The backend answers 200 for every well-formed address, so a 400 can only mean a malformed one.
+        this.formError = error instanceof HttpErrorResponse && error.status === 400
+          ? 'Please check the email address and try again.'
+          : 'Could not send reset instructions. Please try again in a moment.';
       }
     });
   }

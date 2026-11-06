@@ -1,28 +1,4 @@
 .login-wrapper {
-  max-width: 420px;
-  margin: 80px auto;
-  padding: 40px 30px;
-  display: flex;
-  flex-direction: column;
-  color: white;
-  gap: 12px;
-
-  h1 {
-    font-size: 2rem;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  .full-width {
-    width: 100%;
-  }
-
-  button[type="submit"] {
-    margin-top: 20px;
-    font-weight: 600;
-  }
-
   .login-links {
     margin-top: 18px;
     text-align: center;

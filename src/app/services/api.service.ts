@@ -30,12 +30,7 @@ export class ApiService {
   }
 
   loginUser(data: LoginRequest): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/login/`, data, { context: OWN_ERRORS() }).pipe(
-      catchError((error: HttpErrorResponse) => {
-        const errorMsg = error.error.non_field_errors ? error.error.non_field_errors[0] : 'An unexpected error occurred';
-        return throwError(() => errorMsg);
-      })
-    );
+    return this.http.post<void>(`${this.baseUrl}/login/`, data, { context: OWN_ERRORS() });
   }
 
   /** Starts a demo account; the backend sets the session cookies. */

@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
 import { MaterialModule } from 'src/app/material/material.module';
@@ -95,7 +96,9 @@ export class RegisterComponent implements OnInit {
           password.setErrors({ serverRejected: true });
           password.markAsTouched();
         } else {
-          this.formError = 'Registration was not successful. Please check your entries and try again.';
+          this.formError = error instanceof HttpErrorResponse && error.status === 400
+            ? 'Registration was not successful. Please check your entries and try again.'
+            : 'Registration did not work. Please try again in a moment.';
         }
       }
     });

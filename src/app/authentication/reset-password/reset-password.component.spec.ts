@@ -68,4 +68,23 @@ describe('ResetPasswordComponent', () => {
     expect(fixture.nativeElement.querySelector('mat-error')?.textContent).toContain(PASSWORD_HINT);
     expect(fixture.nativeElement.textContent).not.toContain('too common');
   });
+
+  const failures: [number, string][] = [
+    [400, 'The password could not be reset. The link may have expired; please request a new one.'],
+    [429, 'The password could not be changed. Please try again in a moment.'],
+    [500, 'The password could not be changed. Please try again in a moment.'],
+    [0, 'The password could not be changed. Please try again in a moment.'],
+  ];
+  failures.forEach(([status, text]) => {
+    it('shows the right message for status ' + status, () => {
+      const error = new HttpErrorResponse({ status, error: status === 400 ? { detail: 'Invalid or expired token.' } : {} });
+      spyOn(TestBed.inject(ApiService), 'resetPasswordConfirm').and.returnValue(throwError(() => error));
+      component.resetForm.setValue({ new_password: 'abcdefg1', confirm_password: 'abcdefg1' });
+
+      component.onSubmit();
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toContain(text);
+    });
+  });
 });

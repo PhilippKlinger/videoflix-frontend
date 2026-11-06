@@ -66,4 +66,23 @@ describe('RegisterComponent', () => {
     expect(fixture.nativeElement.querySelector('mat-error')?.textContent).toContain(PASSWORD_HINT);
     expect(text).not.toContain('too common');
   });
+
+  const failures: [number, string][] = [
+    [400, 'Registration was not successful. Please check your entries and try again.'],
+    [429, 'Registration did not work. Please try again in a moment.'],
+    [500, 'Registration did not work. Please try again in a moment.'],
+    [0, 'Registration did not work. Please try again in a moment.'],
+  ];
+  failures.forEach(([status, text]) => {
+    it('shows the right message for status ' + status, () => {
+      const error = new HttpErrorResponse({ status, error: status === 400 ? { email: ['x'] } : {} });
+      spyOn(TestBed.inject(ApiService), 'registerUser').and.returnValue(throwError(() => error));
+      component.registerForm.patchValue({ username: 'a@b.de', password: 'abcdefg1', password_confirm: 'abcdefg1' });
+
+      component.onSubmit();
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toContain(text);
+    });
+  });
 });
