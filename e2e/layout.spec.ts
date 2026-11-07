@@ -70,11 +70,11 @@ async function openForgotPasswordError(page: Page): Promise<void> {
   await expect(page.getByText('Please enter a valid email')).toBeVisible();
 }
 
-const PAGES: { name: string; open: (page: Page) => Promise<unknown>; axe?: false }[] = [
+const PAGES: { name: string; open: (page: Page) => Promise<unknown> }[] = [
   { name: 'home', open: page => page.goto('/') },
   { name: 'login', open: page => page.goto('/login') },
   { name: 'register', open: page => page.goto('/register') },
-  { name: 'browse', open: openBrowse, axe: false },
+  { name: 'browse', open: openBrowse },
   { name: 'not-found', open: openNotFound },
   { name: 'login-rejected', open: openLoginRejected },
   { name: 'register-errors', open: openRegisterErrors },
@@ -120,7 +120,7 @@ test.describe('layout', () => {
 
   // One test per page, because a failed test restarts the worker and a repeated
   // setup would spend another rejected login or demo account. Soft: both checks always report.
-  for (const { name, open, axe } of PAGES) {
+  for (const { name, open } of PAGES) {
     test(name, async ({ page }, testInfo) => {
       await open(page);
       await settled(page);
@@ -138,19 +138,9 @@ test.describe('layout', () => {
         expect.soft(scrollWidth, 'document scrollWidth').toBeLessThanOrEqual(clientWidth);
       });
 
-      if (axe !== false) {
-        await test.step('axe finds no serious or critical violations', () => expectNoAxeFindings(page));
-      }
+      await test.step('axe finds no serious or critical violations', () => expectNoAxeFindings(page));
     });
   }
-
-  // scrollable-region-focusable on the tile lists: <img (click)> tiles hold nothing focusable.
-  // Fixed by the tile rebuild, which drops this test and the axe flag of the browse page.
-  test.fixme('browse: axe finds no serious or critical violations', async ({ page }) => {
-    await openBrowse(page);
-    await settled(page);
-    await expectNoAxeFindings(page);
-  });
 
   test('form fields do not overlap', async ({ page }) => {
     await page.goto('/register');

@@ -1,19 +1,14 @@
-<div class="thumb-item"
-  [ngStyle]="{ 'background-image': 'url(' + getThumbnailUrl() + ')' }"
-  (mouseenter)="hovered = true"
-  (mouseleave)="hovered = false">
-  <div class="thumb-title">{{ video.title }}</div>
-  @if (hovered) {
-    <div class="thumb-overlay">
-      <button class="action-btn play" (click)="play.emit(video); $event.stopPropagation()">
-        <mat-icon>play_arrow</mat-icon>
-      </button>
-      <button class="action-btn" (click)="favorite.emit(video); $event.stopPropagation()">
-        <mat-icon>favorite_border</mat-icon>
-      </button>
-      <button class="action-btn" (click)="openDetails.emit(video); $event.stopPropagation()">
-        <mat-icon>expand_more</mat-icon>
-      </button>
-    </div>
-  }
-</div>
+<button type="button" class="tile" (click)="open.emit(video)">
+  <span class="media">
+    @if (video.thumbnail_url) {
+      <img [src]="video.thumbnail_url" alt="" loading="lazy" decoding="async" width="267" height="150" />
+    } @else {
+      <span class="placeholder"></span>
+    }
+    @if (video.visibility === 'private') {
+      <span class="badge">Private</span>
+    }
+  </span>
+  <span class="title">{{ video.title }}</span>
+  <span class="category">{{ video.category }}</span>
+</button>

@@ -7,6 +7,8 @@ import { Video } from 'src/app/models/video.model';
 import { Role } from 'src/app/models/user.model';
 import { MainLayoutComponent } from '../main-layout/main-layout.component';
 import { MyVideosComponent } from '../my-videos/my-videos.component';
+import { VideoThumbnailComponent } from '../video-thumbnail/video-thumbnail.component';
+import { ScrollFadeDirective } from './scroll-fade.directive';
 import { VideoPlayerComponent } from 'src/app/video-player/video-player.component';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material/material.module';
@@ -20,6 +22,8 @@ import { MaterialModule } from 'src/app/material/material.module';
     MaterialModule,
     MainLayoutComponent,
     MyVideosComponent,
+    VideoThumbnailComponent,
+    ScrollFadeDirective,
   ],
   templateUrl: './browse.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -107,7 +111,8 @@ export class BrowseComponent implements OnInit {
     console.log('Favorited:', video);
   }
 
-  openDetails(video: Video) {
-    console.log('Open details for:', video);
+  /** Tiles open the player directly until the details view exists. */
+  openDetails(video: Video): void {
+    this.playVideo(video);
   }
 }

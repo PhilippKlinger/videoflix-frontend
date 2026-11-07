@@ -1,73 +1,81 @@
-.thumb-item {
-  position: relative;
-  flex: 0 0 210px;
-  height: 120px;
-  background-size: cover;
-  background-position: center;
-  border-radius: 8px;
+:host {
+  display: block;
+}
+
+.tile {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--vf-ink);
+  font: inherit;
+  text-align: left;
   cursor: pointer;
-  transition: transform 0.18s cubic-bezier(.4,0,.2,1),
-              box-shadow 0.18s cubic-bezier(.4,0,.2,1);
-  overflow: visible;
-  box-shadow: none;
 
-  &:hover {
-    transform: scale(1.18) translateY(-16px);
-    box-shadow: 0 12px 36px rgba(0,0,0,0.60);
-    z-index: 10;
+  &:focus-visible {
+    outline: 2px solid var(--vf-accent);
+    outline-offset: 0;
+    border-radius: var(--vf-radius);
   }
 
-  .thumb-title {
-    position: absolute;
-    bottom: 4px; left: 4px; right: 4px;
-    background: rgba(0,0,0,0.65);
-    color: #fff;
-    font-weight: 500;
-    padding: 0.2rem 0.4rem;
-    font-size: 0.95rem;
-    text-align: center;
-    border-radius: 4px;
-    pointer-events: none;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    opacity: 0.9;
+  &:hover .media {
+    border-color: var(--vf-mute);
+  }
+}
+
+.media {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--vf-line);
+  border-radius: var(--vf-radius);
+  background: var(--vf-line);
+  transition: border-color 0.15s;
+
+  img,
+  .placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 
-  .thumb-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba(20,20,20,0.01),
-      rgba(0,0,0,0.65) 80%
-    );
-    display: flex;
-    align-items: flex-end;
-    justify-content: flex-start;
-    gap: 8px;
-    padding: 16px;
-    z-index: 12;
-    pointer-events: none;
-
-    .action-btn {
-      pointer-events: auto;
-      background: white;
-      border-radius: 50%;
-      border: none;
-      width: 38px; height: 38px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
-      transition: background 0.15s;
-      cursor: pointer;
-
-      &:hover { background: #dedede; }
-
-      &.play { 
-        background: #fff; 
-        color: #111; 
-      }
-    }
+  img {
+    object-fit: cover;
   }
+
+  .placeholder {
+    background: linear-gradient(135deg, var(--vf-line), var(--vf-bg));
+  }
+}
+
+.badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--vf-ink);
+  background: rgba(11, 11, 15, 0.8);
+}
+
+.title,
+.category {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.title {
+  margin-top: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.category {
+  font-size: 0.8rem;
+  color: var(--vf-mute);
 }

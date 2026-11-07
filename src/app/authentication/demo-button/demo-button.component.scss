@@ -20,6 +20,8 @@
 }
 
 .demo-hint {
+  // A host can cap the width, so a long hint does not widen the column.
+  max-width: var(--demo-hint-max-width, none);
   color: var(--vf-mute);
   font-size: 12px;
 }
