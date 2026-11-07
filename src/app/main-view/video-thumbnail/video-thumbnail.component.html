@@ -11,4 +11,7 @@
   </span>
   <span class="title">{{ video.title }}</span>
   <span class="category">{{ video.category }}</span>
+  @if (hood.enabled()) {
+    <span class="tech">{{ streams }}</span>
+  }
 </button>

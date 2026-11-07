@@ -1,5 +1,7 @@
-import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Video } from 'src/app/models/video.model';
+import { streamCount } from 'src/app/models/video-tech';
+import { UnderTheHoodService } from 'src/app/services/under-the-hood.service';
 
 @Component({
   standalone: true,
@@ -11,4 +13,9 @@ import { Video } from 'src/app/models/video.model';
 export class VideoThumbnailComponent {
   @Input() video!: Video;
   @Output() open = new EventEmitter<Video>();
+  hood = inject(UnderTheHoodService);
+
+  get streams(): string {
+    return streamCount(this.video);
+  }
 }

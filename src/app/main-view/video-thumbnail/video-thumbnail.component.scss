@@ -62,7 +62,8 @@
 }
 
 .title,
-.category {
+.category,
+.tech {
   display: block;
   overflow: hidden;
   white-space: nowrap;
@@ -78,4 +79,11 @@
 .category {
   font-size: 0.8rem;
   color: var(--vf-mute);
+}
+
+// Technical layer: monospace in the tech colour.
+.tech {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--vf-tech);
 }

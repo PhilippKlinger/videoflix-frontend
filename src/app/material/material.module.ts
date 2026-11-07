@@ -8,6 +8,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   exports: [
@@ -20,6 +21,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatMenuModule,
     MatSelectModule,
     MatProgressBarModule,
+    MatSlideToggleModule,
   ]
 })
 export class MaterialModule { }

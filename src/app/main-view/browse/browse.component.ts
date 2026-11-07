@@ -5,6 +5,8 @@ import { VideoService } from 'src/app/services/video.service';
 import { AuthService } from 'src/app/services/auth-service.service';
 import { Video } from 'src/app/models/video.model';
 import { Role } from 'src/app/models/user.model';
+import { techLine } from 'src/app/models/video-tech';
+import { UnderTheHoodService } from 'src/app/services/under-the-hood.service';
 import { MainLayoutComponent } from '../main-layout/main-layout.component';
 import { MyVideosComponent } from '../my-videos/my-videos.component';
 import { VideoThumbnailComponent } from '../video-thumbnail/video-thumbnail.component';
@@ -46,6 +48,7 @@ export class BrowseComponent implements OnInit {
 
   videoService = inject(VideoService);
   authService = inject(AuthService);
+  hood = inject(UnderTheHoodService);
   dialog = inject(MatDialog);
   destroyRef = inject(DestroyRef);
 
@@ -83,6 +86,11 @@ export class BrowseComponent implements OnInit {
 
         this.loading = false;
       });
+  }
+
+  /** Technical line of the hero video; null when it has no streams yet. */
+  get heroTech(): string | null {
+    return this.featured ? techLine(this.featured) : null;
   }
 
   /** Admin uploads become standard videos, so admins have no own uploads. */
