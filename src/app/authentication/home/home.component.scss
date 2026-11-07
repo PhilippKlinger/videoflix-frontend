@@ -64,6 +64,8 @@
   .actions {
     --demo-align: flex-start;
     --demo-text-align: left;
+    // The hint wraps instead of pushing "Sign up" away from the button.
+    --demo-hint-max-width: 24ch;
     display: flex;
     flex-wrap: wrap;
     align-items: flex-start;
