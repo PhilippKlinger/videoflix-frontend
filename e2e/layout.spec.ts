@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page, TestInfo } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import path from 'node:path';
 
@@ -70,11 +70,40 @@ async function openForgotPasswordError(page: Page): Promise<void> {
   await expect(page.getByText('Please enter a valid email')).toBeVisible();
 }
 
-const PAGES: { name: string; open: (page: Page) => Promise<unknown> }[] = [
+/**
+ * Opens the details of the first tile with the real keyboard, checks them like a page,
+ * and closes them with Escape. It reuses the demo login of the browse page.
+ */
+async function checkDetailsDialog(page: Page, testInfo: TestInfo): Promise<void> {
+  const tile = page.locator('#newest li button').first();
+  const dialog = page.getByRole('dialog');
+
+  await test.step('tile opens details with the keyboard', async () => {
+    await tile.focus();
+    await page.keyboard.press('Enter');
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Play' })).toBeFocused();
+  });
+
+  await settled(page);
+  await page.screenshot({
+    path: path.join('e2e-shots', testInfo.project.name, 'details.png'),
+    animations: 'disabled',
+  });
+  await test.step('axe finds no serious or critical violations with the details open', () => expectNoAxeFindings(page));
+
+  await test.step('Escape closes the details and returns focus to the tile', async () => {
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+    await expect(tile).toBeFocused();
+  });
+}
+
+const PAGES: { name: string; open: (page: Page) => Promise<unknown>; then?: (page: Page, testInfo: TestInfo) => Promise<void> }[] = [
   { name: 'home', open: page => page.goto('/') },
   { name: 'login', open: page => page.goto('/login') },
   { name: 'register', open: page => page.goto('/register') },
-  { name: 'browse', open: openBrowse },
+  { name: 'browse', open: openBrowse, then: checkDetailsDialog },
   { name: 'not-found', open: openNotFound },
   { name: 'login-rejected', open: openLoginRejected },
   { name: 'register-errors', open: openRegisterErrors },
@@ -120,7 +149,7 @@ test.describe('layout', () => {
 
   // One test per page, because a failed test restarts the worker and a repeated
   // setup would spend another rejected login or demo account. Soft: both checks always report.
-  for (const { name, open } of PAGES) {
+  for (const { name, open, then } of PAGES) {
     test(name, async ({ page }, testInfo) => {
       await open(page);
       await settled(page);
@@ -139,6 +168,8 @@ test.describe('layout', () => {
       });
 
       await test.step('axe finds no serious or critical violations', () => expectNoAxeFindings(page));
+
+      await then?.(page, testInfo);
     });
   }
 
