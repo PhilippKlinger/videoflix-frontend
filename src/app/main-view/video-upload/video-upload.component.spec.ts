@@ -82,6 +82,25 @@ describe('VideoUploadComponent', () => {
     expect(text()).toContain('The description must not be longer than 500 characters.');
   });
 
+  describe('file picker', () => {
+    it('opens the hidden file input from a labelled button', () => {
+      const input: HTMLInputElement = fixture.nativeElement.querySelector('input[type="file"]');
+      const button: HTMLButtonElement = fixture.nativeElement.querySelector('button.file-button');
+      expect(button.type).toBe('button');
+      expect(button.textContent).toContain('Choose video');
+      expect(input.hidden).toBeTrue();
+      const click = spyOn(input, 'click');
+      button.click();
+      expect(click).toHaveBeenCalled();
+    });
+
+    it('shows the name of the chosen file', () => {
+      expect(text()).toContain('No file chosen');
+      component.onFileChange({ target: { files: [clip] } } as unknown as Event);
+      expect(text()).toContain('clip.mp4');
+    });
+  });
+
   it('does not upload without a file', () => {
     component.uploadForm.patchValue({ title: 'My clip', description: 'A test clip', category: 'Action' });
     component.onSubmit();

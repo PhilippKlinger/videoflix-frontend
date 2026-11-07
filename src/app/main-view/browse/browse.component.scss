@@ -137,11 +137,13 @@
   }
 }
 
-/* === NO VIDEOS === */
-.no_videos {
-  text-align: center;
-  color: #f44336;
+/* === LOADING, ERROR, NO VIDEOS === */
+.state-message {
   padding: 2rem;
+
+  p {
+    margin: 0 0 1rem;
+  }
 }
 
 /* === DEMO BANNER === */

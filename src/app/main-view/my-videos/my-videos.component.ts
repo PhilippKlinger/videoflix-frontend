@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { Subscription, catchError, exhaustMap, forkJoin, map, of, timer } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { Video } from 'src/app/models/video.model';
+import { conversionLabel } from 'src/app/models/conversion-label';
 import { MaterialModule } from 'src/app/material/material.module';
 
 /** Same quota as the backend (masterplan G6, MAX_UPLOADS_PER_ACCOUNT). */
@@ -30,7 +31,7 @@ export class MyVideosComponent {
 
   readonly maxUploads = MAX_UPLOADS;
   readonly slotFree = computed(() => this.videos().length < MAX_UPLOADS);
-  readonly progress = signal<Record<number, number>>({});
+  readonly progress = signal<Record<number, { progress: number; resolution: string | null }>>({});
   readonly confirmingId = signal<number | null>(null);
   readonly deletingIds = signal<ReadonlySet<number>>(new Set());
   readonly errorMessage = signal('');
@@ -44,7 +45,13 @@ export class MyVideosComponent {
   }
 
   progressOf(video: Video): number {
-    return this.progress()[video.id] ?? video.conversion_progress;
+    return this.progress()[video.id]?.progress ?? video.conversion_progress;
+  }
+
+  /** Status text of a video that cannot be played yet. */
+  statusLabel(video: Video): string {
+    const polled = this.progress()[video.id];
+    return conversionLabel(this.progressOf(video), polled ? polled.resolution : video.current_resolution);
   }
 
   askDelete(video: Video): void {
@@ -103,16 +110,17 @@ export class MyVideosComponent {
           map(result => ({
             id: video.id,
             progress: result.progress,
+            resolution: result.current_resolution,
             done: result.status !== video.status || result.progress >= 100,
           })),
           // A video deleted elsewhere returns 404; the reloaded list sorts it out.
-          catchError(() => of({ id: video.id, progress: this.progressOf(video), done: true }))
+          catchError(() => of({ id: video.id, progress: this.progressOf(video), resolution: this.progress()[video.id]?.resolution ?? video.current_resolution, done: true }))
         )
       )))
     ).subscribe(results => {
       this.progress.update(current => ({
         ...current,
-        ...Object.fromEntries(results.map(result => [result.id, result.progress])),
+        ...Object.fromEntries(results.map(result => [result.id, { progress: result.progress, resolution: result.resolution }])),
       }));
       if (results.some(result => result.done)) {
         // The reloaded list restarts the polling for the videos still converting.

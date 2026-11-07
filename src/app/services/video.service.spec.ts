@@ -69,4 +69,16 @@ describe('VideoService', () => {
     TestBed.inject(HttpTestingController).expectOne('/api/video/').flush({}, { status: 500, statusText: 'Server Error' });
     expect(videos).toEqual([]);
   });
+
+  it('marks a failed first load, and clears the mark with the next success', () => {
+    spyOn(console, 'error');
+    service.loadVideos();
+    const http = TestBed.inject(HttpTestingController);
+    http.expectOne('/api/video/').flush({}, { status: 500, statusText: 'Server Error' });
+    expect(service.loadFailed()).toBeTrue();
+
+    service.loadVideos();
+    http.expectOne('/api/video/').flush([]);
+    expect(service.loadFailed()).toBeFalse();
+  });
 });

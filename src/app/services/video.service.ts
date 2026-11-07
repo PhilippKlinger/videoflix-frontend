@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Video } from '../models/video.model';
 import { BehaviorSubject } from 'rxjs';
 import { ApiService } from './api.service';
@@ -12,6 +12,8 @@ export class VideoService {
   // null until the first response, so an empty list can be told apart from "still loading".
   private videos = new BehaviorSubject<Video[] | null>(null);
   videos$ = this.videos.asObservable();
+  /** True when the first load failed, so the page can tell it apart from an empty catalog. */
+  readonly loadFailed = signal(false);
 
 
   constructor(private apiService: ApiService) { }
@@ -20,11 +22,13 @@ export class VideoService {
     this.apiService.getVideos().subscribe({
       next: (videos) => {
         this.sortVideosByDate(videos);
+        this.loadFailed.set(false);
         this.videos.next(videos);
       },
       error: (error) => {
         console.error('Failed to load videos', error);
         // A failed reload keeps the list already shown; only the first load ends with an empty one.
+        this.loadFailed.set(this.videos.value === null);
         this.videos.next(this.videos.value ?? []);
       }
     });
