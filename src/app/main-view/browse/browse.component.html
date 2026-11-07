@@ -25,7 +25,7 @@
     }
 
     <!-- Scrollable lists -->
-    @if (!loading) {
+    @if (!loading && !videoService.loadFailed()) {
       <section class="list_section">
         @if (showMyVideos) {
           <app-my-videos [videos]="ownVideos" (play)="playVideo($event)" (changed)="reload()"></app-my-videos>
@@ -61,11 +61,16 @@
       </section>
     }
 
-    <!-- Fallback -->
-    @if (!loading && !newestVideos.length) {
-      <div class="no_videos">
-        No videos found.
+    <!-- Loading, error and empty state -->
+    @if (loading) {
+      <p class="state-message loading" role="status">Loading videos…</p>
+    } @else if (videoService.loadFailed()) {
+      <div class="state-message error" role="alert">
+        <p>The videos could not be loaded. Please try again.</p>
+        <button mat-stroked-button type="button" (click)="reload()">Try again</button>
       </div>
+    } @else if (!newestVideos.length) {
+      <p class="state-message no_videos">No videos found.</p>
     }
 
   </main>

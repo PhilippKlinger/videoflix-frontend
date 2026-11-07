@@ -8,6 +8,10 @@
     <p class="my-videos-error" role="alert">{{ errorMessage() }}</p>
   }
 
+  @if (!videos().length) {
+    <p class="state-message">You have not uploaded a video yet.</p>
+  }
+
   <ul class="tiles">
     <li>
       @if (slotFree()) {
@@ -35,7 +39,7 @@
         } @else if (video.status === 'failed') {
           <p class="tile-status failed">Conversion failed. Delete the video and try again.</p>
         } @else {
-          <p class="tile-status" aria-live="polite">Converting… {{ progressOf(video) }} %</p>
+          <p class="tile-status" aria-live="polite">{{ statusLabel(video) }}</p>
         }
 
         <div class="tile-footer">

@@ -29,10 +29,19 @@
         </mat-select>
         <mat-error>Please choose a genre.</mat-error>
       </mat-form-field>
-      <label class="file-field">
-        <span>Video file (MP4 or MOV, up to 50 MB and 2 minutes)</span>
-        <input type="file" accept="video/mp4,video/quicktime" (change)="onFileChange($event)" [disabled]="uploading()">
-      </label>
+      <div class="file-field">
+        <div class="file-row">
+          <button mat-stroked-button type="button" class="file-button" aria-describedby="file-hint"
+            (click)="fileInput.click()" [disabled]="uploading()">
+            <mat-icon aria-hidden="true">video_file</mat-icon>
+            Choose video file
+          </button>
+          <span class="file-name">{{ selectedFile ? selectedFile.name : 'No file chosen' }}</span>
+        </div>
+        <span id="file-hint" class="file-hint">MP4 or MOV, up to 50 MB and 2 minutes</span>
+        <!-- Hidden: the button above is the keyboard and screen reader path -->
+        <input #fileInput hidden type="file" accept="video/mp4,video/quicktime" (change)="onFileChange($event)" [disabled]="uploading()">
+      </div>
 
       @if (errorMessage()) {
         <p class="form-error" role="alert">{{ errorMessage() }}</p>

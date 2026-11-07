@@ -124,6 +124,40 @@ describe('BrowseComponent', () => {
     expect(query('app-my-videos')).not.toBeNull();
   });
 
+  it('shows a loading text until the first answer arrives', () => {
+    TestBed.configureTestingModule({
+      imports: [BrowseComponent],
+      providers: [provideAppHttpClient(), provideHttpClientTesting(), provideRouter([])]
+    });
+    httpMock = TestBed.inject(HttpTestingController);
+    fixture = TestBed.createComponent(BrowseComponent);
+    fixture.detectChanges();
+    expect(query('.state-message')?.textContent).toContain('Loading videos…');
+    httpMock.expectOne('/api/me/').flush({ id: 1, email: 'a@b.de', role: 'member' });
+    httpMock.expectOne('/api/video/').flush([]);
+    fixture.detectChanges();
+    expect(query('.state-message.loading')).toBeNull();
+  });
+
+  it('tells in plain words when the videos cannot be loaded, and offers a retry', () => {
+    spyOn(console, 'error');
+    TestBed.configureTestingModule({
+      imports: [BrowseComponent],
+      providers: [provideAppHttpClient(), provideHttpClientTesting(), provideRouter([])]
+    });
+    httpMock = TestBed.inject(HttpTestingController);
+    fixture = TestBed.createComponent(BrowseComponent);
+    fixture.detectChanges();
+    httpMock.expectOne('/api/me/').flush({ id: 1, email: 'a@b.de', role: 'member' });
+    httpMock.expectOne('/api/video/').flush({}, { status: 500, statusText: 'Server Error' });
+    fixture.detectChanges();
+    expect(query('.state-message.error')?.textContent).toContain('The videos could not be loaded.');
+    expect(query('.no_videos')).toBeNull();
+
+    query('.state-message.error button')?.click();
+    httpMock.expectOne('/api/video/').flush([]);
+  });
+
   it('still shows the catalog when the account cannot be loaded', fakeAsync(() => {
     const unhandled = jasmine.createSpy('onUnhandledError');
     const previous = config.onUnhandledError;

@@ -91,13 +91,13 @@ describe('MyVideosComponent', () => {
 
     it('polls the progress while converting and reloads when it is done', fakeAsync(() => {
       create([converting]);
-      expect(text()).toContain('Converting… 0 %');
+      expect(text()).toContain('Preparing 1080p… 0 %');
       let changed = 0;
       component.changed.subscribe(() => changed++);
 
       tick(POLL_INTERVAL_MS);
       httpMock.expectOne('/api/conversion-progress/2/').flush({ progress: 40, current_resolution: '480p', status: 'processing' });
-      expect(text()).toContain('Converting… 40 %');
+      expect(text()).toContain('Preparing 480p… 40 %');
       expect(changed).toBe(0);
 
       tick(POLL_INTERVAL_MS);
@@ -114,6 +114,15 @@ describe('MyVideosComponent', () => {
       fixture.detectChanges();
       tick(POLL_INTERVAL_MS * 2);
       httpMock.expectNone('/api/conversion-progress/2/');
+    }));
+
+    it('says "Converting" when no resolution is known yet', fakeAsync(() => {
+      create([converting]);
+      tick(POLL_INTERVAL_MS);
+      httpMock.expectOne('/api/conversion-progress/2/').flush({ progress: 10, current_resolution: null, status: 'processing' });
+      expect(text()).toContain('Converting… 10 %');
+      fixture.destroy();
+      discardPeriodicTasks();
     }));
 
     it('shows that more resolutions are converted after the first one is playable', fakeAsync(() => {
@@ -149,7 +158,7 @@ describe('MyVideosComponent', () => {
       expect(slow.cancelled).toBeFalse();
 
       slow.flush({ progress: 40, current_resolution: '480p', status: 'processing' });
-      expect(text()).toContain('Converting… 40 %');
+      expect(text()).toContain('Preparing 480p… 40 %');
       // Still converting, so the polling goes on until the page closes.
       fixture.destroy();
       discardPeriodicTasks();
@@ -165,7 +174,7 @@ describe('MyVideosComponent', () => {
       httpMock.expectOne('/api/conversion-progress/2/').flush({ progress: 40, current_resolution: '480p', status: 'processing' });
       httpMock.expectOne('/api/conversion-progress/4/').flush({ detail: 'Not found.' }, { status: 404, statusText: 'Not Found' });
 
-      expect(text()).toContain('Converting… 40 %');
+      expect(text()).toContain('Preparing 480p… 40 %');
       expect(changed).toBe(1);
       tick(POLL_INTERVAL_MS);
       httpMock.expectNone(() => true);
@@ -184,6 +193,18 @@ describe('MyVideosComponent', () => {
       httpMock.expectNone('/api/conversion-progress/2/');
       discardPeriodicTasks();
     }));
+  });
+
+  describe('empty state', () => {
+    it('tells that nothing is uploaded yet', () => {
+      create([]);
+      expect(query('.state-message')?.textContent).toContain('You have not uploaded a video yet.');
+    });
+
+    it('shows no empty text once there is an upload', () => {
+      create([ready]);
+      expect(query('.state-message')).toBeNull();
+    });
   });
 
   describe('delete', () => {

@@ -21,8 +21,29 @@
   gap: 8px;
 }
 
+.file-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.file-button {
+  min-height: 44px;
+}
+
+.file-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.file-hint {
+  color: var(--vf-mute);
+  font-size: 0.875rem;
+}
+
 .form-error {
-  color: #ff8a80;
+  color: var(--vf-error);
   margin: 0;
 }
 
@@ -34,4 +55,14 @@
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+
+  button,
+  a {
+    min-height: 44px;
+  }
+
+  // Cancel sits on the dark card; the theme's default link blue is hard to read there.
+  a {
+    color: var(--vf-ink);
+  }
 }

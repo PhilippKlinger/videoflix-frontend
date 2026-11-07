@@ -20,8 +20,15 @@
   color: #ccc;
 }
 
+.state-message {
+  // Sits under the heading like the tiles, not centered like the full-page states.
+  margin: 0 0 0.8rem;
+  padding: 0;
+  text-align: left;
+}
+
 .my-videos-error {
-  color: #ff8a80;
+  color: var(--vf-error);
 }
 
 .tiles {
@@ -34,6 +41,8 @@
 }
 
 .tile {
+  // Border-box: the dashed border of the upload tile must not make it wider than a catalog tile.
+  box-sizing: border-box;
   width: 267px;
   min-height: 150px;
   display: flex;
@@ -101,7 +110,7 @@
   text-align: center;
 
   &.failed {
-    color: #ff8a80;
+    color: var(--vf-error);
   }
 }
 
