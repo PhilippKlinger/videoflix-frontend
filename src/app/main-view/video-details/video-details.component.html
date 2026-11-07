@@ -1,0 +1,19 @@
+<div class="art">
+  @if (video.thumbnail_url) {
+    <img [src]="video.thumbnail_url" alt="" width="640" height="360" />
+  } @else {
+    <span class="placeholder"></span>
+  }
+  <button type="button" class="close" aria-label="Close details" (click)="close()">
+    <mat-icon aria-hidden="true">close</mat-icon>
+  </button>
+</div>
+<div class="main">
+  <h2 mat-dialog-title>{{ video.title }}</h2>
+  <p class="category">{{ video.category }}</p>
+  <p class="description">{{ video.description }}</p>
+  <button mat-flat-button type="button" class="play" (click)="play()">
+    <mat-icon aria-hidden="true">play_arrow</mat-icon>
+    Play
+  </button>
+</div>

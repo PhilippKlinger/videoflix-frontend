@@ -9,6 +9,7 @@ import { MainLayoutComponent } from '../main-layout/main-layout.component';
 import { MyVideosComponent } from '../my-videos/my-videos.component';
 import { VideoThumbnailComponent } from '../video-thumbnail/video-thumbnail.component';
 import { ScrollFadeDirective } from './scroll-fade.directive';
+import { VideoDetailsComponent } from '../video-details/video-details.component';
 import { VideoPlayerComponent } from 'src/app/video-player/video-player.component';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material/material.module';
@@ -111,8 +112,18 @@ export class BrowseComponent implements OnInit {
     console.log('Favorited:', video);
   }
 
-  /** Tiles open the player directly until the details view exists. */
+  /** Tiles open the details first; the player follows on "Play". */
   openDetails(video: Video): void {
-    this.playVideo(video);
+    this.dialog.open<VideoDetailsComponent, { video: Video }, 'play'>(VideoDetailsComponent, {
+      data: { video },
+      width: '640px',
+      maxWidth: '92vw',
+      autoFocus: '.play',
+      restoreFocus: true,
+    }).afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(result => {
+        if (result === 'play') this.playVideo(video);
+      });
   }
 }
