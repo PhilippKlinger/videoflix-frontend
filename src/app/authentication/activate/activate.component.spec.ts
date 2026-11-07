@@ -9,6 +9,7 @@ import { ApiService } from 'src/app/services/api.service';
 describe('ActivateComponent', () => {
   let fixture: ComponentFixture<ActivateComponent>;
   let activateSpy: jasmine.Spy;
+  let newLinkSpy: jasmine.Spy;
 
   function create(response: Observable<unknown>): ActivateComponent {
     activateSpy.and.returnValue(response);
@@ -19,11 +20,12 @@ describe('ActivateComponent', () => {
 
   beforeEach(() => {
     activateSpy = jasmine.createSpy('activateAccount');
+    newLinkSpy = jasmine.createSpy('getNewActivationEmail');
     TestBed.configureTestingModule({
       imports: [ActivateComponent],
       providers: [
         provideRouter([]),
-        { provide: ApiService, useValue: { activateAccount: activateSpy } },
+        { provide: ApiService, useValue: { activateAccount: activateSpy, getNewActivationEmail: newLinkSpy } },
         { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ uid: 'MQ', token: 'abc' })) } },
       ]
     });
@@ -41,5 +43,40 @@ describe('ActivateComponent', () => {
     expect(component.failed).toBeTrue();
     const link: HTMLAnchorElement | null = fixture.nativeElement.querySelector('a[href="/login"]');
     expect(link).not.toBeNull();
+  });
+
+  describe('request a new link', () => {
+    function submit(email: string): void {
+      const input: HTMLInputElement = fixture.nativeElement.querySelector('input[type="email"]');
+      input.value = email;
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
+      fixture.detectChanges();
+    }
+
+    beforeEach(() => create(throwError(() => new HttpErrorResponse({ status: 400 }))));
+
+    it('sends the address and shows a neutral confirmation', () => {
+      newLinkSpy.and.returnValue(of({ detail: 'ok' }));
+      submit('max@example.com');
+      expect(newLinkSpy).toHaveBeenCalledWith({ email: 'max@example.com' });
+      expect(fixture.nativeElement.textContent).toContain('If this address needs activation');
+      expect(fixture.nativeElement.querySelector('form')).toBeNull();
+    });
+
+    it('does not call the API for an invalid address', () => {
+      submit('not-an-email');
+      expect(newLinkSpy).not.toHaveBeenCalled();
+    });
+
+    it('shows a friendly error without technical text when the request fails', () => {
+      newLinkSpy.and.returnValue(throwError(() => new HttpErrorResponse({ status: 500, statusText: 'Server Error' })));
+      submit('max@example.com');
+      const text: string = fixture.nativeElement.textContent;
+      expect(text).toContain('Could not send a new link. Please try again in a moment.');
+      expect(text).not.toContain('500');
+      expect(fixture.nativeElement.querySelector('form')).not.toBeNull();
+    });
   });
 });
