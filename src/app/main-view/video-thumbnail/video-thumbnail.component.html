@@ -1,4 +1,4 @@
-<button type="button" class="tile" [attr.aria-label]="video.title" (click)="open.emit(video)">
+<button type="button" class="tile" (click)="open.emit(video)">
   <span class="media">
     @if (video.thumbnail_url) {
       <img [src]="video.thumbnail_url" alt="" loading="lazy" decoding="async" width="267" height="150" />

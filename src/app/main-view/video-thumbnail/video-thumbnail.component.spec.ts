@@ -22,7 +22,10 @@ describe('VideoThumbnailComponent', () => {
     create({ title: 'Mountain run' });
     expect(root().tagName).toBe('BUTTON');
     expect(root().getAttribute('type')).toBe('button');
-    expect(root().getAttribute('aria-label')).toBe('Mountain run');
+    // No aria-label: the visible text names the button, and the image adds nothing.
+    expect(root().hasAttribute('aria-label')).toBeFalse();
+    expect(root().querySelector('img')?.getAttribute('alt')).toBe('');
+    expect(root().textContent).toContain('Mountain run');
   });
 
   it('emits open on Enter', () => {

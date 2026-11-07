@@ -28,13 +28,14 @@
     z-index: 1;
   }
 
-  // The image fades into the page below it; the left side darkens for the text.
+  // The image fades into the page below it. The text sits on the dark lower part, so it
+  // stays readable on any clip; the page colour is fully opaque at the bottom edge.
   &-overlay {
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(to top, var(--vf-bg) 2%, rgba(11, 11, 15, 0.15) 60%, rgba(11, 11, 15, 0.45)),
-      linear-gradient(to right, rgba(11, 11, 15, 0.8), transparent 60%);
+      linear-gradient(to top, var(--vf-bg) 4%, rgba(11, 11, 15, 0.88) 38%, rgba(11, 11, 15, 0.4) 70%, rgba(11, 11, 15, 0.45)),
+      linear-gradient(to right, rgba(11, 11, 15, 0.8), transparent 65%);
     z-index: 2;
     pointer-events: none;
   }
