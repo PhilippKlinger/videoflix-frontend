@@ -13,8 +13,8 @@
     <p>
       Hoster ist die Hostinger International Ltd., 61 Lordou Vironos str., 6023 Larnaca, Zypern
       (Server in Frankfurt am Main, Auftragsverarbeitung nach Art. 28 DSGVO). Einzelne Seitenaufrufe werden nicht
-      protokolliert. Fehlermeldungen des Servers können Zeitpunkt und aufgerufene Adresse enthalten; die Logs werden
-      nach spätestens 14 Tagen gelöscht.
+      protokolliert. Fehlermeldungen des Servers können Zeitpunkt und aufgerufene Adresse sowie die IP-Adresse enthalten;
+      die Logs werden nach spätestens 14 Tagen gelöscht.
       Zum Schutz vor Missbrauch wird die IP-Adresse höchstens eine Stunde zur Begrenzung von Anfragen gespeichert.
       Datenbank und Videos werden auf demselben Server gesichert. Gelöschte Daten können darin noch etwa zwei Wochen
       enthalten sein, danach werden die Sicherungen gelöscht.
@@ -23,9 +23,10 @@
 
     <h2>Konto, Demo und Videos</h2>
     <p>
-      Für ein Konto werden E-Mail-Adresse, Passwort (als Hash) und Wiedergabefortschritt gespeichert, bis Sie die
-      Löschung per E-Mail verlangen; hochgeladene Videos sind nur für Sie und die Administration sichtbar und werden
-      mit dem Konto gelöscht. Demo-Konten haben keine E-Mail-Adresse und werden samt Videos nach 2 Stunden
+      Für ein Konto werden E-Mail-Adresse, Passwort (als Hash), Zeitpunkt der Registrierung und der letzten Anmeldung
+      sowie Titel und Beschreibung Ihrer Uploads gespeichert, bis Sie die Löschung per E-Mail verlangen; hochgeladene
+      Videos sind nur für Sie und die Administration sichtbar. Auf Ihre Anfrage werden das Konto und seine Uploads
+      sofort und endgültig gelöscht. Demo-Konten haben keine E-Mail-Adresse und werden samt Videos nach 2 Stunden
       gelöscht. Ohne E-Mail-Adresse ist kein Konto möglich; die Demo funktioniert ohne. Rechtsgrundlage: Art. 6 Abs. 1
       lit. b DSGVO.
     </p>
@@ -38,9 +39,9 @@
 
     <h2>Cookies</h2>
     <p>
-      Es werden nur technisch notwendige Cookies für Anmeldung und Schutz vor gefälschten Anfragen gesetzt; die auf
-      der Startseite eingegebene E-Mail-Adresse bleibt bis zur Anmeldung im Browser gespeichert
-      (§ 25 Abs. 2 Nr. 2 TDDDG, keine Einwilligung nötig).
+      Es werden nur technisch notwendige Cookies für Anmeldung und Schutz vor gefälschten Anfragen gesetzt. Als einziger
+      Browser-Speicher dient der <code>localStorage</code>-Eintrag <code>videoflix.underTheHood</code>, der den
+      Schalter „Under the hood“ speichert (§ 25 Abs. 2 Nr. 2 TDDDG, keine Einwilligung nötig).
     </p>
 
     <h2>Ihre Rechte</h2>
