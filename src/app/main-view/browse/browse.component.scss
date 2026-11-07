@@ -16,6 +16,8 @@
   overflow: hidden;
   display: flex;
   align-items: flex-end;
+  // Calm backdrop for a video without thumbnail.
+  background: linear-gradient(135deg, var(--vf-line), var(--vf-bg));
 
   &-bg {
     position: absolute;
@@ -23,19 +25,16 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: brightness(0.42);
     z-index: 1;
   }
 
+  // The image fades into the page below it; the left side darkens for the text.
   &-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      180deg,
-      rgba(0,0,0,0.6) 0%,
-      rgba(0,0,0,0.2) 50%,
-      rgba(0,0,0,0.6) 100%
-    );
+    background:
+      linear-gradient(to top, var(--vf-bg) 2%, rgba(11, 11, 15, 0.15) 60%, rgba(11, 11, 15, 0.45)),
+      linear-gradient(to right, rgba(11, 11, 15, 0.8), transparent 60%);
     z-index: 2;
     pointer-events: none;
   }
@@ -46,22 +45,32 @@
     padding: 0 4rem 2.5rem;
     max-width: 540px;
     margin-left: 3rem;
+    text-align: left;
+
+    @media (max-width: 600px) {
+      padding-inline: 16px;
+      margin-left: 0;
+    }
 
     h1 {
       font-size: 3rem;
       margin-bottom: 0.5rem;
       font-weight: bold;
       line-height: 1.1;
-      color: #fff;
+      color: var(--vf-ink);
     }
     p {
       font-size: 1.25rem;
       margin-bottom: 1.5rem;
-      color: #eee;
+      color: var(--vf-ink);
       line-height: 1.5;
     }
-    button {
+    .hero-play {
       min-width: 120px;
+      min-height: 44px;
+      --mat-button-filled-container-color: var(--vf-ink);
+      --mat-button-filled-label-text-color: var(--vf-bg);
+      --mat-button-filled-state-layer-color: var(--vf-bg);
     }
   }
 }
@@ -86,7 +95,7 @@
     font-size: 1.4rem;
     font-weight: bold;
     margin-bottom: 0.8rem;
-    color: #fff;
+    color: var(--vf-ink);
     text-transform: uppercase;
   }
 
@@ -99,18 +108,19 @@
       gap: 8px;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
-      margin: 0;
-      padding: 0;
+      // Room for the focus ring, which the scroll container would otherwise clip.
+      margin: 0 -4px;
+      padding: 4px;
       list-style: none;
     }
 
-    /* Fade at the right edge */
-    &::after {
+    // Fade at the right edge, only while more tiles are hidden
+    &:has(ul.has-more)::after {
       content: "";
       position: absolute;
       top: 0; right: 0;
       width: 50px; height: 100%;
-      background: linear-gradient(to left, rgba(0,0,0,0.8), transparent);
+      background: linear-gradient(to left, var(--vf-bg), transparent);
       pointer-events: none;
     }
 
@@ -120,30 +130,8 @@
     scrollbar-width: none;
 
     li {
-      position: relative;
+      flex: 0 0 267px;
       scroll-snap-align: start;
-
-      .badge {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        padding: 2px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        color: #fff;
-        background: rgba(0, 0, 0, 0.7);
-      }
-
-      img {
-        display: block;
-        height: 150px;
-        aspect-ratio: 16/9;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-      }
-      img:hover {
-        transform: scale(1.05);
-      }
     }
   }
 }

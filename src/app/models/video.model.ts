@@ -28,7 +28,6 @@ export interface Video {
   // Standard videos are public, uploads private (owner and admin only).
   visibility: 'public' | 'private';
   is_own: boolean;
-  _hovered?: boolean;
 }
 
 export const CATEGORY_CHOICES = [

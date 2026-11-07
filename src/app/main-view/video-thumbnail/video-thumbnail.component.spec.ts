@@ -1,7 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClient, withXhr } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideRouter } from '@angular/router';
 import { TEST_VIDEO } from '../../testing/video.fixture';
 
 import { VideoThumbnailComponent } from './video-thumbnail.component';
@@ -10,20 +7,49 @@ describe('VideoThumbnailComponent', () => {
   let component: VideoThumbnailComponent;
   let fixture: ComponentFixture<VideoThumbnailComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [VideoThumbnailComponent],
-      providers: [provideHttpClient(withXhr()), provideHttpClientTesting(), provideRouter([])]
-    })
-    .compileComponents();
-
+  function create(overrides: Partial<typeof TEST_VIDEO> = {}) {
     fixture = TestBed.createComponent(VideoThumbnailComponent);
     component = fixture.componentInstance;
-    component.video = TEST_VIDEO;
+    component.video = { ...TEST_VIDEO, ...overrides };
     fixture.detectChanges();
+  }
+
+  const root = (): HTMLElement => fixture.nativeElement.firstElementChild;
+
+  beforeEach(() => TestBed.configureTestingModule({ imports: [VideoThumbnailComponent] }));
+
+  it('is a button named after the video', () => {
+    create({ title: 'Mountain run' });
+    expect(root().tagName).toBe('BUTTON');
+    expect(root().getAttribute('type')).toBe('button');
+    expect(root().getAttribute('aria-label')).toBe('Mountain run');
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('emits open on Enter', () => {
+    create();
+    const opened: unknown[] = [];
+    component.open.subscribe(video => opened.push(video));
+    // The browser turns Enter and Space on a focused button into a click.
+    root().click();
+    expect(opened).toEqual([component.video]);
+  });
+
+  it('shows title and category', () => {
+    create({ title: 'Mountain run', category: 'Sports' });
+    expect(root().textContent).toContain('Mountain run');
+    expect(root().textContent).toContain('Sports');
+  });
+
+  it('shows the private badge only for private videos', () => {
+    create({ visibility: 'public' });
+    expect(root().querySelector('.badge')).toBeNull();
+    create({ visibility: 'private' });
+    expect(root().querySelector('.badge')?.textContent).toContain('Private');
+  });
+
+  it('shows a placeholder instead of a broken image without a thumbnail', () => {
+    create({ thumbnail_url: null });
+    expect(root().querySelector('img')).toBeNull();
+    expect(root().querySelector('.placeholder')).not.toBeNull();
   });
 });

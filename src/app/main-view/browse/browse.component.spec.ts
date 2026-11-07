@@ -52,6 +52,13 @@ describe('BrowseComponent', () => {
     }
   });
 
+  it('renders every catalog tile as a button and a video without thumbnail without a broken hero image', () => {
+    create('member', [{ ...TEST_VIDEO, id: 1, thumbnail_url: null }]);
+    expect(query('img.hero-bg')).toBeNull();
+    expect(query('.hero')).not.toBeNull();
+    expect(fixture.nativeElement.querySelectorAll('.video_list app-video-thumbnail > button').length).toBe(2);
+  });
+
   it('features the newest catalog video and lists the newest first', () => {
     create('member', [
       { ...TEST_VIDEO, id: 1, created_at: '2026-01-01T00:00:00Z' },
