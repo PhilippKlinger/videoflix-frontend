@@ -24,6 +24,13 @@ describe('RegisterComponent', () => {
     fixture.detectChanges();
   });
 
+  it('uses an email keyboard and no auto-capitalisation on the email field', () => {
+    const input: HTMLInputElement = fixture.nativeElement.querySelector('input[matInput]');
+    expect(input.type).toBe('email');
+    expect(input.getAttribute('autocapitalize')).toBe('off');
+    expect(input.getAttribute('autocomplete')).toBe('email');
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
