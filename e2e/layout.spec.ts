@@ -145,7 +145,8 @@ async function checkDetailsDialog(page: Page, testInfo: TestInfo): Promise<void>
   await test.step('switch on shows the stream table or its calm fallback', async () => {
     const inspector = dialog.locator('app-stream-inspector');
     await expect(inspector.getByText('Upload → ffprobe → ffmpeg → HLS → Player')).toBeVisible();
-    await expect(inspector.locator('table').or(inspector.getByText('Stream details are not available yet.'))).toBeVisible();
+    // Cells render without whitespace between them, so the row text is one run.
+    await expect(inspector.locator('tbody tr').first()).toHaveText(/^\d+p[\d.]+ [kM]bit\/s\d+ × \d+ s[\d.]+ [MG]B$/);
   });
 
   await settled(page);

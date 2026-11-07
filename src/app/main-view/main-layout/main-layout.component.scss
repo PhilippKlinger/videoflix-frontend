@@ -47,7 +47,14 @@
     --mat-slide-toggle-unselected-hover-handle-color: var(--vf-mute);
     --mat-slide-toggle-unselected-focus-handle-color: var(--vf-mute);
     --mat-slide-toggle-unselected-pressed-handle-color: var(--vf-mute);
-    --mat-slide-toggle-unselected-track-outline-color: var(--vf-mute);
+    --mat-slide-toggle-track-outline-color: var(--vf-mute);
+
+    // Material removes the outline of the switch button; keyboard focus gets a visible ring.
+    ::ng-deep button.mdc-switch:focus-visible {
+      outline: 2px solid var(--vf-accent);
+      outline-offset: 3px;
+      border-radius: 9999px;
+    }
   }
 
   .logo-link {
@@ -141,6 +148,9 @@
 
     a {
       color: var(--vf-tech);
+      font-size: inherit;
+      opacity: 1;
+      text-decoration: underline;
     }
   }
 

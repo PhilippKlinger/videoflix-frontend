@@ -69,7 +69,7 @@ describe('BrowseComponent', () => {
     expect(fixture.nativeElement.querySelectorAll('.video_list app-video-thumbnail > button').length).toBe(2);
   });
 
- it('hero tech line only when enabled', () => {
+  it('hero tech line only when enabled', () => {
     const resolutions = ['1080p', '480p'].map((resolution, id) => ({ id, original_video: 1, resolution }));
     create('member', [{ ...TEST_VIDEO, id: 1, resolutions }]);
     expect(query('.hero .tech')).toBeNull();

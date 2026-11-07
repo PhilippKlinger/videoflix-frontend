@@ -1,4 +1,5 @@
-import { Component, effect, inject, input, signal, untracked } from '@angular/core';
+import { Component, DestroyRef, effect, inject, input, signal, untracked } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StreamStats } from 'src/app/models/video.model';
 import { formatBitrate, formatSegments, formatSize } from 'src/app/models/video-tech';
 import { UnderTheHoodService } from 'src/app/services/under-the-hood.service';
@@ -15,6 +16,7 @@ export class StreamInspectorComponent {
   videoId = input.required<number>();
   readonly hood = inject(UnderTheHoodService);
   private videoService = inject(VideoService);
+  private destroyRef = inject(DestroyRef);
 
   /** null until the response arrives. */
   streams = signal<StreamStats[] | null>(null);
@@ -34,7 +36,7 @@ export class StreamInspectorComponent {
   }
 
   private load(videoId: number): void {
-    this.videoService.getStreams(videoId).subscribe({
+    this.videoService.getStreams(videoId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: streams => this.streams.set(streams),
       error: error => {
         console.error('Failed to load stream details', error);

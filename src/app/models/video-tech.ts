@@ -1,7 +1,7 @@
 import { Video } from './video.model';
 
-// H.264 and AAC are constants, not read from the video: they are true for every stream because
-// the backend's get_ffmpeg_hls_command fixes both codecs.
+// H.264 and AAC are constants, not read from the video: the backend's get_ffmpeg_hls_command
+// fixes the video codec, and it encodes audio as AAC whenever a clip has an audio track.
 const CODECS = 'H.264 · AAC';
 
 /** Technical summary of the HLS streams; null while the video has none. Resolutions are named like "720p". */
@@ -24,7 +24,7 @@ export function formatBitrate(kbps: number): string {
   return kbps < 1000 ? `${kbps} kbit/s` : `${oneDecimal(kbps / 1000)} Mbit/s`;
 }
 
-/** Decimal units, like the file manager of the server: whole MB from 10 MB, one decimal below and for GB. */
+/** Decimal units: whole MB from 10 MB, one decimal below and for GB. */
 export function formatSize(bytes: number): string {
   if (bytes >= 999_500_000) return `${oneDecimal(bytes / 1e9)} GB`;
   const mb = bytes / 1e6;

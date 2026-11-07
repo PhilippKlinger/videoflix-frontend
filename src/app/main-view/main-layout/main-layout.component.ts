@@ -1,4 +1,5 @@
-import { Component, inject, Input, ChangeDetectionStrategy, signal, effect, untracked } from '@angular/core';
+import { Component, DestroyRef, inject, Input, ChangeDetectionStrategy, signal, effect, untracked } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material/material.module';
 import { ATTESTATIONS_URL } from 'src/app/links';
@@ -20,6 +21,7 @@ export class MainLayoutComponent {
   authService = inject(AuthService)
   hood = inject(UnderTheHoodService);
   private buildInfoService = inject(BuildInfoService);
+  private destroyRef = inject(DestroyRef);
 
   readonly attestationsUrl = ATTESTATIONS_URL;
   /** null until loaded, and when the build is unknown. */
@@ -31,7 +33,7 @@ export class MainLayoutComponent {
     effect(() => {
       if (!this.hood.enabled() || requested) return;
       requested = true;
-      untracked(() => this.buildInfoService.load().subscribe(info => this.build.set(info)));
+      untracked(() => this.buildInfoService.load().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(info => this.build.set(info)));
     });
   }
 

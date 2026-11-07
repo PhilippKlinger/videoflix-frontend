@@ -109,9 +109,15 @@ describe('StreamInspectorComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Upload → ffprobe → ffmpeg → HLS → Player');
   });
 
-  it('reserves room while loading', () => {
+  it('reserves room for three rows, so the dialog does not jump when the data arrives', () => {
     turnOn();
-    expect(fixture.nativeElement.querySelector('.body')).not.toBeNull();
-    http.expectOne(URL);
+    const body: HTMLElement = fixture.nativeElement.querySelector('.body');
+    const loading = body.offsetHeight;
+    http.expectOne(URL).flush({
+      streams: ['1080p', '720p', '480p'].map(resolution => ({ ...STREAM, resolution })),
+    });
+    fixture.detectChanges();
+    expect(body.querySelectorAll('tbody tr').length).toBe(3);
+    expect(body.offsetHeight).toBe(loading);
   });
 });

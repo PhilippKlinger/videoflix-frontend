@@ -20,9 +20,9 @@
   text-transform: uppercase;
 }
 
-// Fits three stream rows plus the header, so the dialog does not jump when the data arrives.
+// Fits the header plus three stream rows (measured 84px at 12.8px), so the dialog does not jump.
 .body {
-  min-height: 5.5em;
+  min-height: 6.75em;
 }
 
 .note {
@@ -35,7 +35,7 @@
   overflow-x: auto;
 
   &:focus-visible {
-    outline: 2px solid var(--vf-ink);
+    outline: 2px solid var(--vf-accent);
     outline-offset: 2px;
   }
 }
