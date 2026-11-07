@@ -99,11 +99,41 @@ async function checkDetailsDialog(page: Page, testInfo: TestInfo): Promise<void>
   });
 }
 
+/**
+ * Opens the upload form from the browse page and checks it like a page. It reuses the demo
+ * login of the browse page and uploads nothing.
+ */
+async function checkUploadForm(page: Page, testInfo: TestInfo): Promise<void> {
+  await test.step('upload tile opens the form', async () => {
+    await page.getByRole('link', { name: 'Upload video' }).click();
+    await expect(page).toHaveURL(/\/upload$/);
+    await expect(page.getByRole('button', { name: 'Choose video file' })).toBeVisible();
+  });
+
+  await settled(page);
+  await page.screenshot({
+    path: path.join('e2e-shots', testInfo.project.name, 'upload.png'),
+    fullPage: true,
+    animations: 'disabled',
+  });
+  await test.step('upload form: no horizontal overflow', async () => {
+    const { scrollWidth, clientWidth } = await page.evaluate(() => {
+      const { scrollWidth, clientWidth } = document.documentElement;
+      return { scrollWidth, clientWidth };
+    });
+    expect.soft(scrollWidth, 'document scrollWidth').toBeLessThanOrEqual(clientWidth);
+  });
+  await test.step('upload form: axe finds no serious or critical violations', () => expectNoAxeFindings(page));
+}
+
 const PAGES: { name: string; open: (page: Page) => Promise<unknown>; then?: (page: Page, testInfo: TestInfo) => Promise<void> }[] = [
   { name: 'home', open: page => page.goto('/') },
   { name: 'login', open: page => page.goto('/login') },
   { name: 'register', open: page => page.goto('/register') },
-  { name: 'browse', open: openBrowse, then: checkDetailsDialog },
+  { name: 'browse', open: openBrowse, then: async (page, testInfo) => {
+    await checkDetailsDialog(page, testInfo);
+    await checkUploadForm(page, testInfo);
+  } },
   { name: 'not-found', open: openNotFound },
   { name: 'login-rejected', open: openLoginRejected },
   { name: 'register-errors', open: openRegisterErrors },
