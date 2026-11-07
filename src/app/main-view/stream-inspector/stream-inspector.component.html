@@ -1,0 +1,38 @@
+@if (hood.enabled()) {
+  <section class="inspector" aria-labelledby="inspector-label">
+    <h3 id="inspector-label" class="label">Streams</h3>
+    <div class="body">
+      @if (failed()) {
+        <p class="note">Stream details could not be loaded.</p>
+      } @else if (streams(); as list) {
+        @if (list.length) {
+          <div class="table-wrap" role="region" aria-label="Stream statistics" tabindex="0">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Resolution</th>
+                  <th scope="col">Bitrate</th>
+                  <th scope="col">Segments</th>
+                  <th scope="col">Size</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (stream of list; track stream.resolution) {
+                  <tr>
+                    <td>{{ stream.resolution }}</td>
+                    <td>{{ formatBitrate(stream.bitrate_kbps) }}</td>
+                    <td>{{ formatSegments(stream.segment_count, stream.segment_seconds) }}</td>
+                    <td>{{ formatSize(stream.size_bytes) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <p class="note">Stream details are not available yet.</p>
+        }
+      }
+    </div>
+    <p class="path">Upload → ffprobe → ffmpeg → HLS → Player</p>
+  </section>
+}

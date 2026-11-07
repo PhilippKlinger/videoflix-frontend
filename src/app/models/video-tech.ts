@@ -18,3 +18,23 @@ export function streamCount(video: Video): string {
   const count = video.resolutions.length;
   return count === 1 ? '1 stream' : `${count} streams`;
 }
+
+/** kbit/s below 1 Mbit/s, otherwise Mbit/s with at most one decimal. */
+export function formatBitrate(kbps: number): string {
+  return kbps < 1000 ? `${kbps} kbit/s` : `${oneDecimal(kbps / 1000)} Mbit/s`;
+}
+
+/** Decimal units, like the file manager of the server: whole MB from 10 MB, one decimal below and for GB. */
+export function formatSize(bytes: number): string {
+  if (bytes >= 999_500_000) return `${oneDecimal(bytes / 1e9)} GB`;
+  const mb = bytes / 1e6;
+  return mb >= 10 ? `${Math.round(mb)} MB` : `${oneDecimal(mb)} MB`;
+}
+
+export function formatSegments(count: number, seconds: number): string {
+  return `${count} × ${seconds} s`;
+}
+
+function oneDecimal(value: number): string {
+  return String(Math.round(value * 10) / 10);
+}

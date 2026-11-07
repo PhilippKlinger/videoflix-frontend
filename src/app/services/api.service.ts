@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpContext, HttpErrorResponse, HttpEvent } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
-import { ConversionProgress, Video } from '../models/video.model';
+import { ConversionProgress, StreamStats, Video } from '../models/video.model';
 import { CurrentUser, LoginRequest, PasswordConfirmRequest, RegisterRequest } from '../models/user.model';
 import { environment } from '../environments/environment';
 import { SHOWS_OWN_ERRORS } from './http-error-interceptor.service';
@@ -52,6 +52,11 @@ export class ApiService {
 
   resetPasswordConfirm(uid: string, token: string, data: PasswordConfirmRequest): Observable<any> {
     return this.http.post(`${this.baseUrl}/password_confirm/${uid}/${token}/`, data, { context: OWN_ERRORS() });
+  }
+
+  /** Measured stream statistics; the component shows its own error text. */
+  getStreams(videoId: number): Observable<{ streams: StreamStats[] }> {
+    return this.http.get<{ streams: StreamStats[] }>(`${this.baseUrl}/video/${videoId}/streams/`, { context: OWN_ERRORS() });
   }
 
   getVideos(): Observable<Video[]> {

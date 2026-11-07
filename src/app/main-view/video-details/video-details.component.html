@@ -7,6 +7,7 @@
   <button type="button" class="close" aria-label="Close details" (click)="close()">
     <mat-icon aria-hidden="true">close</mat-icon>
   </button>
+  <app-stream-inspector [videoId]="video.id" />
 </div>
 <div class="main">
   <h2 mat-dialog-title>{{ video.title }}</h2>

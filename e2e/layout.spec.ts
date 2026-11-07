@@ -89,6 +89,15 @@ async function checkUnderTheHood(page: Page, testInfo: TestInfo): Promise<void> 
     await expect(page.locator('body')).not.toContainText('H.264');
   });
 
+  await test.step('default details show no stream inspector', async () => {
+    const dialog = page.getByRole('dialog');
+    await page.locator('#newest li button').first().click();
+    await expect(dialog.getByRole('button', { name: 'Play' })).toBeVisible();
+    await expect(dialog.locator('app-stream-inspector .inspector')).toHaveCount(0);
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+  });
+
   await test.step('switch shows technical details and survives a reload', async () => {
     await toggle.click();
     await expect(toggle).toBeChecked();
@@ -131,6 +140,12 @@ async function checkDetailsDialog(page: Page, testInfo: TestInfo): Promise<void>
     await page.keyboard.press('Enter');
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole('button', { name: 'Play' })).toBeFocused();
+  });
+
+  await test.step('switch on shows the stream table or its calm fallback', async () => {
+    const inspector = dialog.locator('app-stream-inspector');
+    await expect(inspector.getByText('Upload → ffprobe → ffmpeg → HLS → Player')).toBeVisible();
+    await expect(inspector.locator('table').or(inspector.getByText('Stream details are not available yet.'))).toBeVisible();
   });
 
   await settled(page);

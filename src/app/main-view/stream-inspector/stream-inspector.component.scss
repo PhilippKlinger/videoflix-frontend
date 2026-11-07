@@ -1,0 +1,68 @@
+:host {
+  display: block;
+}
+
+.inspector {
+  margin-top: 20px;
+  padding: 12px 14px;
+  border: 1px solid var(--vf-line);
+  border-radius: 9px;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.8rem;
+}
+
+.label {
+  margin: 0 0 8px;
+  color: var(--vf-mute);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+}
+
+// Fits three stream rows plus the header, so the dialog does not jump when the data arrives.
+.body {
+  min-height: 5.5em;
+}
+
+.note {
+  margin: 0;
+  color: var(--vf-mute);
+}
+
+// A table wider than the dialog scrolls here; focusable so keyboard users can reach it.
+.table-wrap {
+  overflow-x: auto;
+
+  &:focus-visible {
+    outline: 2px solid var(--vf-ink);
+    outline-offset: 2px;
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 3px 12px 3px 0;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  color: var(--vf-mute);
+  font-weight: 400;
+}
+
+td {
+  color: var(--vf-tech);
+}
+
+.path {
+  margin: 10px 0 0;
+  color: var(--vf-mute);
+  font-size: 0.7rem;
+}

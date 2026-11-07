@@ -58,4 +58,10 @@ describe('VideoDetailsComponent', () => {
     expect(query('img').getAttribute('src')).toBe(TEST_VIDEO.thumbnail_url);
     expect(query('.placeholder')).toBeNull();
   });
+
+  it('has an inspector for this video that stays empty while the switch is off', () => {
+    create();
+    expect(query('app-stream-inspector')).not.toBeNull();
+    expect(query('app-stream-inspector').textContent?.trim()).toBe('');
+  });
 });
