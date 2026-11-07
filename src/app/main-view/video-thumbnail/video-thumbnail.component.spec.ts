@@ -28,11 +28,11 @@ describe('VideoThumbnailComponent', () => {
     expect(root().textContent).toContain('Mountain run');
   });
 
-  it('emits open on Enter', () => {
+  it('emits open on click', () => {
     create();
     const opened: unknown[] = [];
     component.open.subscribe(video => opened.push(video));
-    // The browser turns Enter and Space on a focused button into a click.
+    // The keyboard path is covered by the e2e test "tile opens details with the keyboard".
     root().click();
     expect(opened).toEqual([component.video]);
   });

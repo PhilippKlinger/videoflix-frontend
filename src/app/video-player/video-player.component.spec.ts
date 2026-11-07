@@ -107,6 +107,27 @@ describe('VideoPlayerComponent', () => {
       expect(videoElement()).not.toBeNull();
     });
 
+    it('shows the video title', () => {
+      httpMock.expectOne('/api/me/').flush({});
+      expect(fixture.nativeElement.querySelector('h2').textContent).toContain('Test video');
+    });
+
+    it('shows a loading state until the video can play', () => {
+      httpMock.expectOne('/api/me/').flush({});
+      expect(fixture.nativeElement.querySelector('.loading')).not.toBeNull();
+      videoElement().dispatchEvent(new Event('canplay'));
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.loading')).toBeNull();
+    });
+
+    it('hides the loading state on error and shows the friendly message', async () => {
+      await sessionOk();
+      videoElement().dispatchEvent(new Event('error'));
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.loading')).toBeNull();
+      expect(fixture.nativeElement.textContent).toContain('This video cannot be played right now');
+    });
+
     it('offers only the converted resolutions, highest first', () => {
       httpMock.expectOne('/api/me/').flush({});
       expect(component.resolutions).toEqual(['1080p', '720p', '480p']);

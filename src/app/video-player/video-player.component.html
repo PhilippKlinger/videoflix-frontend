@@ -2,12 +2,15 @@
   <button class="close-btn" (click)="closeDialog()" aria-label="Close player">
     <mat-icon>close</mat-icon>
   </button>
+  @if (!isFullscreen) {
+    <h2 class="player-title">{{ video.title }}</h2>
+  }
   @if (playbackError) {
     <p class="processing-message">This video cannot be played right now. Please try again later.</p>
   } @else if (selectedResolution) {
     <div class="player-stage">
       <video #videoPlayer controls autoplay controlslist="nofullscreen" [attr.poster]="video.thumbnail_url"
-        (loadedmetadata)="onLoadedMetadata()"></video>
+        (loadedmetadata)="onLoadedMetadata()" (canplay)="onCanPlay()" (error)="onVideoError()"></video>
       <!-- The native controls cannot be extended, so the own controls sit in a bar below the video. -->
       <div class="player-bar">
         <button class="quality-btn" mat-flat-button [matMenuTriggerFor]="qualityBtn" [attr.aria-label]="'Resolution ' + selectedResolution">
@@ -25,6 +28,12 @@
           </button>
         }
       </div>
+      @if (loading) {
+        <div class="loading" role="status">
+          <span>Loading video…</span>
+          <mat-progress-bar mode="indeterminate" aria-label="Loading video"></mat-progress-bar>
+        </div>
+      }
     </div>
   } @else if (video.status === 'failed') {
     <p class="processing-message">This video could not be converted.</p>

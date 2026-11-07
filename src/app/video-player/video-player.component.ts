@@ -34,6 +34,8 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   resumeAt: number | null = null;
   isFullscreen = false;
   playbackError = false;
+  // True from the start of a stream until the browser can play it.
+  loading = true;
   // Not every browser can put an element into fullscreen (iPhone).
   readonly canFullscreen = document.fullscreenEnabled;
   private hls: Hls | null = null;
@@ -89,7 +91,17 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     // A second switch before the first one loaded must not lose the original position.
     this.resumeAt ??= this.videoPlayer?.nativeElement.currentTime ?? null;
     this.selectedResolution = resolution;
+    this.loading = true;
     await this.loadStream();
+  }
+
+  onCanPlay(): void {
+    this.loading = false;
+  }
+
+  /** The video element itself failed, for example on a broken native HLS stream. */
+  onVideoError(): void {
+    this.showPlaybackError();
   }
 
   onLoadedMetadata(): void {
@@ -179,6 +191,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private showPlaybackError(): void {
     this.playbackError = true;
+    this.loading = false;
     this.hls?.destroy();
     this.hls = null;
     this.changeDetector.markForCheck();

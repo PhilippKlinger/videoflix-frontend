@@ -4,12 +4,16 @@ import { provideRouter } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { config } from 'rxjs';
 
+import { MatDialog } from '@angular/material/dialog';
+import { of } from 'rxjs';
 import { BrowseComponent } from './browse.component';
 import { MyVideosComponent } from '../my-videos/my-videos.component';
 import { TEST_VIDEO } from 'src/app/testing/video.fixture';
 import { provideAppHttpClient } from 'src/app/http.providers';
 import { Role } from 'src/app/models/user.model';
 import { Video } from 'src/app/models/video.model';
+import { VideoDetailsComponent } from '../video-details/video-details.component';
+import { VideoPlayerComponent } from 'src/app/video-player/video-player.component';
 
 describe('BrowseComponent', () => {
   let component: BrowseComponent;
@@ -155,5 +159,46 @@ describe('BrowseComponent', () => {
     httpMock.expectOne('/api/video/').flush([]);
     fixture.detectChanges();
     expect(component.ownVideos).toEqual([]);
+  });
+
+  describe('opening a video', () => {
+    let open: jasmine.Spy;
+
+    function afterClosing(result: string | undefined) {
+      open = spyOn(component.dialog, 'open').and.returnValue({ afterClosed: () => of(result) } as never);
+    }
+
+    it('opening a tile opens details', () => {
+      create('member', [{ ...TEST_VIDEO, id: 1 }]);
+      afterClosing(undefined);
+      fixture.nativeElement.querySelector('.video_list app-video-thumbnail > button').click();
+      expect(open).toHaveBeenCalledTimes(1);
+      expect(open.calls.mostRecent().args[0]).toBe(VideoDetailsComponent);
+      expect(open.calls.mostRecent().args[1].data).toEqual({ video: component.newestVideos[0] });
+      expect(open.calls.mostRecent().args[1].restoreFocus).toBeTrue();
+    });
+
+    it('opens the player after "play" in the details', () => {
+      create('member', [{ ...TEST_VIDEO, id: 1 }]);
+      afterClosing('play');
+      component.openDetails(TEST_VIDEO);
+      expect(open).toHaveBeenCalledTimes(2);
+      expect(open.calls.mostRecent().args[0]).toBe(VideoPlayerComponent);
+    });
+
+    it('stays on the page when the details close without "play"', () => {
+      create('member', [{ ...TEST_VIDEO, id: 1 }]);
+      afterClosing(undefined);
+      component.openDetails(TEST_VIDEO);
+      expect(open).toHaveBeenCalledTimes(1);
+    });
+
+    it('hero play goes directly to the player', () => {
+      create('member', [{ ...TEST_VIDEO, id: 1 }]);
+      afterClosing(undefined);
+      query('.hero-play')!.click();
+      expect(open).toHaveBeenCalledTimes(1);
+      expect(open.calls.mostRecent().args[0]).toBe(VideoPlayerComponent);
+    });
   });
 });
