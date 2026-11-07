@@ -1,39 +1,24 @@
-# Videoflix
+# Videoflix Frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.12.
+Single-page web app for Videoflix, a small video streaming platform: sign up and log in, browse the catalog, watch HLS streams, and upload your own clips. It talks to the Django REST API in [videoflix-backend](https://github.com/PhilippKlinger/videoflix-backend).
 
-## Development server
+## Stack
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- Angular 22.2 with standalone components, Angular Material 22.2
+- TypeScript 6.0, RxJS 7.8
+- hls.js 1.7 for playback
+- Karma and Jasmine for unit tests, Playwright for end-to-end tests
 
-## Code scaffolding
+## Commands
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+```bash
+npm ci          # install dependencies
+npm start       # dev server on http://localhost:4200, proxies /api to the backend (proxy.conf.json)
+npm test        # unit tests
+npm run build   # production build, output in dist/videoflix/browser
+npm run e2e     # Playwright tests (need a running backend)
+```
 
-## Build
+## Deployment
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-The end-to-end tests use [Playwright](https://playwright.dev) and run against the local dev stack:
-
-1. Start the backend with `docker compose --profile dev up -d` (includes Mailpit for the activation mails).
-2. Start the frontend with `npm start`.
-3. Once: `npx playwright install chromium`.
-4. Run `npm run e2e`. The report is written to `playwright-report/`.
-
-Suites:
-
-- `e2e/auth-smoke.spec.ts`: register, activate via Mailpit, log in, refresh, log out.
-- `e2e/demo-upload.spec.ts`: try demo, upload `e2e/fixtures/test-clip.mp4` (3 s, generated with ffmpeg `testsrc`), wait for the conversion, play, use resolution menu and close button in fullscreen, delete. It runs in the installed Google Chrome, because Playwright's Chromium cannot decode H.264/AAC.
-
-The backend throttles registration mails, uploads and demo starts per hour. For repeated runs, copy the relaxed `THROTTLE_RATE_*` values from the backend's `.env.dev.template` into its `.env`.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+The production build is served by nginx from the container image. Compose files, the deploy workflow and the runbook live in [videoflix-deploy](https://github.com/PhilippKlinger/videoflix-deploy).
