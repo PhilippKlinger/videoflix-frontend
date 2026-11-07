@@ -93,7 +93,8 @@ export class VideoUploadComponent {
   private messageFor(error: HttpErrorResponse): string {
     if (error.status === 400) {
       const fileError = error.error?.video_file?.[0];
-      const titleError = error.error?.title?.[0];
+      const titleField = error.error?.title;
+      const titleError = Array.isArray(titleField) ? titleField[0] : titleField;
       const detail = error.error?.detail;
       if (typeof fileError === 'string') return fileError;
       if (typeof titleError === 'string') return titleError;

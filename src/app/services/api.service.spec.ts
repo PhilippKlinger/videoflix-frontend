@@ -132,6 +132,7 @@ describe('ApiService', () => {
       ['/api/register/', () => service.registerUser({ email: 'a@b.de', password: 'x', confirmed_password: 'x' }).subscribe()],
       ['/api/login/', () => service.loginUser({ email: 'a@b.de', password: 'x' }).subscribe()],
       ['/api/password_reset/', () => service.forgotPassword({ email: 'a@b.de' }).subscribe()],
+      ['/api/request-new-activation-link/', () => service.getNewActivationEmail({ email: 'a@b.de' }).subscribe()],
       ['/api/password_confirm/MQ/abc/', () => service.resetPasswordConfirm('MQ', 'abc', { new_password: 'x', confirm_password: 'x' }).subscribe()],
     ];
     calls.forEach(([url, call]) => {

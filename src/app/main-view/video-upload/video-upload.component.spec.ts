@@ -120,6 +120,16 @@ describe('VideoUploadComponent', () => {
     expect(text()).not.toContain('try again later');
   });
 
+  it('shows a backend title error that arrives as a plain string', () => {
+    fillForm();
+    component.onSubmit();
+    httpMock.expectOne('/api/upload/').flush(
+      { title: 'Title is not allowed.' },
+      { status: 400, statusText: 'Bad Request' }
+    );
+    expect(text()).toContain('Title is not allowed.');
+  });
+
   it('shows the backend message for a resolution or frame rate that is too high', () => {
     for (const message of ['The video resolution is too large.', 'The frame rate must not be higher than 120 fps.']) {
       fillForm();

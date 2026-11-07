@@ -26,7 +26,7 @@ export class ApiService {
   }
 
   getNewActivationEmail(data: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/request-new-activation-link/`, data)
+    return this.http.post(`${this.baseUrl}/request-new-activation-link/`, data, { context: OWN_ERRORS() })
   }
 
   loginUser(data: LoginRequest): Observable<void> {
