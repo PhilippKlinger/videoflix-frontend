@@ -28,7 +28,8 @@ export class VideoService {
       error: (error) => {
         console.error('Failed to load videos', error);
         // A failed reload keeps the list already shown; only the first load ends with an empty one.
-        this.loadFailed.set(this.videos.value === null);
+        // Stays set through failed retries until a list has loaded.
+        this.loadFailed.set(this.loadFailed() || this.videos.value === null);
         this.videos.next(this.videos.value ?? []);
       }
     });
@@ -36,6 +37,7 @@ export class VideoService {
 
   /** Forgets the list on an account switch, so no other account's uploads are shown. */
   clear(): void {
+    this.loadFailed.set(false);
     this.videos.next(null);
   }
 

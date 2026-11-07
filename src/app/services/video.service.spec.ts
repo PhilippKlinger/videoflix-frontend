@@ -81,4 +81,22 @@ describe('VideoService', () => {
     http.expectOne('/api/video/').flush([]);
     expect(service.loadFailed()).toBeFalse();
   });
+
+  it('keeps the failed mark when a retry fails again', () => {
+    spyOn(console, 'error');
+    const http = TestBed.inject(HttpTestingController);
+    service.loadVideos();
+    http.expectOne('/api/video/').flush({}, { status: 500, statusText: 'Server Error' });
+    service.loadVideos();
+    http.expectOne('/api/video/').flush({}, { status: 500, statusText: 'Server Error' });
+    expect(service.loadFailed()).toBeTrue();
+  });
+
+  it('clear resets the failed mark', () => {
+    spyOn(console, 'error');
+    service.loadVideos();
+    TestBed.inject(HttpTestingController).expectOne('/api/video/').flush({}, { status: 500, statusText: 'Server Error' });
+    service.clear();
+    expect(service.loadFailed()).toBeFalse();
+  });
 });
