@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { HttpErrorResponse, HttpEventType } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
@@ -13,6 +13,11 @@ const MAX_FILE_SIZE = 50 * 1024 * 1024;
 /** Same lengths as the backend model (video_app/models.py). */
 export const TITLE_MAX_LENGTH = 150;
 export const DESCRIPTION_MAX_LENGTH = 500;
+
+/** Rejects text that is only whitespace; the backend refuses it as a blank title. */
+function notBlank(control: AbstractControl<string>): ValidationErrors | null {
+  return control.value.trim() ? null : { blank: true };
+}
 
 @Component({
   standalone: true,
@@ -31,7 +36,7 @@ export class VideoUploadComponent {
   readonly titleMaxLength = TITLE_MAX_LENGTH;
   readonly descriptionMaxLength = DESCRIPTION_MAX_LENGTH;
   readonly uploadForm = inject(FormBuilder).nonNullable.group({
-    title: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(TITLE_MAX_LENGTH)]],
+    title: ['', [Validators.required, notBlank, Validators.minLength(4), Validators.maxLength(TITLE_MAX_LENGTH)]],
     description: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(DESCRIPTION_MAX_LENGTH)]],
     category: ['', Validators.required],
   });
@@ -88,8 +93,10 @@ export class VideoUploadComponent {
   private messageFor(error: HttpErrorResponse): string {
     if (error.status === 400) {
       const fileError = error.error?.video_file?.[0];
+      const titleError = error.error?.title?.[0];
       const detail = error.error?.detail;
       if (typeof fileError === 'string') return fileError;
+      if (typeof titleError === 'string') return titleError;
       if (typeof detail === 'string') return detail;
     }
     if (error.status === 429) {

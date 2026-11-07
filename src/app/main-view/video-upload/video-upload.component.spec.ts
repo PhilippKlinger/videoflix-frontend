@@ -101,6 +101,37 @@ describe('VideoUploadComponent', () => {
     });
   });
 
+  it('rejects a title that only consists of whitespace', () => {
+    fillForm();
+    component.uploadForm.patchValue({ title: '    ' });
+    expect(component.uploadForm.controls.title.hasError('blank')).toBeTrue();
+    component.onSubmit();
+    httpMock.expectNone('/api/upload/');
+  });
+
+  it('shows the backend message for a rejected title', () => {
+    fillForm();
+    component.onSubmit();
+    httpMock.expectOne('/api/upload/').flush(
+      { title: ['This field may not be blank.'] },
+      { status: 400, statusText: 'Bad Request' }
+    );
+    expect(text()).toContain('This field may not be blank.');
+    expect(text()).not.toContain('try again later');
+  });
+
+  it('shows the backend message for a resolution or frame rate that is too high', () => {
+    for (const message of ['The video resolution is too large.', 'The frame rate must not be higher than 120 fps.']) {
+      fillForm();
+      component.onSubmit();
+      httpMock.expectOne('/api/upload/').flush(
+        { video_file: [message] },
+        { status: 400, statusText: 'Bad Request' }
+      );
+      expect(text()).toContain(message);
+    }
+  });
+
   it('does not upload without a file', () => {
     component.uploadForm.patchValue({ title: 'My clip', description: 'A test clip', category: 'Action' });
     component.onSubmit();

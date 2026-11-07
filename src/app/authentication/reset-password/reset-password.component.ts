@@ -84,7 +84,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
       next: () => {
         this.loading = false;
         this.resetSuccess = true;
-        this.snackBar.open('Password reset succesfully! Redirect...', 'OK', { duration: 3000 });
+        this.snackBar.open('Password reset successfully! Redirecting...', 'OK', { duration: 3000 });
         this.countdownTimer = setInterval(() => {
           this.timeLeft--;
           if (this.timeLeft <= 0) {
