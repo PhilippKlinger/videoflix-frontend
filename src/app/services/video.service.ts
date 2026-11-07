@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
-import { Video } from '../models/video.model';
-import { BehaviorSubject } from 'rxjs';
+import { StreamStats, Video } from '../models/video.model';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 import { ApiService } from './api.service';
 
 
@@ -33,6 +33,10 @@ export class VideoService {
         this.videos.next(this.videos.value ?? []);
       }
     });
+  }
+
+  getStreams(videoId: number): Observable<StreamStats[]> {
+    return this.apiService.getStreams(videoId).pipe(map(response => response.streams));
   }
 
   /** Forgets the list on an account switch, so no other account's uploads are shown. */

@@ -16,6 +16,9 @@
         <div class="hero-content">
           <h1>{{ featured.title }}</h1>
           <p>{{ featured.description }}</p>
+          @if (hood.enabled() && heroTech) {
+            <p class="tech">{{ heroTech }}</p>
+          }
           <button mat-flat-button type="button" class="hero-play" (click)="playVideo(featured)">
             <mat-icon>play_arrow</mat-icon>
             Play

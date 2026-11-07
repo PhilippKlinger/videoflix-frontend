@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material/material.module';
+import { StreamInspectorComponent } from '../stream-inspector/stream-inspector.component';
 import { Video } from 'src/app/models/video.model';
 
 @Component({
   standalone: true,
   selector: 'app-video-details',
-  imports: [MaterialModule],
+  imports: [MaterialModule, StreamInspectorComponent],
   templateUrl: './video-details.component.html',
   styleUrls: ['./video-details.component.scss'],
 })

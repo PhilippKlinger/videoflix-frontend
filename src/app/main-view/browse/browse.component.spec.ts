@@ -12,6 +12,7 @@ import { TEST_VIDEO } from 'src/app/testing/video.fixture';
 import { provideAppHttpClient } from 'src/app/http.providers';
 import { Role } from 'src/app/models/user.model';
 import { Video } from 'src/app/models/video.model';
+import { UnderTheHoodService } from 'src/app/services/under-the-hood.service';
 import { VideoDetailsComponent } from '../video-details/video-details.component';
 import { VideoPlayerComponent } from 'src/app/video-player/video-player.component';
 
@@ -40,7 +41,12 @@ describe('BrowseComponent', () => {
     return fixture.nativeElement.querySelector(selector);
   }
 
-  afterEach(() => httpMock.verify());
+  beforeEach(() => localStorage.removeItem('videoflix.underTheHood'));
+
+  afterEach(() => {
+    httpMock.verify();
+    localStorage.removeItem('videoflix.underTheHood');
+  });
 
   it('loads the hero image first and catalog tiles only when they scroll into view', () => {
     create('member', [{ ...TEST_VIDEO, id: 1 }, { ...TEST_VIDEO, id: 2 }]);
@@ -61,6 +67,17 @@ describe('BrowseComponent', () => {
     expect(query('img.hero-bg')).toBeNull();
     expect(query('.hero')).not.toBeNull();
     expect(fixture.nativeElement.querySelectorAll('.video_list app-video-thumbnail > button').length).toBe(2);
+  });
+
+  it('hero tech line only when enabled', () => {
+    const resolutions = ['1080p', '480p'].map((resolution, id) => ({ id, original_video: 1, resolution }));
+    create('member', [{ ...TEST_VIDEO, id: 1, resolutions }]);
+    expect(query('.hero .tech')).toBeNull();
+
+    TestBed.inject(UnderTheHoodService).toggle();
+    fixture.detectChanges();
+    httpMock.expectOne('/version.json').flush({ sha: '133f300', builtAt: 'x' });
+    expect(query('.hero .tech')?.textContent?.trim()).toBe('HLS · 480p 1080p · H.264 · AAC');
   });
 
   it('features the newest catalog video and lists the newest first', () => {

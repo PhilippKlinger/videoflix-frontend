@@ -66,6 +66,13 @@
       color: var(--vf-ink);
       line-height: 1.5;
     }
+    // Technical layer: monospace in the tech colour.
+    p.tech {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.95rem;
+      color: var(--vf-tech);
+      margin-bottom: 1rem;
+    }
     .hero-play {
       min-width: 120px;
       min-height: 44px;

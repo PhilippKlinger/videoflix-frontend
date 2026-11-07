@@ -71,6 +71,63 @@ async function openForgotPasswordError(page: Page): Promise<void> {
 }
 
 /**
+ * Checks the default view for technical detail, then turns "Under the hood" on, checks the
+ * technical layer like a page and reloads to see that the switch is remembered. It reuses the
+ * demo login of the browse page and leaves the switch on.
+ */
+async function checkUnderTheHood(page: Page, testInfo: TestInfo): Promise<void> {
+  const toggle = page.getByRole('switch', { name: 'Under the hood' });
+  const heroTech = page.locator('.hero .tech');
+  const tileTech = page.locator('#newest li .tech');
+  const attestation = page.getByRole('link', { name: /attested image/ });
+
+  await test.step('default view shows no technical details', async () => {
+    await expect(toggle).not.toBeChecked();
+    await expect(heroTech).toHaveCount(0);
+    await expect(tileTech).toHaveCount(0);
+    await expect(attestation).toHaveCount(0);
+    await expect(page.locator('body')).not.toContainText('H.264');
+  });
+
+  await test.step('default details show no stream inspector', async () => {
+    const dialog = page.getByRole('dialog');
+    await page.locator('#newest li button').first().click();
+    await expect(dialog.getByRole('button', { name: 'Play' })).toBeVisible();
+    await expect(dialog.locator('app-stream-inspector .inspector')).toHaveCount(0);
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+  });
+
+  await test.step('switch shows technical details and survives a reload', async () => {
+    await toggle.click();
+    await expect(toggle).toBeChecked();
+    await expect(heroTech).toHaveText(/^HLS · (\d+p )*\d+p · H\.264 · AAC$/);
+    await expect(tileTech.first()).toHaveText(/^\d+ streams?$/);
+    await expect(attestation).toHaveAttribute('href', 'https://github.com/PhilippKlinger/videoflix-frontend/attestations');
+    await expect(attestation).toHaveAttribute('target', '_blank');
+
+    await page.reload();
+    await expect(page.getByRole('switch', { name: 'Under the hood' })).toBeChecked();
+    await expect(heroTech).toBeVisible();
+  });
+
+  await settled(page);
+  await page.screenshot({
+    path: path.join('e2e-shots', testInfo.project.name, 'browse-under-the-hood.png'),
+    fullPage: true,
+    animations: 'disabled',
+  });
+  await test.step('under the hood: no horizontal overflow', async () => {
+    const { scrollWidth, clientWidth } = await page.evaluate(() => {
+      const { scrollWidth, clientWidth } = document.documentElement;
+      return { scrollWidth, clientWidth };
+    });
+    expect.soft(scrollWidth, 'document scrollWidth').toBeLessThanOrEqual(clientWidth);
+  });
+  await test.step('under the hood: axe finds no serious or critical violations', () => expectNoAxeFindings(page));
+}
+
+/**
  * Opens the details of the first tile with the real keyboard, checks them like a page,
  * and closes them with Escape. It reuses the demo login of the browse page.
  */
@@ -83,6 +140,13 @@ async function checkDetailsDialog(page: Page, testInfo: TestInfo): Promise<void>
     await page.keyboard.press('Enter');
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole('button', { name: 'Play' })).toBeFocused();
+  });
+
+  await test.step('switch on shows the stream table or its calm fallback', async () => {
+    const inspector = dialog.locator('app-stream-inspector');
+    await expect(inspector.getByText('Upload → ffprobe → ffmpeg → HLS → Player')).toBeVisible();
+    // Cells render without whitespace between them, so the row text is one run.
+    await expect(inspector.locator('tbody tr').first()).toHaveText(/^\d+p[\d.]+ [kM]bit\/s\d+ × \d+ s[\d.]+ [MG]B$/);
   });
 
   await settled(page);
@@ -131,6 +195,7 @@ const PAGES: { name: string; open: (page: Page) => Promise<unknown>; then?: (pag
   { name: 'login', open: page => page.goto('/login') },
   { name: 'register', open: page => page.goto('/register') },
   { name: 'browse', open: openBrowse, then: async (page, testInfo) => {
+    await checkUnderTheHood(page, testInfo);
     await checkDetailsDialog(page, testInfo);
     await checkUploadForm(page, testInfo);
   } },

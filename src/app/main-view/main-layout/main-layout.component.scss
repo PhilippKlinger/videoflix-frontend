@@ -16,6 +16,45 @@
 
   @media (max-width: 600px) {
     padding: 24px 16px 0;
+    // Logo on its own row, so switch and "Log out" fit below it in reading order.
+    flex-wrap: wrap;
+  }
+
+  .logo-link {
+    @media (max-width: 600px) {
+      flex: 0 0 100%;
+    }
+  }
+
+  .hood-toggle {
+    margin-left: auto;
+    color: var(--vf-ink);
+    --mat-slide-toggle-label-text-color: var(--vf-ink);
+    --mat-slide-toggle-label-text-size: 0.9rem;
+    --mat-slide-toggle-selected-track-color: var(--vf-accent);
+    --mat-slide-toggle-selected-hover-track-color: var(--vf-accent);
+    --mat-slide-toggle-selected-focus-track-color: var(--vf-accent);
+    --mat-slide-toggle-selected-pressed-track-color: var(--vf-accent);
+    --mat-slide-toggle-selected-handle-color: var(--vf-ink);
+    --mat-slide-toggle-selected-hover-handle-color: var(--vf-ink);
+    --mat-slide-toggle-selected-focus-handle-color: var(--vf-ink);
+    --mat-slide-toggle-selected-pressed-handle-color: var(--vf-ink);
+    --mat-slide-toggle-unselected-track-color: var(--vf-line);
+    --mat-slide-toggle-unselected-hover-track-color: var(--vf-line);
+    --mat-slide-toggle-unselected-focus-track-color: var(--vf-line);
+    --mat-slide-toggle-unselected-pressed-track-color: var(--vf-line);
+    --mat-slide-toggle-unselected-handle-color: var(--vf-mute);
+    --mat-slide-toggle-unselected-hover-handle-color: var(--vf-mute);
+    --mat-slide-toggle-unselected-focus-handle-color: var(--vf-mute);
+    --mat-slide-toggle-unselected-pressed-handle-color: var(--vf-mute);
+    --mat-slide-toggle-track-outline-color: var(--vf-mute);
+
+    // Material removes the outline of the switch button; keyboard focus gets a visible ring.
+    ::ng-deep button.mdc-switch:focus-visible {
+      outline: 2px solid var(--vf-accent);
+      outline-offset: 3px;
+      border-radius: 9999px;
+    }
   }
 
   .logo-link {
@@ -85,10 +124,35 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  gap: 10px;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px 24px;
   padding-bottom: 28px;
   padding-top: 18px;
   padding-right: 48px;
+
+  @media (max-width: 600px) {
+    padding-inline: 16px;
+  }
+
+  p,
+  .legal {
+    margin: 0;
+  }
+
+  // Technical layer: monospace in the tech colour.
+  .build {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.9rem;
+    color: var(--vf-tech);
+
+    a {
+      color: var(--vf-tech);
+      font-size: inherit;
+      opacity: 1;
+      text-decoration: underline;
+    }
+  }
 
   a {
     color: #fff;

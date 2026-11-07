@@ -30,6 +30,16 @@ export interface Video {
   is_own: boolean;
 }
 
+/** Measured values of one HLS stream, as returned by the streams endpoint. */
+export interface StreamStats {
+  resolution: string;
+  bitrate_kbps: number;
+  segment_count: number;
+  segment_seconds: number;
+  duration_seconds: number;
+  size_bytes: number;
+}
+
 export const CATEGORY_CHOICES = [
   { value: 'Action', label: 'Action' },
   { value: 'Comedy', label: 'Comedy' },

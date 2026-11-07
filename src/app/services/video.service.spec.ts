@@ -5,7 +5,7 @@ import { provideRouter } from '@angular/router';
 
 import { HttpTestingController } from '@angular/common/http/testing';
 import { VideoService } from './video.service';
-import { Video } from '../models/video.model';
+import { StreamStats, Video } from '../models/video.model';
 import { TEST_VIDEO } from '../testing/video.fixture';
 
 describe('VideoService', () => {
@@ -98,5 +98,13 @@ describe('VideoService', () => {
     TestBed.inject(HttpTestingController).expectOne('/api/video/').flush({}, { status: 500, statusText: 'Server Error' });
     service.clear();
     expect(service.loadFailed()).toBeFalse();
+  });
+
+  it('maps getStreams to the streams array', () => {
+    let result: StreamStats[] | undefined;
+    service.getStreams(7).subscribe(streams => result = streams);
+    const stream = { resolution: '720p', bitrate_kbps: 1300, segment_count: 26, segment_seconds: 4, duration_seconds: 103.4, size_bytes: 17000000 };
+    TestBed.inject(HttpTestingController).expectOne('/api/video/7/streams/').flush({ streams: [stream] });
+    expect(result).toEqual([stream]);
   });
 });

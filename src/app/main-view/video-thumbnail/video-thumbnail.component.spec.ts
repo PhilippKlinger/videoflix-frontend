@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TEST_VIDEO } from '../../testing/video.fixture';
 
+import { UnderTheHoodService } from 'src/app/services/under-the-hood.service';
 import { VideoThumbnailComponent } from './video-thumbnail.component';
 
 describe('VideoThumbnailComponent', () => {
@@ -16,7 +17,12 @@ describe('VideoThumbnailComponent', () => {
 
   const root = (): HTMLElement => fixture.nativeElement.firstElementChild;
 
-  beforeEach(() => TestBed.configureTestingModule({ imports: [VideoThumbnailComponent] }));
+  beforeEach(() => {
+    localStorage.removeItem('videoflix.underTheHood');
+    TestBed.configureTestingModule({ imports: [VideoThumbnailComponent] });
+  });
+
+  afterEach(() => localStorage.removeItem('videoflix.underTheHood'));
 
   it('is a button named after the video', () => {
     create({ title: 'Mountain run' });
@@ -54,5 +60,17 @@ describe('VideoThumbnailComponent', () => {
     create({ thumbnail_url: null });
     expect(root().querySelector('img')).toBeNull();
     expect(root().querySelector('.placeholder')).not.toBeNull();
+  });
+
+  it('tech line only when enabled', () => {
+    const resolutions = ['480p', '720p'].map((resolution, id) => ({ id, original_video: 1, resolution }));
+    create({ resolutions });
+    expect(root().querySelector('.tech')).toBeNull();
+    expect(root().textContent).not.toContain('streams');
+
+    TestBed.inject(UnderTheHoodService).toggle();
+    fixture.detectChanges();
+    expect(root().querySelector('.tech')?.textContent?.trim()).toBe('2 streams');
+    expect(root().hasAttribute('aria-label')).toBeFalse();
   });
 });

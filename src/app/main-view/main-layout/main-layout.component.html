@@ -3,6 +3,7 @@
         <a routerLink="/browse" class="logo-link" aria-label="Videoflix, to the film overview">
             <img src="/assets/logo.svg" alt="Videoflix" class="logo" width="251" height="40" />
         </a>
+        <mat-slide-toggle class="hood-toggle" [checked]="hood.enabled()" (change)="hood.toggle()">Under the hood</mat-slide-toggle>
         <button type="button" class="logout-link" (click)="logout()">
             <mat-icon>logout</mat-icon>
             Log out
@@ -16,7 +17,17 @@
     </main>
 
     <footer class="main-footer">
-        <a routerLink="/datenschutz">Datenschutz</a> |
-        <a routerLink="/impressum">Impressum</a>
+        @if (hood.enabled()) {
+            <p class="build">
+                @if (build(); as info) {
+                    build {{ info.sha }} ·
+                }
+                <a [href]="attestationsUrl" target="_blank" rel="noopener">attested image <span aria-hidden="true">↗</span></a>
+            </p>
+        }
+        <span class="legal">
+            <a routerLink="/datenschutz">Datenschutz</a> |
+            <a routerLink="/impressum">Impressum</a>
+        </span>
     </footer>
 </div>

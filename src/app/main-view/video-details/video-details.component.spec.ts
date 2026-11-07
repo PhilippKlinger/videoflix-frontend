@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { By } from '@angular/platform-browser';
+import { StreamInspectorComponent } from '../stream-inspector/stream-inspector.component';
 import { TEST_VIDEO } from 'src/app/testing/video.fixture';
 import { Video } from 'src/app/models/video.model';
 
@@ -57,5 +59,15 @@ describe('VideoDetailsComponent', () => {
     create();
     expect(query('img').getAttribute('src')).toBe(TEST_VIDEO.thumbnail_url);
     expect(query('.placeholder')).toBeNull();
+  });
+
+  it('has an inspector for this video that stays empty while the switch is off', () => {
+    create();
+    expect(query('app-stream-inspector')).not.toBeNull();
+    const inspector = fixture.debugElement.query(By.directive(StreamInspectorComponent));
+    expect(inspector.componentInstance.videoId()).toBe(TEST_VIDEO.id);
+    expect(query('.main app-stream-inspector')).not.toBeNull();
+    expect(query('.art app-stream-inspector')).toBeNull();
+    expect(query('app-stream-inspector').textContent?.trim()).toBe('');
   });
 });
