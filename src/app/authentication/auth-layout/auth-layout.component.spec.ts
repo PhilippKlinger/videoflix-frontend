@@ -41,7 +41,7 @@ describe('AuthLayoutComponent', () => {
 
   it('keeps the background image and overlay unless the page brings its own', () => {
     const container: HTMLElement = fixture.nativeElement.querySelector('.auth-container');
-    expect(container.style.backgroundImage).toContain('/assets/backgrounds/start.webp');
+    expect(container.style.backgroundImage).toContain('/assets/backgrounds/cover.webp');
     expect(container.classList).not.toContain('own-background');
 
     fixture.componentRef.setInput('backgroundImage', '');

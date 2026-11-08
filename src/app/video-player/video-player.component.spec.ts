@@ -120,6 +120,14 @@ describe('VideoPlayerComponent', () => {
       expect(fixture.nativeElement.querySelector('.loading')).toBeNull();
     });
 
+    it('hides the native controls while loading, so their spinner does not show twice', () => {
+      httpMock.expectOne('/api/me/').flush({});
+      expect(videoElement().controls).toBeFalse();
+      videoElement().dispatchEvent(new Event('canplay'));
+      fixture.detectChanges();
+      expect(videoElement().controls).toBeTrue();
+    });
+
     it('hides the loading state on error and shows the friendly message', async () => {
       await sessionOk();
       videoElement().dispatchEvent(new Event('error'));
