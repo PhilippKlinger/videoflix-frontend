@@ -38,7 +38,7 @@ describe('Legal pages', () => {
       'Hosting und Server-Logs',
       'Konto, Demo und Videos',
       'E-Mails',
-      'Cookies',
+      'Cookies und Browser-Speicher',
       'Ihre Rechte',
     ]);
     expect(text()).toContain('nach 2 Stunden');
@@ -50,5 +50,15 @@ describe('Legal pages', () => {
     expect(text()).toContain('Einzelne Seitenaufrufe werden nicht');
     expect(text()).toContain('etwa zwei Wochen');
     expect(text()).toContain('Ohne E-Mail-Adresse ist kein Konto möglich');
+    // Statements must match what the code and the server really do
+    expect(text()).toContain('können IP-Adresse, Zeitpunkt und aufgerufene Adresse enthalten');
+    expect(text()).toContain('höchstens eine Stunde');
+    expect(text()).toContain('videoflix.underTheHood');
+    expect(text()).toContain('Under the hood');
+    expect(text()).not.toContain('Startseite');
+    expect(text()).toContain('Zeitpunkt von Registrierung und letzter Anmeldung');
+    expect(text()).toContain('Uploads mit Titel und Beschreibung');
+    expect(text()).not.toContain('Wiedergabefortschritt');
+    expect(text()).toContain('werden dann sofort gelöscht');
   });
 });

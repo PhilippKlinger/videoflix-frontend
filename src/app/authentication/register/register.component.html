@@ -12,7 +12,7 @@
           <h1>Sign up</h1>
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Email Address</mat-label>
-            <input matInput formControlName="username">
+            <input matInput type="email" formControlName="username" autocomplete="email" autocapitalize="off">
             <mat-icon matPrefix>mail</mat-icon>
             @if (registerForm.get('username')?.hasError('required') && registerForm.get('username')?.touched) {
               <mat-error>

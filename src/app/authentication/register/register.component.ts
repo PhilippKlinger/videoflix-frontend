@@ -84,7 +84,7 @@ export class RegisterComponent implements OnInit {
         this.registerSuccess = true;
         this.requestloading = false;
 
-        this.snackBar.open('Registration successful! Redirect...', 'OK', { duration: 3000 });
+        this.snackBar.open('Registration successful! Please check your email.', 'OK', { duration: 3000 });
 
       },
       error: (error) => {
