@@ -12,7 +12,7 @@ import { BUILD_STORY_URL } from 'src/app/links';
   styleUrl: './auth-layout.component.scss'
 })
 export class AuthLayoutComponent {
-  @Input() backgroundImage: string = '/assets/backgrounds/start.webp';
+  @Input() backgroundImage: string = '/assets/backgrounds/cover.webp';
   @Input() showBuildLink = false;
   readonly buildStoryUrl = BUILD_STORY_URL;
 
