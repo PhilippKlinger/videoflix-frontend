@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { By } from '@angular/platform-browser';
@@ -9,10 +10,10 @@ import { VideoDetailsComponent } from './video-details.component';
 
 describe('VideoDetailsComponent', () => {
   let fixture: ComponentFixture<VideoDetailsComponent>;
-  let close: jasmine.Spy;
+  let close: Mock;
 
   function create(video: Video = TEST_VIDEO) {
-    close = jasmine.createSpy('close');
+    close = vi.fn().mockName('close');
     TestBed.configureTestingModule({
       imports: [VideoDetailsComponent],
       providers: [
@@ -38,7 +39,8 @@ describe('VideoDetailsComponent', () => {
   it('play closes with "play"', () => {
     create();
     query('.play').click();
-    expect(close).toHaveBeenCalledOnceWith('play');
+    expect(close).toHaveBeenCalledTimes(1);
+    expect(close).toHaveBeenCalledWith('play');
   });
 
   it('has a labelled close button that closes without a value', () => {
@@ -46,7 +48,8 @@ describe('VideoDetailsComponent', () => {
     const button = query('.close');
     expect(button.getAttribute('aria-label')).toBe('Close details');
     button.click();
-    expect(close).toHaveBeenCalledOnceWith();
+    expect(close).toHaveBeenCalledTimes(1);
+    expect(close).toHaveBeenCalledWith();
   });
 
   it('shows a calm placeholder instead of a broken image without thumbnail', () => {

@@ -1,3 +1,4 @@
+import type { MockedObject } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -30,7 +31,7 @@ describe('VideoPlayerComponent', () => {
   let fixture: ComponentFixture<VideoPlayerComponent>;
   let component: VideoPlayerComponent;
   let httpMock: HttpTestingController;
-  let hls: jasmine.SpyObj<Hls>;
+  let hls: MockedObject<Hls>;
 
   const converted: Video = {
     ...TEST_VIDEO,
@@ -55,8 +56,13 @@ describe('VideoPlayerComponent', () => {
     fixture = TestBed.createComponent(VideoPlayerComponent);
     component = fixture.componentInstance;
     // hls.js is a third-party library; the browser's own video element stays real.
-    hls = jasmine.createSpyObj<Hls>('Hls', ['loadSource', 'attachMedia', 'destroy', 'on']);
-    spyOn(component, 'createHls').and.resolveTo(hls);
+    hls = {
+      loadSource: vi.fn().mockName('Hls.loadSource'),
+      attachMedia: vi.fn().mockName('Hls.attachMedia'),
+      destroy: vi.fn().mockName('Hls.destroy'),
+      on: vi.fn().mockName('Hls.on')
+    } as unknown as MockedObject<Hls>;
+    vi.spyOn(component, 'createHls').mockResolvedValue(hls);
     fixture.detectChanges();
   }
 
@@ -64,6 +70,8 @@ describe('VideoPlayerComponent', () => {
   async function sessionOk() {
     httpMock.expectOne('/api/me/').flush({ id: 1, email: 'a@b.c', role: 'member' });
     await fixture.whenStable();
+    // zone.js does not track native async/await under Vitest; let the pending promise chain finish.
+    await new Promise(resolve => setTimeout(resolve));
   }
 
   function videoElement(): HTMLVideoElement {
@@ -93,7 +101,7 @@ describe('VideoPlayerComponent', () => {
 
     it('shows a friendly message on a fatal playback error', async () => {
       await sessionOk();
-      const onError = hls.on.calls.mostRecent().args[1] as (event: string, data: { fatal: boolean }) => void;
+      const onError = hls.on.mock.lastCall![1] as (event: string, data: { fatal: boolean }) => void;
       onError('hlsError', { fatal: true });
       fixture.detectChanges();
       expect(fixture.nativeElement.textContent).toContain('This video cannot be played right now');
@@ -101,7 +109,7 @@ describe('VideoPlayerComponent', () => {
 
     it('ignores non-fatal playback errors', async () => {
       await sessionOk();
-      const onError = hls.on.calls.mostRecent().args[1] as (event: string, data: { fatal: boolean }) => void;
+      const onError = hls.on.mock.lastCall![1] as (event: string, data: { fatal: boolean }) => void;
       onError('hlsError', { fatal: false });
       fixture.detectChanges();
       expect(videoElement()).not.toBeNull();
@@ -122,10 +130,10 @@ describe('VideoPlayerComponent', () => {
 
     it('hides the native controls while loading, so their spinner does not show twice', () => {
       httpMock.expectOne('/api/me/').flush({});
-      expect(videoElement().controls).toBeFalse();
+      expect(videoElement().controls).toBe(false);
       videoElement().dispatchEvent(new Event('canplay'));
       fixture.detectChanges();
-      expect(videoElement().controls).toBeTrue();
+      expect(videoElement().controls).toBe(true);
     });
 
     it('hides the loading state on error and shows the friendly message', async () => {
@@ -162,7 +170,7 @@ describe('VideoPlayerComponent', () => {
 
     it('does nothing when the same resolution is chosen again', async () => {
       await sessionOk();
-      hls.loadSource.calls.reset();
+      hls.loadSource.mockClear();
       await component.onResolutionChange('720p');
       expect(hls.loadSource).not.toHaveBeenCalled();
     });

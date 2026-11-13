@@ -29,7 +29,7 @@ describe('VideoThumbnailComponent', () => {
     expect(root().tagName).toBe('BUTTON');
     expect(root().getAttribute('type')).toBe('button');
     // No aria-label: the visible text names the button, and the image adds nothing.
-    expect(root().hasAttribute('aria-label')).toBeFalse();
+    expect(root().hasAttribute('aria-label')).toBe(false);
     expect(root().querySelector('img')?.getAttribute('alt')).toBe('');
     expect(root().textContent).toContain('Mountain run');
   });
@@ -71,6 +71,6 @@ describe('VideoThumbnailComponent', () => {
     TestBed.inject(UnderTheHoodService).toggle();
     fixture.detectChanges();
     expect(root().querySelector('.tech')?.textContent?.trim()).toBe('2 streams');
-    expect(root().hasAttribute('aria-label')).toBeFalse();
+    expect(root().hasAttribute('aria-label')).toBe(false);
   });
 });

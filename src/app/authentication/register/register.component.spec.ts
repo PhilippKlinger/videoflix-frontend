@@ -41,7 +41,7 @@ describe('RegisterComponent', () => {
   });
 
   it('sends email, password and confirmed_password', () => {
-    const registerSpy = spyOn(TestBed.inject(ApiService), 'registerUser').and.returnValue(of({}));
+    const registerSpy = vi.spyOn(TestBed.inject(ApiService), 'registerUser').mockReturnValue(of({}));
     component.registerForm.patchValue({ username: 'a@b.de', password: 'secret12', password_confirm: 'secret12' });
 
     component.onSubmit();
@@ -52,9 +52,9 @@ describe('RegisterComponent', () => {
   it('password with 7 characters is invalid, with 8 valid', () => {
     const password = component.registerForm.get('password')!;
     password.setValue('abcdefg1');
-    expect(password.valid).toBeTrue();
+    expect(password.valid).toBe(true);
     password.setValue('abcdef1');
-    expect(password.valid).toBeFalse();
+    expect(password.valid).toBe(false);
   });
 
   it('shows PASSWORD_HINT at the field', () => {
@@ -64,7 +64,7 @@ describe('RegisterComponent', () => {
 
   it('server rejection of the password shows PASSWORD_HINT at the field, not the server text', () => {
     const rejection = new HttpErrorResponse({ status: 400, error: { non_field_errors: ['This password is too common.'] } });
-    spyOn(TestBed.inject(ApiService), 'registerUser').and.returnValue(throwError(() => rejection));
+    vi.spyOn(TestBed.inject(ApiService), 'registerUser').mockReturnValue(throwError(() => rejection));
     component.registerForm.patchValue({ username: 'a@b.de', password: 'password1', password_confirm: 'password1' });
 
     component.onSubmit();
@@ -74,12 +74,15 @@ describe('RegisterComponent', () => {
     password.markAsTouched();
     fixture.detectChanges();
     const text = fixture.nativeElement.textContent;
-    expect(password.hasError('serverRejected')).toBeTrue();
+    expect(password.hasError('serverRejected')).toBe(true);
     expect(fixture.nativeElement.querySelector('mat-error')?.textContent).toContain(PASSWORD_HINT);
     expect(text).not.toContain('too common');
   });
 
-  const failures: [number, string][] = [
+  const failures: [
+    number,
+    string
+  ][] = [
     [400, 'Registration was not successful. Please check your entries and try again.'],
     [429, 'Registration did not work. Please try again in a moment.'],
     [500, 'Registration did not work. Please try again in a moment.'],
@@ -88,7 +91,7 @@ describe('RegisterComponent', () => {
   failures.forEach(([status, text]) => {
     it('shows the right message for status ' + status, () => {
       const error = new HttpErrorResponse({ status, error: status === 400 ? { email: ['x'] } : {} });
-      spyOn(TestBed.inject(ApiService), 'registerUser').and.returnValue(throwError(() => error));
+      vi.spyOn(TestBed.inject(ApiService), 'registerUser').mockReturnValue(throwError(() => error));
       component.registerForm.patchValue({ username: 'a@b.de', password: 'abcdefg1', password_confirm: 'abcdefg1' });
 
       component.onSubmit();

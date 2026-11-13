@@ -16,7 +16,10 @@ import { PrivacyComponent } from './legal/privacy.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 
 describe('app routes', () => {
-  const expected: [string, Type<unknown>][] = [
+  const expected: [
+    string,
+    Type<unknown>
+  ][] = [
     ['', HomeComponent],
     ['login', LoginComponent],
     ['register', RegisterComponent],
@@ -32,7 +35,7 @@ describe('app routes', () => {
 
   function find(path: string): Route {
     const route = routes.find(r => r.path === path);
-    expect(route).withContext(path).toBeDefined();
+    expect(route, path).toBeDefined();
     return route!;
   }
 
@@ -52,7 +55,7 @@ describe('app routes', () => {
   it('protects browse and upload with the AuthGuard only', () => {
     for (const route of routes) {
       const guarded = route.path === 'browse' || route.path === 'upload';
-      expect(route.canActivate ?? []).withContext(route.path!).toEqual(guarded ? [AuthGuard] : []);
+      expect(route.canActivate ?? [], route.path!).toEqual(guarded ? [AuthGuard] : []);
     }
   });
 

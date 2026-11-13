@@ -17,7 +17,7 @@ describe('DemoButtonComponent', () => {
     });
     httpMock = TestBed.inject(HttpTestingController);
     router = TestBed.inject(Router);
-    spyOn(router, 'navigate').and.resolveTo(true);
+    vi.spyOn(router, 'navigate').mockResolvedValue(true);
     fixture = TestBed.createComponent(DemoButtonComponent);
     fixture.detectChanges();
   });
@@ -44,7 +44,7 @@ describe('DemoButtonComponent', () => {
   it('cannot be clicked twice while the demo starts', () => {
     button().click();
     fixture.detectChanges();
-    expect(button().disabled).toBeTrue();
+    expect(button().disabled).toBe(true);
     httpMock.expectOne('/api/demo/').flush({}, { status: 201, statusText: 'Created' });
     httpMock.expectOne('/api/me/').flush({ id: 2, email: 'demo-1@demo.invalid', role: 'demo' });
   });
@@ -52,7 +52,7 @@ describe('DemoButtonComponent', () => {
   it('says when all demo slots are in use', () => {
     clickAndFail(503, 'All demo slots are in use. Please try again later.');
     expect(fixture.nativeElement.textContent).toContain('All demo slots are in use. Please try again later.');
-    expect(button().disabled).toBeFalse();
+    expect(button().disabled).toBe(false);
     expect(router.navigate).not.toHaveBeenCalled();
   });
 

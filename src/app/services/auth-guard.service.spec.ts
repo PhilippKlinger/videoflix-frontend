@@ -25,15 +25,15 @@ describe('AuthGuard', () => {
   }
 
   it('allows navigation when /api/me/ succeeds', () => {
-    spyOn(authService, 'loadCurrentUser').and.returnValue(of({ id: 1, email: 'a@b.de', role: 'member' }));
-    expect(run()).toBeTrue();
+    vi.spyOn(authService, 'loadCurrentUser').mockReturnValue(of({ id: 1, email: 'a@b.de', role: 'member' }));
+    expect(run()).toBe(true);
   });
 
   it('returns a UrlTree to / when /api/me/ fails', () => {
-    spyOn(authService, 'loadCurrentUser').and.returnValue(throwError(() => new Error('401')));
+    vi.spyOn(authService, 'loadCurrentUser').mockReturnValue(throwError(() => new Error('401')));
     const result = run();
     const router = TestBed.inject(Router);
-    expect(result instanceof UrlTree).toBeTrue();
+    expect(result instanceof UrlTree).toBe(true);
     expect(router.serializeUrl(result as UrlTree)).toBe('/');
   });
 });

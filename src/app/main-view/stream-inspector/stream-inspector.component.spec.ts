@@ -7,7 +7,7 @@ import { UnderTheHoodService } from 'src/app/services/under-the-hood.service';
 import { StreamStats } from 'src/app/models/video.model';
 
 const STREAM: StreamStats = {
-  resolution: '720p', bitrate_kbps: 1300, segment_count: 26, segment_seconds: 4, duration_seconds: 103.4, size_bytes: 17_000_000,
+  resolution: '720p', bitrate_kbps: 1300, segment_count: 26, segment_seconds: 4, duration_seconds: 103.4, size_bytes: 17000000,
 };
 const URL = '/api/video/7/streams/';
 
@@ -95,7 +95,7 @@ describe('StreamInspectorComponent', () => {
   });
 
   it('http error shows "Stream details could not be loaded." and logs the error', () => {
-    const log = spyOn(console, 'error');
+    const log = vi.spyOn(console, 'error').mockReturnValue(undefined);
     turnOn();
     http.expectOne(URL).flush('boom', { status: 500, statusText: 'Server Error' });
     fixture.detectChanges();

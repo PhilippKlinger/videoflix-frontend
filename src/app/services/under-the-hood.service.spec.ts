@@ -7,35 +7,39 @@ describe('UnderTheHoodService', () => {
   afterEach(() => localStorage.removeItem(KEY));
 
   it('is off by default', () => {
-    expect(new UnderTheHoodService().enabled()).toBeFalse();
+    expect(new UnderTheHoodService().enabled()).toBe(false);
   });
 
   it('remembers the value after a new instance', () => {
     new UnderTheHoodService().toggle();
-    expect(new UnderTheHoodService().enabled()).toBeTrue();
+    expect(new UnderTheHoodService().enabled()).toBe(true);
   });
 
   it('switches back off', () => {
     const service = new UnderTheHoodService();
     service.toggle();
     service.toggle();
-    expect(service.enabled()).toBeFalse();
-    expect(new UnderTheHoodService().enabled()).toBeFalse();
+    expect(service.enabled()).toBe(false);
+    expect(new UnderTheHoodService().enabled()).toBe(false);
   });
 
   // A throwing storage cannot be produced otherwise (private mode, blocked site data).
   it('works when reading storage throws', () => {
-    spyOn(Storage.prototype, 'getItem').and.throwError('blocked');
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
     const service = new UnderTheHoodService();
-    expect(service.enabled()).toBeFalse();
+    expect(service.enabled()).toBe(false);
     service.toggle();
-    expect(service.enabled()).toBeTrue();
+    expect(service.enabled()).toBe(true);
   });
 
   it('works when writing storage throws', () => {
-    spyOn(Storage.prototype, 'setItem').and.throwError('blocked');
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
     const service = new UnderTheHoodService();
     service.toggle();
-    expect(service.enabled()).toBeTrue();
+    expect(service.enabled()).toBe(true);
   });
 });

@@ -10,7 +10,8 @@ import { ScrollFadeDirective } from './scroll-fade.directive';
   styles: `.row { width: 200px; overflow-x: auto; } .content { height: 10px; }`,
 })
 class HostComponent {
-  @ViewChild('row', { static: true }) row!: ElementRef<HTMLElement>;
+  @ViewChild('row', { static: true })
+  row!: ElementRef<HTMLElement>;
   contentWidth = 100;
 }
 
@@ -20,7 +21,8 @@ describe('ScrollFadeDirective', () => {
 
   // The ResizeObserver reports after layout, so give it a few frames.
   const frames = async () => {
-    for (let i = 0; i < 3; i++) await new Promise(resolve => requestAnimationFrame(resolve));
+    for (let i = 0; i < 3; i++)
+      await new Promise(resolve => requestAnimationFrame(resolve));
   };
 
   async function create(contentWidth: number) {
@@ -36,18 +38,18 @@ describe('ScrollFadeDirective', () => {
 
   it('no has-more when the content fits', async () => {
     await create(100);
-    expect(row.classList.contains('has-more')).toBeFalse();
+    expect(row.classList.contains('has-more')).toBe(false);
   });
 
   it('has-more when the content overflows', async () => {
     await create(500);
-    expect(row.classList.contains('has-more')).toBeTrue();
+    expect(row.classList.contains('has-more')).toBe(true);
   });
 
   it('no has-more when scrolled to the end', async () => {
     await create(500);
     row.scrollLeft = row.scrollWidth;
     await frames();
-    expect(row.classList.contains('has-more')).toBeFalse();
+    expect(row.classList.contains('has-more')).toBe(false);
   });
 });
