@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, Input, ChangeDetectionStrategy, signal, effect, untracked } from '@angular/core';
+import { Component, DestroyRef, inject, ChangeDetectionStrategy, signal, effect, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material/material.module';

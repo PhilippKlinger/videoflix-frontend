@@ -7,8 +7,6 @@ import { BehaviorSubject } from 'rxjs';
 export class ErrorHandlingService {
   private errorMessage = new BehaviorSubject<string>('');
 
-  constructor() {}
-
   log(message: string) {
     this.errorMessage.next(message);
   }

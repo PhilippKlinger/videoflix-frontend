@@ -34,7 +34,7 @@ import { MaterialModule } from 'src/app/material/material.module';
 })
 export class BrowseComponent implements OnInit {
   /** Videos grouped by genre */
-  genreMap: { [genre: string]: Video[] } = {};
+  genreMap: Record<string, Video[]> = {};
   /** Dynamic order of the genres */
   genreOrder: string[] = [];
   /** Newest videos */
