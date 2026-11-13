@@ -3,8 +3,11 @@
 Single-page web app for Videoflix, a small video streaming platform: sign up and log in, browse the catalog, watch HLS streams, and upload your own clips. It talks to the Django REST API in [videoflix-backend](https://github.com/PhilippKlinger/videoflix-backend).
 
 [![CI](https://github.com/PhilippKlinger/videoflix-frontend/actions/workflows/ci.yml/badge.svg)](https://github.com/PhilippKlinger/videoflix-frontend/actions/workflows/ci.yml)
+[![Security Checks](https://github.com/PhilippKlinger/videoflix-frontend/actions/workflows/security.yml/badge.svg)](https://github.com/PhilippKlinger/videoflix-frontend/actions/workflows/security.yml)
 [![CodeQL](https://github.com/PhilippKlinger/videoflix-frontend/actions/workflows/codeql.yml/badge.svg)](https://github.com/PhilippKlinger/videoflix-frontend/actions/workflows/codeql.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/PhilippKlinger/videoflix-frontend/badge)](https://scorecard.dev/viewer/?uri=github.com/PhilippKlinger/videoflix-frontend)
+![Angular 22](https://img.shields.io/badge/angular-22-red.svg)
+![TypeScript 6.0](https://img.shields.io/badge/typescript-6.0-blue.svg)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Live](https://img.shields.io/badge/live-videoflix.philipp--klinger.com-informational)](https://videoflix.philipp-klinger.com)
 
@@ -15,7 +18,7 @@ Single-page web app for Videoflix, a small video streaming platform: sign up and
 - Upload your own clips and follow the conversion status until they are playable
 - "Under the hood" switch that shows the technical details of each stream
 
-How the app, the API and the worker fit together: [upload-to-playback diagram](https://github.com/PhilippKlinger/videoflix-backend#readme) in the backend and the [stack diagram](https://github.com/PhilippKlinger/videoflix-deploy#readme) in videoflix-deploy.
+How the app, the API and the worker fit together: [upload-to-playback diagram](https://github.com/PhilippKlinger/videoflix-backend#how-it-works) in the backend and the [stack diagram](https://github.com/PhilippKlinger/videoflix-deploy#architecture) in videoflix-deploy.
 
 ## Tech stack
 
