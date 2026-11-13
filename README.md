@@ -11,6 +11,15 @@ Single-page web app for Videoflix, a small video streaming platform: sign up and
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Live](https://img.shields.io/badge/live-videoflix.philipp--klinger.com-informational)](https://videoflix.philipp-klinger.com)
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Tech stack](#tech-stack)
+- [Getting started](#getting-started)
+- [CI and security](#ci-and-security)
+- [Related repositories](#related-repositories)
+- [License](#license)
+
 ## Overview
 
 - Sign up with mail activation, log in, reset the password, or start a demo account with one click
