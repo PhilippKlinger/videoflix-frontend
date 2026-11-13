@@ -31,27 +31,21 @@ How the app, the API and the worker fit together: [upload-to-playback diagram](h
 
 ```bash
 npm ci          # install dependencies
-npm start       # dev server on http://localhost:4200, proxies /api to the backend (proxy.conf.json)
+npm start       # dev server on http://localhost:4200, proxies /api to the backend
 npm test        # unit tests
-npm run lint    # ESLint (angular-eslint)
+npm run lint    # ESLint
 npm run build   # production build, output in dist/videoflix/browser
-npm run e2e     # Playwright tests (need a running backend)
 ```
 
-## Testing and CI
-
-Every pull request to `main` must pass these checks before a merge:
+## CI and security
 
 - **Test and build:** ESLint, unit tests with a coverage gate, production build with strict templates
 - **E2E (Compose stack):** Playwright against the real backend stack (sign-up, login, demo, upload, playback, layout, accessibility with axe)
 - **Security checks:** secret scan (gitleaks), dependency review, `npm audit`, workflow lint (zizmor)
 - **CodeQL** for TypeScript and the workflows
+- **Image:** the nginx image is scanned with Trivy on every pull request and published to GHCR on `main`
 
-The image job builds the nginx image and scans it with Trivy on every pull request; on `main` it publishes the image to GHCR.
-
-## Deployment
-
-The production build is served by nginx from the container image. Compose files, the deploy workflow and the runbook live in [videoflix-deploy](https://github.com/PhilippKlinger/videoflix-deploy).
+All checks except the image job are required before a merge. A merge to `main` starts the deploy in [videoflix-deploy](https://github.com/PhilippKlinger/videoflix-deploy).
 
 ## Related repositories
 
