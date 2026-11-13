@@ -10,8 +10,8 @@ export class AuthGuard implements CanActivate {
   constructor(private router: Router, private authService: AuthService) {}
 
   canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> {
+    _next: ActivatedRouteSnapshot,
+    _state: RouterStateSnapshot): Observable<boolean | UrlTree> {
       return this.authService.loadCurrentUser().pipe(
         map(() => true),
         catchError(() => of(this.router.createUrlTree(['/'])))

@@ -15,6 +15,7 @@ Single-page web app for Videoflix, a small video streaming platform: sign up and
 npm ci          # install dependencies
 npm start       # dev server on http://localhost:4200, proxies /api to the backend (proxy.conf.json)
 npm test        # unit tests
+npm run lint    # ESLint (angular-eslint)
 npm run build   # production build, output in dist/videoflix/browser
 npm run e2e     # Playwright tests (need a running backend)
 ```

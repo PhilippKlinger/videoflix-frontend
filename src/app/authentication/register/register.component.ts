@@ -34,8 +34,6 @@ export class RegisterComponent implements OnInit {
   api = inject(ApiService);
   snackBar = inject(MatSnackBar);
 
-  constructor() { }
-
   ngOnInit(): void {
     this.registerForm = this.fb.group({
       email: [''],

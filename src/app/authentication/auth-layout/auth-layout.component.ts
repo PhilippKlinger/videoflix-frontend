@@ -12,13 +12,11 @@ import { BUILD_STORY_URL } from 'src/app/links';
   styleUrl: './auth-layout.component.scss'
 })
 export class AuthLayoutComponent {
-  @Input() backgroundImage: string = '/assets/backgrounds/cover.webp';
+  @Input() backgroundImage = '/assets/backgrounds/cover.webp';
   @Input() showBuildLink = false;
   readonly buildStoryUrl = BUILD_STORY_URL;
 
   router = inject(Router);
-
-  constructor() { }
 
   isLoginPage(): boolean {
     return this.router.url === '/login';

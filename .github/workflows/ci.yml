@@ -34,6 +34,10 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
+      # ESLint with angular-eslint; errors fail the run, warnings (explicit any) do not.
+      - name: Lint
+        run: npm run lint
+
       # Vitest runs the unit tests in Playwright's headless Chromium.
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium

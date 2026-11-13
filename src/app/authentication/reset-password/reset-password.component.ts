@@ -40,8 +40,6 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   snackBar = inject(MatSnackBar);
   route = inject(ActivatedRoute)
 
-  constructor() { }
-
   ngOnInit(): void {
     this.resetForm = this.fb.group({
       new_password: ['', [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH)]],

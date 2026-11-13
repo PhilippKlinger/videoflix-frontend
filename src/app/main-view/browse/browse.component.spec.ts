@@ -5,7 +5,6 @@ import { provideRouter } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { config } from 'rxjs';
 
-import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { BrowseComponent } from './browse.component';
 import { MyVideosComponent } from '../my-videos/my-videos.component';

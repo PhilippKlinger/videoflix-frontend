@@ -1,4 +1,4 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
@@ -14,7 +14,7 @@ import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./forgot-password.component.scss']
 })
-export class ForgotPasswordComponent {
+export class ForgotPasswordComponent implements OnInit {
   forgotForm!: FormGroup;
   loading = false;
   success = false;
@@ -23,8 +23,6 @@ export class ForgotPasswordComponent {
   fb = inject(FormBuilder);
   api = inject(ApiService);
   router = inject(Router);
-
-  constructor() { }
 
   ngOnInit(): void {
     this.forgotForm = this.fb.group({

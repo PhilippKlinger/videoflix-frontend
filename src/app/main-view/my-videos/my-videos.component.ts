@@ -25,6 +25,7 @@ export class MyVideosComponent {
   private injector = inject(Injector);
 
   readonly videos = input.required<Video[]>();
+  // eslint-disable-next-line @angular-eslint/no-output-native -- 'play' does not bubble from the media element; renaming would change the API
   readonly play = output<Video>();
   /** Asks the page to reload the list (conversion done, video deleted). */
   readonly changed = output<void>();
