@@ -41,8 +41,8 @@ describe('LoginComponent', () => {
 
   it('navigates to /browse after login', () => {
     const user: CurrentUser = { id: 1, email: 'a@b.de', role: 'member' };
-    const loginSpy = spyOn(TestBed.inject(AuthService), 'login').and.returnValue(of(user));
-    const navigateSpy = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
+    const loginSpy = vi.spyOn(TestBed.inject(AuthService), 'login').mockReturnValue(of(user));
+    const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
 
     component.loginForm.setValue({ email: 'a@b.de', password: 'pw' });
     component.onSubmit();
@@ -52,7 +52,7 @@ describe('LoginComponent', () => {
   });
 
   it("failed login shows 'Email or password is incorrect.' with role alert next to the form", () => {
-    spyOn(TestBed.inject(AuthService), 'login').and.returnValue(throwError(() => new HttpErrorResponse({ status: 400, error: {} })));
+    vi.spyOn(TestBed.inject(AuthService), 'login').mockReturnValue(throwError(() => new HttpErrorResponse({ status: 400, error: {} })));
 
     component.loginForm.setValue({ email: 'a@b.de', password: 'wrong' });
     component.onSubmit();
@@ -63,7 +63,11 @@ describe('LoginComponent', () => {
     expect(document.querySelector('mat-snack-bar-container')).toBeNull();
   });
 
-  const failures: [string, number, string][] = [
+  const failures: [
+    string,
+    number,
+    string
+  ][] = [
     ['credentials rejected (400)', 400, 'Email or password is incorrect.'],
     ['throttled (429)', 429, 'Login did not work. Please try again in a moment.'],
     ['server error (500)', 500, 'Login did not work. Please try again in a moment.'],
@@ -73,7 +77,7 @@ describe('LoginComponent', () => {
   failures.forEach(([name, status, text]) => {
     it('shows the right message when ' + name, () => {
       const error = new HttpErrorResponse({ status, error: {} });
-      spyOn(TestBed.inject(AuthService), 'login').and.returnValue(throwError(() => error));
+      vi.spyOn(TestBed.inject(AuthService), 'login').mockReturnValue(throwError(() => error));
 
       component.loginForm.setValue({ email: 'a@b.de', password: 'pw' });
       component.onSubmit();

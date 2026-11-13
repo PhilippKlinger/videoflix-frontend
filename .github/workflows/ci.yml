@@ -34,9 +34,13 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
-      # Coverage thresholds live in karma.conf.js and fail the run when coverage drops.
+      # Vitest runs the unit tests in Playwright's headless Chromium.
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Coverage thresholds live in angular.json and fail the run when coverage drops.
       - name: Run tests with coverage
-        run: npm test -- --watch=false --browsers=ChromeHeadlessCI --code-coverage
+        run: npm test -- --watch=false --coverage
 
       # Strict templates make the production build the type check as well.
       - name: Build for production

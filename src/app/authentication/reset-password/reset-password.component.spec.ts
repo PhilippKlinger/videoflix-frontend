@@ -40,7 +40,7 @@ describe('ResetPasswordComponent', () => {
   });
 
   it('posts uid, token and both passwords', () => {
-    const confirmSpy = spyOn(TestBed.inject(ApiService), 'resetPasswordConfirm').and.returnValue(of({}));
+    const confirmSpy = vi.spyOn(TestBed.inject(ApiService), 'resetPasswordConfirm').mockReturnValue(of({}));
     component.resetForm.setValue({ new_password: 'secret12', confirm_password: 'secret12' });
 
     component.onSubmit();
@@ -50,20 +50,20 @@ describe('ResetPasswordComponent', () => {
 
   it('flags mismatching passwords', () => {
     component.resetForm.setValue({ new_password: 'a12345', confirm_password: 'b12345' });
-    expect(component.resetForm.errors?.['mismatch']).toBeTrue();
+    expect(component.resetForm.errors?.['mismatch']).toBe(true);
   });
 
   it('password with 7 characters is invalid, with 8 valid', () => {
     const password = component.resetForm.get('new_password')!;
     password.setValue('abcdefg1');
-    expect(password.valid).toBeTrue();
+    expect(password.valid).toBe(true);
     password.setValue('abcdef1');
-    expect(password.valid).toBeFalse();
+    expect(password.valid).toBe(false);
   });
 
   it('server rejection of the password shows PASSWORD_HINT at the field, not the server text', () => {
     const rejection = new HttpErrorResponse({ status: 400, error: { non_field_errors: ['This password is too common.'] } });
-    spyOn(TestBed.inject(ApiService), 'resetPasswordConfirm').and.returnValue(throwError(() => rejection));
+    vi.spyOn(TestBed.inject(ApiService), 'resetPasswordConfirm').mockReturnValue(throwError(() => rejection));
     component.resetForm.setValue({ new_password: 'password1', confirm_password: 'password1' });
 
     component.onSubmit();
@@ -74,7 +74,10 @@ describe('ResetPasswordComponent', () => {
     expect(fixture.nativeElement.textContent).not.toContain('too common');
   });
 
-  const failures: [number, string][] = [
+  const failures: [
+    number,
+    string
+  ][] = [
     [400, 'The password could not be reset. The link may have expired; please request a new one.'],
     [429, 'The password could not be changed. Please try again in a moment.'],
     [500, 'The password could not be changed. Please try again in a moment.'],
@@ -83,7 +86,7 @@ describe('ResetPasswordComponent', () => {
   failures.forEach(([status, text]) => {
     it('shows the right message for status ' + status, () => {
       const error = new HttpErrorResponse({ status, error: status === 400 ? { detail: 'Invalid or expired token.' } : {} });
-      spyOn(TestBed.inject(ApiService), 'resetPasswordConfirm').and.returnValue(throwError(() => error));
+      vi.spyOn(TestBed.inject(ApiService), 'resetPasswordConfirm').mockReturnValue(throwError(() => error));
       component.resetForm.setValue({ new_password: 'abcdefg1', confirm_password: 'abcdefg1' });
 
       component.onSubmit();

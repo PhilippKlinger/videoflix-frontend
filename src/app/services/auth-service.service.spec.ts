@@ -99,7 +99,7 @@ describe('AuthService', () => {
     httpMock.expectOne('/api/logout/').flush({}, { status: 401, statusText: 'Unauthorized' });
 
     expect(current).toBeNull();
-    expect(completed).toBeTrue();
-    expect(failed).toBeFalse();
+    expect(completed).toBe(true);
+    expect(failed).toBe(false);
   });
 });

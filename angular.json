@@ -108,40 +108,23 @@
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
             "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets",
-              {
-                "glob": "robots.txt",
-                "input": "src",
-                "output": "/"
-              },
-              {
-                "glob": "material-icons.{woff2,woff}",
-                "input": "node_modules/material-icons/iconfont",
-                "output": "/fonts"
-              },
-              {
-                "glob": "roboto-{latin,latin-ext}-{300,400,500}-normal.woff2",
-                "input": "node_modules/@fontsource/roboto/files",
-                "output": "/fonts"
-              }
+            "runner": "vitest",
+            "browsers": [
+              "chromiumHeadless"
             ],
-            "styles": [
-              "src/styles/fonts.scss",
-              "src/styles/material-theme.scss",
-              "src/styles.scss"
+            "coverageReporters": [
+              "html",
+              "text-summary"
             ],
-            "scripts": [],
-            "karmaConfig": "karma.conf.js"
+            "coverageThresholds": {
+              "statements": 45,
+              "branches": 18,
+              "functions": 34,
+              "lines": 47
+            }
           }
         }
       }

@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { HTTP_INTERCEPTORS, HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -11,8 +12,8 @@ import { provideAppHttpClient } from '../http.providers';
 describe('AuthInterceptor', () => {
   let http: HttpClient;
   let httpMock: HttpTestingController;
-  let navigateSpy: jasmine.Spy;
-  let clearSpy: jasmine.Spy;
+  let navigateSpy: Mock;
+  let clearSpy: Mock;
 
   const unauthorized = { status: 401, statusText: 'Unauthorized' };
 
@@ -29,8 +30,8 @@ describe('AuthInterceptor', () => {
     });
     http = TestBed.inject(HttpClient);
     httpMock = TestBed.inject(HttpTestingController);
-    navigateSpy = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
-    clearSpy = spyOn(TestBed.inject(AuthService), 'clearSession').and.callThrough();
+    navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    clearSpy = vi.spyOn(TestBed.inject(AuthService), 'clearSession');
   });
 
   afterEach(() => httpMock.verify());
@@ -72,7 +73,7 @@ describe('AuthInterceptor', () => {
 
     expect(clearSpy).toHaveBeenCalled();
     expect(navigateSpy).toHaveBeenCalledWith(['/']);
-    expect(error instanceof HttpErrorResponse).toBeTrue();
+    expect(error instanceof HttpErrorResponse).toBe(true);
     expect(error?.status).toBe(401);
   });
 

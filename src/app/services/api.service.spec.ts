@@ -91,14 +91,14 @@ describe('ApiService', () => {
     expect(req.request.method).toBe('POST');
     // The backend accepts JSON only, so a plain HTML form cannot start a demo.
     expect(req.request.body).toEqual({});
-    expect(req.request.context.get(SHOWS_OWN_ERRORS)).toBeTrue();
+    expect(req.request.context.get(SHOWS_OWN_ERRORS)).toBe(true);
     req.flush({ detail: 'demo started' }, { status: 201, statusText: 'Created' });
   });
 
   it('addVideo lets the upload page show its own errors', () => {
     service.addVideo(new FormData()).subscribe();
     const req = httpMock.expectOne('/api/upload/');
-    expect(req.request.context.get(SHOWS_OWN_ERRORS)).toBeTrue();
+    expect(req.request.context.get(SHOWS_OWN_ERRORS)).toBe(true);
     req.flush({});
   });
 
@@ -106,7 +106,7 @@ describe('ApiService', () => {
     service.deleteVideo(1).subscribe();
     const req = httpMock.expectOne('/api/video/1/');
     expect(req.request.method).toBe('DELETE');
-    expect(req.request.context.get(SHOWS_OWN_ERRORS)).toBeTrue();
+    expect(req.request.context.get(SHOWS_OWN_ERRORS)).toBe(true);
     req.flush(null, { status: 204, statusText: 'No Content' });
   });
 
@@ -115,7 +115,7 @@ describe('ApiService', () => {
     service.getConversionProgress(1).subscribe(p => status = p.status);
     const req = httpMock.expectOne('/api/conversion-progress/1/');
     // A 404 for a deleted video is handled by "My videos" and must not show up later as a snackbar.
-    expect(req.request.context.get(SHOWS_OWN_ERRORS)).toBeTrue();
+    expect(req.request.context.get(SHOWS_OWN_ERRORS)).toBe(true);
     req.flush({ progress: 40, current_resolution: '480p', status: 'processing' });
     expect(status).toBe('processing');
   });
@@ -128,7 +128,10 @@ describe('ApiService', () => {
   });
 
   it('the form calls leave error display to their component (SHOWS_OWN_ERRORS)', () => {
-    const calls: [string, () => void][] = [
+    const calls: [
+      string,
+      () => void
+    ][] = [
       ['/api/register/', () => service.registerUser({ email: 'a@b.de', password: 'x', confirmed_password: 'x' }).subscribe()],
       ['/api/login/', () => service.loginUser({ email: 'a@b.de', password: 'x' }).subscribe()],
       ['/api/password_reset/', () => service.forgotPassword({ email: 'a@b.de' }).subscribe()],
@@ -138,7 +141,7 @@ describe('ApiService', () => {
     calls.forEach(([url, call]) => {
       call();
       const req = httpMock.expectOne(url);
-      expect(req.request.context.get(SHOWS_OWN_ERRORS)).withContext(url).toBeTrue();
+      expect(req.request.context.get(SHOWS_OWN_ERRORS), url).toBe(true);
       req.flush({});
     });
   });
@@ -147,7 +150,7 @@ describe('ApiService', () => {
     let error: unknown;
     service.loginUser({ email: 'a@b.de', password: 'wrong' }).subscribe({ error: (e) => error = e });
     httpMock.expectOne('/api/login/').flush({ non_field_errors: ['x'] }, { status: 429, statusText: 'Too Many Requests' });
-    expect(error instanceof HttpErrorResponse).toBeTrue();
+    expect(error instanceof HttpErrorResponse).toBe(true);
     expect((error as HttpErrorResponse).status).toBe(429);
   });
 });

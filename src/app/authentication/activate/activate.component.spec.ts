@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
@@ -8,19 +9,19 @@ import { ApiService } from 'src/app/services/api.service';
 
 describe('ActivateComponent', () => {
   let fixture: ComponentFixture<ActivateComponent>;
-  let activateSpy: jasmine.Spy;
-  let newLinkSpy: jasmine.Spy;
+  let activateSpy: Mock;
+  let newLinkSpy: Mock;
 
   function create(response: Observable<unknown>): ActivateComponent {
-    activateSpy.and.returnValue(response);
+    activateSpy.mockReturnValue(response);
     fixture = TestBed.createComponent(ActivateComponent);
     fixture.detectChanges();
     return fixture.componentInstance;
   }
 
   beforeEach(() => {
-    activateSpy = jasmine.createSpy('activateAccount');
-    newLinkSpy = jasmine.createSpy('getNewActivationEmail');
+    activateSpy = vi.fn().mockName('activateAccount');
+    newLinkSpy = vi.fn().mockName('getNewActivationEmail');
     TestBed.configureTestingModule({
       imports: [ActivateComponent],
       providers: [
@@ -34,13 +35,13 @@ describe('ActivateComponent', () => {
   it('shows success after activation', () => {
     const component = create(of({ detail: 'Account successfully activated.' }));
     expect(activateSpy).toHaveBeenCalledWith('MQ', 'abc');
-    expect(component.activated).toBeTrue();
+    expect(component.activated).toBe(true);
     expect(fixture.nativeElement.textContent).toContain('Your account is active.');
   });
 
   it('shows an error for an invalid link', () => {
     const component = create(throwError(() => new HttpErrorResponse({ status: 400 })));
-    expect(component.failed).toBeTrue();
+    expect(component.failed).toBe(true);
     const link: HTMLAnchorElement | null = fixture.nativeElement.querySelector('a[href="/login"]');
     expect(link).not.toBeNull();
   });
@@ -58,7 +59,7 @@ describe('ActivateComponent', () => {
     beforeEach(() => create(throwError(() => new HttpErrorResponse({ status: 400 }))));
 
     it('sends the address and shows a neutral confirmation', () => {
-      newLinkSpy.and.returnValue(of({ detail: 'ok' }));
+      newLinkSpy.mockReturnValue(of({ detail: 'ok' }));
       submit('max@example.com');
       expect(newLinkSpy).toHaveBeenCalledWith({ email: 'max@example.com' });
       expect(fixture.nativeElement.textContent).toContain('If this address needs activation');
@@ -71,7 +72,7 @@ describe('ActivateComponent', () => {
     });
 
     it('shows a friendly error without technical text when the request fails', () => {
-      newLinkSpy.and.returnValue(throwError(() => new HttpErrorResponse({ status: 500, statusText: 'Server Error' })));
+      newLinkSpy.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500, statusText: 'Server Error' })));
       submit('max@example.com');
       const text: string = fixture.nativeElement.textContent;
       expect(text).toContain('Could not send a new link. Please try again in a moment.');

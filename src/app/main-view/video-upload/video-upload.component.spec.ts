@@ -22,7 +22,7 @@ describe('VideoUploadComponent', () => {
     });
     httpMock = TestBed.inject(HttpTestingController);
     router = TestBed.inject(Router);
-    spyOn(router, 'navigate').and.resolveTo(true);
+    vi.spyOn(router, 'navigate').mockResolvedValue(true);
     fixture = TestBed.createComponent(VideoUploadComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -51,7 +51,7 @@ describe('VideoUploadComponent', () => {
     expect(formData.get('description')).toBe('A test clip');
     expect(formData.get('category')).toBe('Action');
     expect(formData.get('video_file')).toBe(clip);
-    expect(formData.has('genre')).toBeFalse();
+    expect(formData.has('genre')).toBe(false);
     req.flush(TEST_VIDEO, { status: 201, statusText: 'Created' });
   });
 
@@ -88,8 +88,8 @@ describe('VideoUploadComponent', () => {
       const button: HTMLButtonElement = fixture.nativeElement.querySelector('button.file-button');
       expect(button.type).toBe('button');
       expect(button.textContent).toContain('Choose video');
-      expect(input.hidden).toBeTrue();
-      const click = spyOn(input, 'click');
+      expect(input.hidden).toBe(true);
+      const click = vi.spyOn(input, 'click').mockReturnValue(undefined);
       button.click();
       expect(click).toHaveBeenCalled();
     });
@@ -104,7 +104,7 @@ describe('VideoUploadComponent', () => {
   it('rejects a title that only consists of whitespace', () => {
     fillForm();
     component.uploadForm.patchValue({ title: '    ' });
-    expect(component.uploadForm.controls.title.hasError('blank')).toBeTrue();
+    expect(component.uploadForm.controls.title.hasError('blank')).toBe(true);
     component.onSubmit();
     httpMock.expectNone('/api/upload/');
   });
@@ -112,10 +112,7 @@ describe('VideoUploadComponent', () => {
   it('shows the backend message for a rejected title', () => {
     fillForm();
     component.onSubmit();
-    httpMock.expectOne('/api/upload/').flush(
-      { title: ['This field may not be blank.'] },
-      { status: 400, statusText: 'Bad Request' }
-    );
+    httpMock.expectOne('/api/upload/').flush({ title: ['This field may not be blank.'] }, { status: 400, statusText: 'Bad Request' });
     expect(text()).toContain('This field may not be blank.');
     expect(text()).not.toContain('try again later');
   });
@@ -123,10 +120,7 @@ describe('VideoUploadComponent', () => {
   it('shows a backend title error that arrives as a plain string', () => {
     fillForm();
     component.onSubmit();
-    httpMock.expectOne('/api/upload/').flush(
-      { title: 'Title is not allowed.' },
-      { status: 400, statusText: 'Bad Request' }
-    );
+    httpMock.expectOne('/api/upload/').flush({ title: 'Title is not allowed.' }, { status: 400, statusText: 'Bad Request' });
     expect(text()).toContain('Title is not allowed.');
   });
 
@@ -134,10 +128,7 @@ describe('VideoUploadComponent', () => {
     for (const message of ['The video resolution is too large.', 'The frame rate must not be higher than 120 fps.']) {
       fillForm();
       component.onSubmit();
-      httpMock.expectOne('/api/upload/').flush(
-        { video_file: [message] },
-        { status: 400, statusText: 'Bad Request' }
-      );
+      httpMock.expectOne('/api/upload/').flush({ video_file: [message] }, { status: 400, statusText: 'Bad Request' });
       expect(text()).toContain(message);
     }
   });
@@ -161,10 +152,7 @@ describe('VideoUploadComponent', () => {
   it('shows the reason for a rejected file', () => {
     fillForm();
     component.onSubmit();
-    httpMock.expectOne('/api/upload/').flush(
-      { video_file: ['The video must not be longer than 2 minutes.'] },
-      { status: 400, statusText: 'Bad Request' }
-    );
+    httpMock.expectOne('/api/upload/').flush({ video_file: ['The video must not be longer than 2 minutes.'] }, { status: 400, statusText: 'Bad Request' });
     expect(text()).toContain('The video must not be longer than 2 minutes.');
     expect(router.navigate).not.toHaveBeenCalled();
   });
@@ -172,20 +160,14 @@ describe('VideoUploadComponent', () => {
   it('shows the upload limit message', () => {
     fillForm();
     component.onSubmit();
-    httpMock.expectOne('/api/upload/').flush(
-      { detail: 'Upload limit reached. Delete one of your videos first.' },
-      { status: 400, statusText: 'Bad Request' }
-    );
+    httpMock.expectOne('/api/upload/').flush({ detail: 'Upload limit reached. Delete one of your videos first.' }, { status: 400, statusText: 'Bad Request' });
     expect(text()).toContain('Upload limit reached. Delete one of your videos first.');
   });
 
   it('asks to wait when uploads are throttled', () => {
     fillForm();
     component.onSubmit();
-    httpMock.expectOne('/api/upload/').flush(
-      { detail: 'Request was throttled. Expected available in 3599 seconds.' },
-      { status: 429, statusText: 'Too Many Requests' }
-    );
+    httpMock.expectOne('/api/upload/').flush({ detail: 'Request was throttled. Expected available in 3599 seconds.' }, { status: 429, statusText: 'Too Many Requests' });
     expect(text()).toContain('You have uploaded a lot of videos recently. Please try again later.');
     expect(text()).not.toContain('3599');
   });
@@ -195,6 +177,6 @@ describe('VideoUploadComponent', () => {
     component.onSubmit();
     httpMock.expectOne('/api/upload/').flush({}, { status: 500, statusText: 'Server Error' });
     expect(text()).toContain('The upload did not work. Please try again later.');
-    expect(component.uploading()).toBeFalse();
+    expect(component.uploading()).toBe(false);
   });
 });

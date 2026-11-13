@@ -43,7 +43,7 @@ describe('VideoService', () => {
   it('keeps the loaded list when a reload fails', () => {
     let videos: Video[] | null | undefined;
     service.videos$.subscribe(v => videos = v);
-    spyOn(console, 'error');
+    vi.spyOn(console, 'error').mockReturnValue(undefined);
     const httpMock = TestBed.inject(HttpTestingController);
     service.loadVideos();
     httpMock.expectOne('/api/video/').flush([{ ...TEST_VIDEO, id: 1 }]);
@@ -64,40 +64,40 @@ describe('VideoService', () => {
   it('ends loading with an empty list when the request fails', () => {
     let videos: Video[] | null | undefined;
     service.videos$.subscribe(v => videos = v);
-    spyOn(console, 'error');
+    vi.spyOn(console, 'error').mockReturnValue(undefined);
     service.loadVideos();
     TestBed.inject(HttpTestingController).expectOne('/api/video/').flush({}, { status: 500, statusText: 'Server Error' });
     expect(videos).toEqual([]);
   });
 
   it('marks a failed first load, and clears the mark with the next success', () => {
-    spyOn(console, 'error');
+    vi.spyOn(console, 'error').mockReturnValue(undefined);
     service.loadVideos();
     const http = TestBed.inject(HttpTestingController);
     http.expectOne('/api/video/').flush({}, { status: 500, statusText: 'Server Error' });
-    expect(service.loadFailed()).toBeTrue();
+    expect(service.loadFailed()).toBe(true);
 
     service.loadVideos();
     http.expectOne('/api/video/').flush([]);
-    expect(service.loadFailed()).toBeFalse();
+    expect(service.loadFailed()).toBe(false);
   });
 
   it('keeps the failed mark when a retry fails again', () => {
-    spyOn(console, 'error');
+    vi.spyOn(console, 'error').mockReturnValue(undefined);
     const http = TestBed.inject(HttpTestingController);
     service.loadVideos();
     http.expectOne('/api/video/').flush({}, { status: 500, statusText: 'Server Error' });
     service.loadVideos();
     http.expectOne('/api/video/').flush({}, { status: 500, statusText: 'Server Error' });
-    expect(service.loadFailed()).toBeTrue();
+    expect(service.loadFailed()).toBe(true);
   });
 
   it('clear resets the failed mark', () => {
-    spyOn(console, 'error');
+    vi.spyOn(console, 'error').mockReturnValue(undefined);
     service.loadVideos();
     TestBed.inject(HttpTestingController).expectOne('/api/video/').flush({}, { status: 500, statusText: 'Server Error' });
     service.clear();
-    expect(service.loadFailed()).toBeFalse();
+    expect(service.loadFailed()).toBe(false);
   });
 
   it('maps getStreams to the streams array', () => {

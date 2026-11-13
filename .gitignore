@@ -50,3 +50,7 @@ Thumbs.db
 /test-results
 /playwright-report
 e2e-shots/
+
+# Vitest browser mode (failure screenshots)
+__screenshots__/
+.vitest-attachments/

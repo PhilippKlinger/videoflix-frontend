@@ -38,8 +38,8 @@ describe('MainLayoutComponent', () => {
   });
 
   it('logout navigates to / after the server call', () => {
-    const logoutSpy = spyOn(TestBed.inject(AuthService), 'logout').and.returnValue(of(undefined));
-    const navigateSpy = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
+    const logoutSpy = vi.spyOn(TestBed.inject(AuthService), 'logout').mockReturnValue(of(undefined));
+    const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
 
     component.logout();
 

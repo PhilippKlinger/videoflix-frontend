@@ -1,4 +1,5 @@
-import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
+import type { Mock } from 'vitest';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { By } from '@angular/platform-browser';
@@ -136,7 +137,7 @@ describe('BrowseComponent', () => {
 
   it('stops loading and shows a message when there are no videos', () => {
     create('demo', []);
-    expect(component.loading).toBeFalse();
+    expect(component.loading).toBe(false);
     expect(query('.no_videos')).not.toBeNull();
     expect(query('app-my-videos')).not.toBeNull();
   });
@@ -157,7 +158,7 @@ describe('BrowseComponent', () => {
   });
 
   it('tells in plain words when the videos cannot be loaded, and offers a retry', () => {
-    spyOn(console, 'error');
+    vi.spyOn(console, 'error').mockReturnValue(undefined);
     TestBed.configureTestingModule({
       imports: [BrowseComponent],
       providers: [provideAppHttpClient(), provideHttpClientTesting(), provideRouter([])]
@@ -175,11 +176,12 @@ describe('BrowseComponent', () => {
     httpMock.expectOne('/api/video/').flush([]);
   });
 
-  it('still shows the catalog when the account cannot be loaded', fakeAsync(() => {
-    const unhandled = jasmine.createSpy('onUnhandledError');
+  it('still shows the catalog when the account cannot be loaded', () => {
+    vi.useFakeTimers();
+    const unhandled = vi.fn().mockName('onUnhandledError');
     const previous = config.onUnhandledError;
     config.onUnhandledError = unhandled;
-    spyOn(console, 'error');
+    vi.spyOn(console, 'error').mockReturnValue(undefined);
     try {
       TestBed.configureTestingModule({
         imports: [BrowseComponent],
@@ -193,15 +195,17 @@ describe('BrowseComponent', () => {
       httpMock.expectOne('/api/video/').flush([{ ...TEST_VIDEO, id: 1 }]);
       fixture.detectChanges();
       // RxJS reports unhandled errors asynchronously.
-      flush();
+      vi.runAllTimers();
 
       expect(unhandled).not.toHaveBeenCalled();
       expect(component.newestVideos.map(v => v.id)).toEqual([1]);
       expect(query('app-my-videos')).toBeNull();
-    } finally {
-      config.onUnhandledError = previous;
     }
-  }));
+    finally {
+      config.onUnhandledError = previous;
+      vi.useRealTimers();
+    }
+  });
 
   it('reloads the list when "My videos" reports a change', () => {
     create('member', [own]);
@@ -213,10 +217,10 @@ describe('BrowseComponent', () => {
   });
 
   describe('opening a video', () => {
-    let open: jasmine.Spy;
+    let open: Mock;
 
     function afterClosing(result: string | undefined) {
-      open = spyOn(component.dialog, 'open').and.returnValue({ afterClosed: () => of(result) } as never);
+      open = vi.spyOn(component.dialog, 'open').mockReturnValue({ afterClosed: () => of(result) } as never);
     }
 
     it('opening a tile opens details', () => {
@@ -224,9 +228,9 @@ describe('BrowseComponent', () => {
       afterClosing(undefined);
       fixture.nativeElement.querySelector('.video_list app-video-thumbnail > button').click();
       expect(open).toHaveBeenCalledTimes(1);
-      expect(open.calls.mostRecent().args[0]).toBe(VideoDetailsComponent);
-      expect(open.calls.mostRecent().args[1].data).toEqual({ video: component.newestVideos[0] });
-      expect(open.calls.mostRecent().args[1].restoreFocus).toBeTrue();
+      expect(open.mock.lastCall![0]).toBe(VideoDetailsComponent);
+      expect(open.mock.lastCall![1]!.data).toEqual({ video: component.newestVideos[0] });
+      expect(open.mock.lastCall![1]!.restoreFocus).toBe(true);
     });
 
     it('opens the player after "play" in the details', () => {
@@ -234,7 +238,7 @@ describe('BrowseComponent', () => {
       afterClosing('play');
       component.openDetails(TEST_VIDEO);
       expect(open).toHaveBeenCalledTimes(2);
-      expect(open.calls.mostRecent().args[0]).toBe(VideoPlayerComponent);
+      expect(open.mock.lastCall![0]).toBe(VideoPlayerComponent);
     });
 
     it('stays on the page when the details close without "play"', () => {
@@ -249,7 +253,7 @@ describe('BrowseComponent', () => {
       afterClosing(undefined);
       query('.hero-play')!.click();
       expect(open).toHaveBeenCalledTimes(1);
-      expect(open.calls.mostRecent().args[0]).toBe(VideoPlayerComponent);
+      expect(open.mock.lastCall![0]).toBe(VideoPlayerComponent);
     });
   });
 });

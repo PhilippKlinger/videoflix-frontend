@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 
@@ -42,7 +42,10 @@ describe('MyVideosComponent', () => {
     return buttons.find(b => b.textContent?.includes(label));
   }
 
-  afterEach(() => httpMock.verify());
+  afterEach(() => {
+    httpMock.verify();
+    vi.useRealTimers();
+  });
 
   describe('quota', () => {
     it('links to the upload page while a slot is free', () => {
@@ -89,43 +92,46 @@ describe('MyVideosComponent', () => {
       expect(query('button.play-tile')).toBeNull();
     });
 
-    it('polls the progress while converting and reloads when it is done', fakeAsync(() => {
+    it('polls the progress while converting and reloads when it is done', () => {
+      vi.useFakeTimers();
       create([converting]);
       expect(text()).toContain('Preparing 1080p… 0 %');
       let changed = 0;
       component.changed.subscribe(() => changed++);
 
-      tick(POLL_INTERVAL_MS);
+      vi.advanceTimersByTime(POLL_INTERVAL_MS);
       httpMock.expectOne('/api/conversion-progress/2/').flush({ progress: 40, current_resolution: '480p', status: 'processing' });
       expect(text()).toContain('Preparing 480p… 40 %');
       expect(changed).toBe(0);
 
-      tick(POLL_INTERVAL_MS);
+      vi.advanceTimersByTime(POLL_INTERVAL_MS);
       httpMock.expectOne('/api/conversion-progress/2/').flush({ progress: 33, current_resolution: '720p', status: 'ready' });
       expect(changed).toBe(1);
 
       // Until the reloaded list arrives, no further polls and no further reloads.
-      tick(POLL_INTERVAL_MS);
+      vi.advanceTimersByTime(POLL_INTERVAL_MS);
       httpMock.expectNone('/api/conversion-progress/2/');
       expect(changed).toBe(1);
 
       // The reloaded list replaces the input; once all resolutions exist the polling stops.
       fixture.componentRef.setInput('videos', [{ ...converting, status: 'ready', conversion_progress: 100 }]);
       fixture.detectChanges();
-      tick(POLL_INTERVAL_MS * 2);
+      vi.advanceTimersByTime(POLL_INTERVAL_MS * 2);
       httpMock.expectNone('/api/conversion-progress/2/');
-    }));
+    });
 
-    it('says "Converting" when no resolution is known yet', fakeAsync(() => {
+    it('says "Converting" when no resolution is known yet', () => {
+      vi.useFakeTimers();
       create([converting]);
-      tick(POLL_INTERVAL_MS);
+      vi.advanceTimersByTime(POLL_INTERVAL_MS);
       httpMock.expectOne('/api/conversion-progress/2/').flush({ progress: 10, current_resolution: null, status: 'processing' });
       expect(text()).toContain('Converting… 10 %');
       fixture.destroy();
-      discardPeriodicTasks();
-    }));
+      vi.clearAllTimers();
+    });
 
-    it('shows that more resolutions are converted after the first one is playable', fakeAsync(() => {
+    it('shows that more resolutions are converted after the first one is playable', () => {
+      vi.useFakeTimers();
       const playable: Video = { ...converting, status: 'ready', conversion_progress: 33 };
       create([playable]);
       expect(query('button.play-tile')).not.toBeNull();
@@ -133,66 +139,70 @@ describe('MyVideosComponent', () => {
       let changed = 0;
       component.changed.subscribe(() => changed++);
 
-      tick(POLL_INTERVAL_MS);
+      vi.advanceTimersByTime(POLL_INTERVAL_MS);
       httpMock.expectOne('/api/conversion-progress/2/').flush({ progress: 66, current_resolution: '720p', status: 'ready' });
       expect(text()).toContain('More resolutions… 66 %');
       expect(changed).toBe(0);
 
-      tick(POLL_INTERVAL_MS);
+      vi.advanceTimersByTime(POLL_INTERVAL_MS);
       httpMock.expectOne('/api/conversion-progress/2/').flush({ progress: 100, current_resolution: '1080p', status: 'ready' });
       expect(changed).toBe(1);
 
       fixture.componentRef.setInput('videos', [{ ...playable, conversion_progress: 100 }]);
       expect(text()).not.toContain('More resolutions');
-      tick(POLL_INTERVAL_MS * 2);
+      vi.advanceTimersByTime(POLL_INTERVAL_MS * 2);
       httpMock.expectNone('/api/conversion-progress/2/');
-    }));
+    });
 
-    it('waits for a slow progress answer instead of dropping it', fakeAsync(() => {
+    it('waits for a slow progress answer instead of dropping it', () => {
+      vi.useFakeTimers();
       create([converting]);
-      tick(POLL_INTERVAL_MS);
+      vi.advanceTimersByTime(POLL_INTERVAL_MS);
       const slow = httpMock.expectOne('/api/conversion-progress/2/');
 
-      tick(POLL_INTERVAL_MS);
+      vi.advanceTimersByTime(POLL_INTERVAL_MS);
       httpMock.expectNone('/api/conversion-progress/2/');
-      expect(slow.cancelled).toBeFalse();
+      expect(slow.cancelled).toBe(false);
 
       slow.flush({ progress: 40, current_resolution: '480p', status: 'processing' });
       expect(text()).toContain('Preparing 480p… 40 %');
       // Still converting, so the polling goes on until the page closes.
       fixture.destroy();
-      discardPeriodicTasks();
-    }));
+      vi.clearAllTimers();
+    });
 
-    it('keeps the progress of the others when one video is gone', fakeAsync(() => {
+    it('keeps the progress of the others when one video is gone', () => {
+      vi.useFakeTimers();
       const other: Video = { ...converting, id: 4, title: 'Other clip' };
       create([converting, other]);
       let changed = 0;
       component.changed.subscribe(() => changed++);
 
-      tick(POLL_INTERVAL_MS);
+      vi.advanceTimersByTime(POLL_INTERVAL_MS);
       httpMock.expectOne('/api/conversion-progress/2/').flush({ progress: 40, current_resolution: '480p', status: 'processing' });
       httpMock.expectOne('/api/conversion-progress/4/').flush({ detail: 'Not found.' }, { status: 404, statusText: 'Not Found' });
 
       expect(text()).toContain('Preparing 480p… 40 %');
       expect(changed).toBe(1);
-      tick(POLL_INTERVAL_MS);
+      vi.advanceTimersByTime(POLL_INTERVAL_MS);
       httpMock.expectNone(() => true);
-    }));
+    });
 
-    it('does not poll without converting videos', fakeAsync(() => {
+    it('does not poll without converting videos', () => {
+      vi.useFakeTimers();
       create([ready, failed]);
-      tick(POLL_INTERVAL_MS * 2);
+      vi.advanceTimersByTime(POLL_INTERVAL_MS * 2);
       httpMock.expectNone(() => true);
-    }));
+    });
 
-    it('stops polling when the page closes', fakeAsync(() => {
+    it('stops polling when the page closes', () => {
+      vi.useFakeTimers();
       create([converting]);
       fixture.destroy();
-      tick(POLL_INTERVAL_MS * 2);
+      vi.advanceTimersByTime(POLL_INTERVAL_MS * 2);
       httpMock.expectNone('/api/conversion-progress/2/');
-      discardPeriodicTasks();
-    }));
+      vi.clearAllTimers();
+    });
   });
 
   describe('empty state', () => {
@@ -217,7 +227,7 @@ describe('MyVideosComponent', () => {
       component.delete(other);
       httpMock.expectOne('/api/video/1/').flush(null);
       fixture.detectChanges();
-      expect(query<HTMLButtonElement>('.confirm-delete')?.disabled).toBeTrue();
+      expect(query<HTMLButtonElement>('.confirm-delete')?.disabled).toBe(true);
       httpMock.expectOne('/api/video/4/').flush(null);
       fixture.detectChanges();
       expect(query('.confirm-delete')).toBeNull();

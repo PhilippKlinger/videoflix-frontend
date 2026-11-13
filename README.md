@@ -7,7 +7,7 @@ Single-page web app for Videoflix, a small video streaming platform: sign up and
 - Angular 22.2 with standalone components, Angular Material 22.2
 - TypeScript 6.0, RxJS 7.8
 - hls.js 1.7 for playback
-- Karma and Jasmine for unit tests, Playwright for end-to-end tests
+- Vitest (browser mode, headless Chromium) for unit tests, Playwright for end-to-end tests
 
 ## Commands
 
