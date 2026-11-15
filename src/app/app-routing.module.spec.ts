@@ -59,8 +59,22 @@ describe('app routes', () => {
     }
   });
 
-  it('keeps the titles of the legal pages', () => {
-    expect(find('impressum').title).toBe('Impressum · Videoflix');
-    expect(find('datenschutz').title).toBe('Datenschutz · Videoflix');
+  it('gives every route its own tab title', () => {
+    const titles: Record<string, string> = {
+      '': 'Videoflix',
+      'login': 'Log in · Videoflix',
+      'register': 'Sign up · Videoflix',
+      'forgot-password': 'Forgot password · Videoflix',
+      'activate/:uid/:token': 'Activate account · Videoflix',
+      'reset-password/:uid/:token': 'Reset password · Videoflix',
+      'browse': 'Browse · Videoflix',
+      'upload': 'Upload video · Videoflix',
+      'impressum': 'Impressum · Videoflix',
+      'datenschutz': 'Datenschutz · Videoflix',
+      '**': 'Page not found · Videoflix',
+    };
+    for (const [path] of expected) {
+      expect(find(path).title, path).toBe(titles[path]);
+    }
   });
 });
